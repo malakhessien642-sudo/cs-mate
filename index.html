@@ -12,7 +12,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
 
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
@@ -41,11 +44,21 @@
     </nav>
 
     <div class="nav-actions">
-      <button id="languageToggle" class="language-btn" type="button">
+      <button
+        id="languageToggle"
+        class="language-btn"
+        type="button"
+        aria-label="تغيير لغة الموقع"
+      >
         EN
       </button>
 
-      <button id="themeToggle" class="theme-btn" type="button" aria-label="Change theme">
+      <button
+        id="themeToggle"
+        class="theme-btn"
+        type="button"
+        aria-label="تغيير المظهر"
+      >
         ☼
       </button>
     </div>
@@ -87,13 +100,14 @@
         </div>
 
         <div class="hero-stats">
+
           <div class="stat-item">
-            <strong id="languageCount">15+</strong>
+            <strong id="languageCount">0</strong>
             <small>لغة وتقنية</small>
           </div>
 
           <div class="stat-item">
-            <strong id="lessonCount">100+</strong>
+            <strong id="lessonCount">0</strong>
             <small>درس ومثال</small>
           </div>
 
@@ -101,10 +115,11 @@
             <strong>Free</strong>
             <small>التعلم متاح للجميع</small>
           </div>
-        </div>
 
+        </div>
       </div>
 
+      <!-- CODE EDITOR PREVIEW -->
       <div class="hero-visual">
         <div class="editor-window">
 
@@ -120,6 +135,7 @@
           </div>
 
           <div class="editor-code">
+
             <div>
               <b>01</b>
               <code><span class="pink">using</span> System;</code>
@@ -164,6 +180,7 @@
               <b>09</b>
               <code>}</code>
             </div>
+
           </div>
 
           <div class="editor-status">
@@ -198,9 +215,12 @@
         </div>
       </div>
 
+      <!-- SEARCH AND FILTER -->
       <div class="course-controls">
+
         <label class="search-box">
           <span>⌕</span>
+
           <input
             type="search"
             id="searchInput"
@@ -216,11 +236,17 @@
           <option value="database">قواعد البيانات</option>
           <option value="mobile">تطوير التطبيقات</option>
         </select>
+
       </div>
 
-      <!-- JavaScript will insert the language cards here -->
-      <div class="language-grid" id="languageGrid"></div>
+      <!-- JAVASCRIPT INSERTS COURSE CARDS HERE -->
+      <div
+        class="language-grid"
+        id="languageGrid"
+        aria-live="polite"
+      ></div>
 
+      <!-- EMPTY SEARCH RESULTS -->
       <div class="empty-state" id="emptyState" hidden>
         لم يتم العثور على لغة مطابقة لبحثك.
       </div>
@@ -274,37 +300,68 @@
 
     <!-- ABOUT SECTION -->
     <section class="about-section section-wrap" id="about">
+
       <div class="about-content">
         <span class="section-kicker">ABOUT CS MATE</span>
+
         <h2>المعرفة هي البداية، والتطبيق هو الطريق.</h2>
+
         <p>
           CS MATE منصة تعليمية تهدف إلى تنظيم رحلة تعلّم البرمجة
           في مكان واحد. ستجد فيها شروحات مكتوبة، وأمثلة برمجية،
           وتطبيقات وتمارين تساعدك على فهم ما تدرسه خطوة بخطوة.
         </p>
       </div>
+
       <div class="about-mark">&lt; CS MATE /&gt;</div>
+
     </section>
 
   </main>
 
   <!-- LESSON MODAL -->
-  <div class="lesson-modal" id="lessonModal" aria-hidden="true">
-    <div class="lesson-panel" role="dialog" aria-modal="true" aria-labelledby="lessonTitle">
+  <div
+    class="lesson-modal"
+    id="lessonModal"
+    aria-hidden="true"
+  >
 
+    <div
+      class="lesson-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lessonTitle"
+    >
+
+      <!-- LESSON HEADER -->
       <div class="lesson-header">
+
         <div>
-          <span class="section-kicker" id="lessonLanguage">CS MATE LEARNING</span>
+          <span class="section-kicker" id="lessonLanguage">
+            CS MATE LEARNING
+          </span>
+
           <h2 id="lessonTitle">عنوان الدرس</h2>
-          <p id="lessonDescription">وصف الدرس</p>
+
+          <p id="lessonDescription">
+            وصف الدرس
+          </p>
         </div>
 
-        <button id="closeLesson" class="close-button" type="button" aria-label="إغلاق">
+        <button
+          id="closeLesson"
+          class="close-button"
+          type="button"
+          aria-label="إغلاق الدرس"
+        >
           ×
         </button>
+
       </div>
 
+      <!-- LESSON NAVIGATION AND CONTENT -->
       <div class="lesson-layout">
+
         <aside class="lesson-sidebar">
           <h3>محتويات الكورس</h3>
           <nav id="lessonNavigation"></nav>
@@ -313,31 +370,63 @@
         <article class="lesson-content" id="lessonContent">
           <p>سيظهر محتوى الدرس هنا.</p>
         </article>
+
       </div>
 
+      <!-- LESSON CONTROLS -->
       <div class="lesson-footer">
-        <button id="previousLesson" class="button-secondary" type="button">
+
+        <button
+          id="previousLesson"
+          class="button-secondary"
+          type="button"
+        >
           الدرس السابق
         </button>
 
-        <button id="completeLesson" class="button-primary" type="button">
+        <button
+          id="completeLesson"
+          class="button-primary"
+          type="button"
+        >
           أكمل الدرس ✓
         </button>
 
-        <button id="nextLesson" class="button-primary" type="button">
+        <button
+          id="nextLesson"
+          class="button-primary"
+          type="button"
+        >
           الدرس التالي ↗
         </button>
+
       </div>
 
     </div>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- NOTIFICATION -->
+  <div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
-    <a href="#home" class="footer-brand">CS <span>MATE</span></a>
+
+    <a href="#home" class="footer-brand">
+      CS <span>MATE</span>
+    </a>
+
     <p>Learn. Code. Create.</p>
-    <small>© <span id="currentYear">2026</span> CS MATE. Keep learning, keep building.</small>
+
+    <small>
+      © <span id="currentYear">2026</span>
+      CS MATE. Keep learning, keep building.
+    </small>
+
   </footer>
 
 </body>
