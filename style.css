@@ -1450,3 +1450,33 @@ html[data-theme="light"] .toast {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* CS MATE - CARD DISPLAY TEST */
+#languageGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+
+#languageGrid .language-card {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 24px !important;
+  background: #161d30 !important;
+  color: #ffffff !important;
+  border: 1px solid #7050c9 !important;
+  border-radius: 18px !important;
+  min-height: 240px !important;
+}
+
+#languageGrid .language-card h3 {
+  color: #ffffff !important;
+  font-size: 22px !important;
+  margin: 16px 0 !important;
+}
+
+@media (max-width: 700px) {
+  #languageGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
