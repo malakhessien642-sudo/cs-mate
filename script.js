@@ -2281,3 +2281,126 @@ function getOverallProgress() {
 }
 
 console.info("CS MATE: Navigation and progress helpers loaded.");
+
+/* =====================================
+   CS MATE — Language Cards Fix
+===================================== */
+
+#languageGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+#languageGrid .language-card {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 250px;
+  padding: 24px;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    #161d30,
+    #0d1220
+  ) !important;
+
+  border: 1px solid #303951;
+  border-radius: 20px;
+  color: #f1f5ff;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+#languageGrid .language-card:hover {
+  transform: translateY(-5px);
+  border-color: #8b5cf6;
+}
+
+#languageGrid .language-card h3 {
+  margin-top: 20px;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+#languageGrid .language-card .card-description {
+  margin-top: 8px;
+  color: #aeb9d1;
+  line-height: 1.9;
+}
+
+#languageGrid .language-card .card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#languageGrid .language-card .language-logo {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+
+  border-radius: 16px;
+  background: rgba(139, 92, 246, 0.16);
+  color: #c4b5fd;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+#languageGrid .language-card .card-category {
+  padding: 6px 10px;
+  border: 1px solid #303951;
+  border-radius: 30px;
+  color: #c4b5fd;
+  font-size: 11px;
+}
+
+#languageGrid .language-card .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+  color: #aeb9d1;
+  font-size: 12px;
+}
+
+#languageGrid .language-card .card-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 12px 14px;
+
+  border: 1px solid #7050c9;
+  border-radius: 12px;
+  background: rgba(139, 92, 246, 0.16);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#languageGrid .language-card .card-button:hover {
+  background: #7650d8;
+}
+
+@media (max-width: 900px) {
+  #languageGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  #languageGrid {
+    grid-template-columns: 1fr;
+  }
+}
