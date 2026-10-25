@@ -1231,4 +1231,17 @@ if (document.readyState === "loading") {
   );
 } else {
   initializeCSMate();
+}function initializeCSMate() {
+  loadProgress();
+  renderCourses();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeCSMate,
+    { once: true }
+  );
+} else {
+  initializeCSMate();
 }
