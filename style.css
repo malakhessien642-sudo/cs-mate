@@ -1272,3 +1272,106 @@ html[lang="en"] .about-section h2 {
     font-size: 15px;
   }
 }
+/* =========================================
+   CS MATE — Fix Lesson Layout
+========================================= */
+
+/* Give the lesson window more width */
+.lesson-panel {
+  width: 96vw !important;
+  max-width: 1250px !important;
+  max-height: 94vh;
+}
+
+/* Keep the lesson list narrow and the content wide */
+.lesson-layout {
+  display: grid !important;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr) !important;
+  gap: 18px !important;
+  align-items: start;
+}
+
+/* Lesson list stays in the left column */
+.lesson-sidebar {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  min-width: 0;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+/* Progress box: compact, above the lesson */
+#csMateProgressBox {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 8px 12px !important;
+  margin: 0 0 8px !important;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+/* Make the actual lesson the main content area */
+.lesson-content {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  min-width: 0;
+  min-height: 420px;
+  max-height: 65vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 24px !important;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+/* Code examples should use the available width */
+.lesson-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  padding: 18px;
+  border-radius: 10px;
+}
+
+.lesson-content pre code {
+  white-space: pre;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .lesson-panel {
+    width: 96vw !important;
+    max-height: 94vh;
+  }
+
+  .lesson-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .lesson-sidebar,
+  #csMateProgressBox,
+  .lesson-content {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+
+  .lesson-sidebar {
+    max-height: 140px;
+  }
+
+  #csMateProgressBox {
+    padding: 7px 10px !important;
+    margin: 0 !important;
+  }
+
+  .lesson-content {
+    min-height: 300px;
+    max-height: 52vh;
+    padding: 14px !important;
+    font-size: 15px;
+  }
+}
