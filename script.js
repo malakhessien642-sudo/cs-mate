@@ -1245,3 +1245,37 @@ if (document.readyState === "loading") {
 } else {
   initializeCSMate();
 }
+/* =================================
+   PART 35: COURSE DISPLAY FIX
+================================= */
+
+function fixCourseDisplay() {
+  const grid =
+    document.querySelector("#languageGrid") ||
+    document.querySelector("#courseGrid");
+
+  if (!grid) {
+    console.error("Course grid not found!");
+    return;
+  }
+
+  if (
+    typeof courseCatalog === "undefined" ||
+    courseCatalog.length === 0
+  ) {
+    grid.innerHTML =
+      "<p>Courses are not loaded. Check script.js.</p>";
+    return;
+  }
+
+  renderCourses();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    fixCourseDisplay
+  );
+} else {
+  fixCourseDisplay();
+}
