@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10111f">
+  <meta name="description" content="CS MATE — Your Computer Science learning companion. Learn programming from zero to advanced.">
+  <title>CS MATE | Learn. Practice. Build.</title>
+
+  <!-- Main stylesheet: we will create this file in Part 2 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="CS MATE Home">
+      <span class="brand-mark">&lt;/&gt;</span>
+      <span>CS <strong>MATE</strong></span>
+    </a>
+
+    <nav class="top-actions" aria-label="Main controls">
+      <button id="themeToggle" class="icon-button"
+              type="button" aria-label="Toggle theme">
+        ☼
+      </button>
+
+      <button id="langToggle" class="language-button"
+              type="button">
+        العربية
+      </button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="home">
+
+      <div class="hero-copy">
+        <div class="eyebrow">
+          <span class="pulse"></span>
+          <span data-i18n="eyebrow">
+            YOUR COMPUTER SCIENCE COMPANION
+          </span>
+        </div>
+
+        <h1>
+          <span data-i18n="heroLine1">Learn today.</span>
+          <br>
+          <span class="gradient-text" data-i18n="heroLine2">
+            Build tomorrow.
+          </span>
+        </h1>
+
+        <p data-i18n="heroDescription">
+          Your journey from your first line of code to advanced
+          programming concepts starts here.
+        </p>
+
+        <a class="primary-button" href="#languages">
+          <span data-i18n="exploreLanguages">
+            Explore learning paths
+          </span>
+          <span aria-hidden="true">↘</span>
+        </a>
+
+        <div class="hero-stats">
+          <div>
+            <strong>15+</strong>
+            <span data-i18n="statLanguages">Learning paths</span>
+          </div>
+
+          <div>
+            <strong>3</strong>
+            <span data-i18n="statLevels">Learning levels</span>
+          </div>
+
+          <div>
+            <strong>100%</strong>
+            <span data-i18n="statFree">Free to explore</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorative code illustration -->
+      <div class="hero-art" aria-label="Code preview">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+
+        <div class="code-window">
+          <div class="window-bar">
+            <span></span>
+            <span></span>
+            <span></span>
+            <small>hello_world.py</small>
+          </div>
+
+          <pre><code><i>01</i> <b>def</b> <em>hello</em>():
+<i>02</i>     message = <strong>"Hello, CS MATE!"</strong>
+<i>03</i>     <b>print</b>(message)
+<i>04</i>
+<i>05</i> hello()</code></pre>
+
+          <div class="code-footer">
+            <span class="status-dot"></span>
+            <span data-i18n="codeReady">Ready to learn</span>
+            <span class="code-tag">PYTHON</span>
+          </div>
+        </div>
+
+        <div class="floating-chip chip-top">
+          ✦ <span data-i18n="chipPractice">Practice</span>
+        </div>
+
+        <div class="floating-chip chip-bottom">
+          ↗ <span data-i18n="chipProgress">Your progress</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= PROGRESS ================= -->
+    <section class="quick-panel" id="myProgress">
+
+      <div class="quick-title">
+        <span class="quick-icon">✦</span>
+
+        <div>
+          <h2 data-i18n="quickTitle">Your learning space</h2>
+          <p data-i18n="quickSubtitle">
+            Small steps. Real progress.
+          </p>
+        </div>
+      </div>
+
+      <div class="progress-area">
+        <div class="progress-label">
+          <span data-i18n="completedLessons">
+            Completed learning paths
+          </span>
+          <strong id="progressText">0 / 15</strong>
+        </div>
+
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Learning progress"
+          aria-valuemin="0"
+          aria-valuemax="15"
+          aria-valuenow="0"
+        >
+          <span id="progressBar"></span>
+        </div>
+      </div>
+
+      <button
+        class="secondary-button"
+        id="resetProgress"
+        type="button"
+        data-i18n="resetProgress"
+      >
+        Reset progress
+      </button>
+
+    </section>
+
+    <!-- ================= LEARNING LIBRARY ================= -->
+    <section class="section-heading" id="languages">
+
+      <div>
+        <div class="eyebrow" data-i18n="libraryEyebrow">
+          THE LEARNING LIBRARY
+        </div>
+
+        <h2 data-i18n="libraryTitle">
+          Choose your next skill
+        </h2>
+
+        <p data-i18n="libraryDescription">
+          Start with the basics, then level up at your own pace.
+        </p>
+      </div>
+
+      <label class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search languages..."
+          data-i18n-placeholder="searchPlaceholder"
+          aria-label="Search learning paths"
+          autocomplete="off"
+        >
+      </label>
+
+    </section>
+
+    <!-- ================= FILTERS ================= -->
+    <nav class="filter-row" id="filterRow"
+         aria-label="Learning path categories">
+
+      <button
+        class="filter-chip active"
+        type="button"
+        data-filter="all"
+        data-i18n="filterAll"
+      >
+        All paths
+      </button>
+
+      <button
+        class="filter-chip"
+        type="button"
+        data-filter="web"
+        data-i18n="filterWeb"
+      >
+        Web development
+      </button>
+
+      <button
+        class="filter-chip"
+        type="button"
+        data-filter="general"
+        data-i18n="filterGeneral"
+      >
+        Programming
+      </button>
+
+      <button
+        class="filter-chip"
+        type="button"
+        data-filter="mobile"
+        data-i18n="filterMobile"
+      >
+        Mobile development
+      </button>
+
+      <button
+        class="filter-chip"
+        type="button"
+        data-filter="data"
+        data-i18n="filterData"
+      >
+        Data & databases
+      </button>
+
+    </nav>
+
+    <!-- JavaScript will create the language cards here -->
+    <section
+      class="language-grid"
+      id="languageGrid"
+      aria-label="Programming learning paths"
+      aria-live="polite"
+    >
+      <article class="language-card">
+        <div class="card-top">
+          <div class="language-logo">PY</div>
+          <span class="level-pill">BEGINNER</span>
+        </div>
+
+        <h3>Python</h3>
+        <p class="subtitle">Start with programming basics</p>
+        <p class="description">
+          Learn variables, conditions, loops, functions, and more.
+        </p>
+
+        <div class="card-bottom">
+          <span class="lesson-count">24 lessons planned</span>
+          <span class="open-path">Coming soon ↗</span>
+        </div>
+      </article>
+    </section>
+
+    <p class="empty-state hidden" id="emptyState" hidden>
+      No learning paths match your search.
+    </p>
+
+    <!-- ================= LEARNING ROADMAP ================= -->
+    <section class="roadmap">
+
+      <div class="roadmap-icon">✧</div>
+
+      <div>
+        <div class="eyebrow" data-i18n="roadmapEyebrow">
+          A FRIENDLY REMINDER
+        </div>
+
+        <h2 data-i18n="roadmapTitle">
+          You don't need to learn everything at once.
+        </h2>
+
+        <p data-i18n="roadmapDescription">
+          Choose one path, practice consistently, and build small projects.
+          CS MATE is your starting point.
+        </p>
+      </div>
+
+      <a href="#languages" class="text-link">
+        <span data-i18n="startLearning">Start learning</span>
+        ↗
+      </a>
+
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+
+      <a class="brand footer-brand" href="#home">
+        <span class="brand-mark">&lt;/&gt;</span>
+        <span>CS <strong>MATE</strong></span>
+      </a>
+
+      <p data-i18n="footerText">
+        Made for curious Computer Science students.
+      </p>
+
+      <span>
+        © <span id="year">2026</span> CS MATE
+      </span>
+
+    </footer>
+
+  </main>
+
+  <!-- ================= LESSON MODAL ================= -->
+  <div
+    class="modal-backdrop hidden"
+    id="lessonModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    hidden
+  >
+    <div class="lesson-modal">
+
+      <button
+        class="modal-close"
+        id="closeModal"
+        type="button"
+        aria-label="Close lesson"
+      >
+        ×
+      </button>
+
+      <div class="modal-kicker" data-i18n="learningPath">
+        LEARNING PATH
+      </div>
+
+      <h2 id="modalTitle">Python</h2>
+      <p id="modalIntro"></p>
+
+      <div class="lesson-levels" id="lessonLevels">
+        <!-- Learning levels will be added by JavaScript -->
+      </div>
+
+      <div class="lesson-content" id="lessonContent">
+        <!-- Lesson explanation and code will appear here -->
+      </div>
+
+      <div class="quiz-box" id="quizBox">
+
+        <div class="quiz-top">
+          <span data-i18n="quickQuiz">QUICK QUIZ</span>
+          <span id="quizQuestionCount">1 / 1</span>
+        </div>
+
+        <h3 id="quizQuestion">
+          Your first practice question will appear here.
+        </h3>
+
+        <div class="quiz-options" id="quizOptions">
+          <!-- Quiz answers will be added by JavaScript -->
+        </div>
+
+        <p
+          class="quiz-feedback"
+          id="quizFeedback"
+          aria-live="polite"
+        ></p>
+
+        <button
+          id="nextQuestion"
+          class="primary-button hidden"
+          type="button"
+          hidden
+          data-i18n="nextQuestion"
+        >
+          Try again
+        </button>
+
+      </div>
+
+      <button
+        class="primary-button complete-button"
+        id="completeLesson"
+        type="button"
+        data-i18n="markComplete"
+      >
+        Mark intro lesson complete ✓
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Small notifications -->
+  <div
+    class="toast hidden"
+    id="toast"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></div>
+
+  <!-- Main JavaScript: we will create this file in Part 3 -->
+  <script src="script.js"></script>
+
+</body>
+</html>
