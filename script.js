@@ -1,1653 +1,1294 @@
 
-/* =========================================
-   CS MATE - Interactive Learning Platform
-   Version 1.0
-========================================= */
+"use strict";
 
-document.addEventListener("DOMContentLoaded", function () {
-  "use strict";
+/* =====================================
+   CS MATE - Main JavaScript
+   Part 1: Setup and course information
+===================================== */
 
-  const $ = (selector, parent = document) =>
-    parent.querySelector(selector);
+const $ = (selector) => document.querySelector(selector);
 
-  const $$ = (selector, parent = document) =>
-    [...parent.querySelectorAll(selector)];
+const languageGrid = $("#languageGrid");
+const searchInput = $("#searchInput");
+const categoryFilter = $("#categoryFilter");
+const emptyState = $("#emptyState");
 
-  const translations = {
-    en: {
-      brand: "CS MATE",
-      language: "عربي",
-      theme: "☀️",
-      eyebrow: "YOUR COMPUTER SCIENCE COMPANION",
-      heroTitle: 'Learn CS.<br><span class="gradient-text">Build Your Future.</span>',
-      heroDescription:
-        "Your journey from beginner to confident developer starts here. Learn programming, practice with code, and test your knowledge.",
-      startLearning: "Explore Courses →",
-      viewRoadmap: "View Learning Path",
-      trust1: "Beginner friendly",
-      trust2: "Learn at your pace",
-      trust3: "Practice and test",
-      stat1: "Learning Paths",
-      stat2: "Learning Levels",
-      stat3: "Practice & Quizzes",
-      stat4: "Your Learning Journey",
-      progressTitle: "Your learning progress",
-      progressDescription: "Complete lessons to track your progress.",
-      progressStart: "Start learning to build your progress!",
-      coursesKicker: "EXPLORE & LEARN",
-      coursesTitle: "Choose Your Learning Path",
-      coursesDescription:
-        "Explore computer science topics and build your skills step by step.",
-      all: "All",
-      programming: "Programming",
-      fundamentals: "Fundamentals",
-      databases: "Databases",
-      searchPlaceholder: "Search courses...",
-      openCourse: "Open course →",
-      lessons: "lessons",
-      levels: "levels",
-      completed: "completed",
-      noResults: "No courses found. Try another search.",
-      roadmapKicker: "YOUR ROADMAP",
-      roadmapTitle: "From Beginner to Developer",
-      roadmapDescription:
-        "Follow a clear path, practice consistently, and grow your skills.",
-      step1Title: "Start with Basics",
-      step1Text: "Understand variables, data types, conditions, and loops.",
-      step2Title: "Master Programming",
-      step2Text: "Practice functions, arrays, methods, and problem solving.",
-      step3Title: "Learn Core CS",
-      step3Text: "Explore OOP, data structures, algorithms, and databases.",
-      step4Title: "Build Projects",
-      step4Text: "Apply your knowledge by building practical projects.",
-      footerText: "Made for Computer Science students.",
-      footerMade: "Learn. Practice. Grow.",
-      levelBeginner: "Beginner",
-      levelIntermediate: "Intermediate",
-      levelAdvanced: "Advanced",
-      lesson: "Lesson",
-      quizTitle: "Quick Knowledge Check",
-      completeLesson: "✓ Mark as Completed",
-      completedButton: "✓ Completed",
-      close: "Close",
-      next: "Next lesson →",
-      correct: "Correct! Well done.",
-      wrong: "Not quite. Try again!",
-      selectAnswer: "Choose an answer first.",
-      lessonDone: "Lesson marked as completed!",
-      allDone: "You've completed all available lessons!",
-      themeLight: "Switch to light mode",
-      themeDark: "Switch to dark mode",
-      lessonNotFound: "Lesson content is not available yet.",
-      answerOptions: "Answer options"
-    },
+const lessonModal = $("#lessonModal");
+const lessonLanguage = $("#lessonLanguage");
+const lessonTitle = $("#lessonTitle");
+const lessonDescription = $("#lessonDescription");
+const lessonNavigation = $("#lessonNavigation");
+const lessonContent = $("#lessonContent");
 
-    ar: {
-      brand: "CS MATE",
-      language: "English",
-      theme: "☀️",
-      eyebrow: "رفيقك في رحلة علوم الحاسب",
-      heroTitle: 'اتعلم علوم الحاسب.<br><span class="gradient-text">وابني مستقبلك.</span>',
-      heroDescription:
-        "ابدأ رحلتك من الصفر حتى الاحتراف. اتعلم البرمجة، وطبّق بالأكواد، واختبر معلوماتك خطوة بخطوة.",
-      startLearning: "استكشف الكورسات ←",
-      viewRoadmap: "شوف خطة التعلم",
-      trust1: "مناسب للمبتدئين",
-      trust2: "اتعلم بالسرعة المناسبة ليك",
-      trust3: "تدريب واختبارات",
-      stat1: "مسارات تعليمية",
-      stat2: "مستويات للتعلم",
-      stat3: "تدريب واختبارات",
-      stat4: "رحلتك التعليمية",
-      progressTitle: "تقدمك في التعلم",
-      progressDescription: "كمّل الدروس علشان تتابع تقدمك.",
-      progressStart: "ابدأ التعلم علشان تسجل تقدمك!",
-      coursesKicker: "استكشف واتعلم",
-      coursesTitle: "اختار مسارك التعليمي",
-      coursesDescription:
-        "استكشف موضوعات علوم الحاسب وطوّر مهاراتك خطوة بخطوة.",
-      all: "الكل",
-      programming: "البرمجة",
-      fundamentals: "الأساسيات",
-      databases: "قواعد البيانات",
-      searchPlaceholder: "ابحث عن كورس...",
-      openCourse: "افتح الكورس ←",
-      lessons: "دروس",
-      levels: "مستويات",
-      completed: "مكتمل",
-      noResults: "مفيش كورسات مطابقة للبحث. جرّب كلمة تانية.",
-      roadmapKicker: "خطة رحلتك",
-      roadmapTitle: "من مبتدئ لمبرمج",
-      roadmapDescription:
-        "اتبع مسار واضح، وطبّق باستمرار، وطوّر مهاراتك.",
-      step1Title: "ابدأ بالأساسيات",
-      step1Text: "افهم المتغيرات وأنواع البيانات والشروط والحلقات.",
-      step2Title: "أتقن البرمجة",
-      step2Text: "تدرّب على الدوال والمصفوفات وحل المشكلات.",
-      step3Title: "اتعلم أساسيات CS",
-      step3Text: "استكشف OOP وهياكل البيانات والخوارزميات وقواعد البيانات.",
-      step4Title: "ابني مشاريع",
-      step4Text: "طبّق اللي اتعلمته من خلال مشاريع عملية.",
-      footerText: "منصة لطلاب علوم الحاسب.",
-      footerMade: "اتعلم. طبّق. اتطور.",
-      levelBeginner: "مبتدئ",
-      levelIntermediate: "متوسط",
-      levelAdvanced: "متقدم",
-      lesson: "درس",
-      quizTitle: "اختبر معلوماتك",
-      completeLesson: "✓ علّم الدرس كمكتمل",
-      completedButton: "✓ مكتمل",
-      close: "إغلاق",
-      next: "الدرس التالي ←",
-      correct: "إجابة صحيحة! أحسنت.",
-      wrong: "الإجابة مش صحيحة، حاول تاني!",
-      selectAnswer: "اختار إجابة الأول.",
-      lessonDone: "تم تسجيل الدرس كمكتمل!",
-      allDone: "أحسنت! خلصت كل الدروس المتاحة.",
-      themeLight: "التبديل للوضع الفاتح",
-      themeDark: "التبديل للوضع الداكن",
-      lessonNotFound: "محتوى الدرس مش متاح حاليًا.",
-      answerOptions: "الاختيارات"
-    }
-  };
+const previousLessonButton = $("#previousLesson");
+const nextLessonButton = $("#nextLesson");
+const completeLessonButton = $("#completeLesson");
+const closeLessonButton = $("#closeLesson");
 
-  const courses = [
-    {
-      id: "python",
-      icon: "Py",
-      title: { en: "Python Programming", ar: "برمجة Python" },
-      category: "programming",
-      level: "Beginner",
-      description: {
-        en: "Learn programming from scratch with variables, conditions, loops, and functions.",
-        ar: "اتعلم البرمجة من الصفر باستخدام المتغيرات والشروط والحلقات والدوال."
-      },
-      lessons: [
-        {
-          title: { en: "What Is Programming?", ar: "يعني إيه برمجة؟" },
-          body: {
-            en: `
-              <h3>Understanding Programming</h3>
-              <p>Programming means writing instructions that tell a computer what to do.</p>
-              <h3>Your First Python Program</h3>
-              <pre>print("Hello, World!")</pre>
-              <p>The <code>print()</code> function displays information on the screen.</p>
-              <h3>Remember</h3>
-              <ul>
-                <li>Python is a programming language.</li>
-                <li>Code is a set of instructions.</li>
-                <li>Programs run according to their instructions.</li>
-              </ul>
-            `,
-            ar: `
-              <h3>فهم البرمجة</h3>
-              <p>البرمجة هي كتابة تعليمات بنطلب من الكمبيوتر ينفذها علشان يعمل مهمة معينة.</p>
-              <h3>أول برنامج Python</h3>
-              <pre>print("Hello, World!")</pre>
-              <p>الدالة <code>print()</code> بتعرض المعلومات على الشاشة.</p>
-              <h3>افتكر</h3>
-              <ul>
-                <li>Python هي لغة برمجة.</li>
-                <li>الكود عبارة عن مجموعة تعليمات.</li>
-                <li>البرنامج بينفذ التعليمات المكتوبة فيه.</li>
-              </ul>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What does print() do in Python?",
-              ar: "إيه وظيفة print() في Python؟"
-            },
-            options: [
-              { en: "Displays information", ar: "بتعرض معلومات على الشاشة" },
-              { en: "Deletes the program", ar: "بتمسح البرنامج" },
-              { en: "Creates a database", ar: "بتنشئ قاعدة بيانات" }
-            ],
-            answer: 0
-          }
-        },
-        {
-          title: { en: "Variables and Data Types", ar: "المتغيرات وأنواع البيانات" },
-          body: {
-            en: `
-              <h3>What Is a Variable?</h3>
-              <p>A variable is a name that refers to a value stored for use in a program.</p>
-              <pre>name = "Malak"
-age = 20
-is_student = True
+const languageCount = $("#languageCount");
+const lessonCount = $("#lessonCount");
+const currentYear = $("#currentYear");
+const toastElement = $("#toast");
 
-print(name)
-print(age)</pre>
-              <h3>Common Data Types</h3>
-              <ul>
-                <li><code>str</code>: text, such as <code>"Hello"</code></li>
-                <li><code>int</code>: whole numbers, such as <code>10</code></li>
-                <li><code>float</code>: decimal numbers, such as <code>3.5</code></li>
-                <li><code>bool</code>: <code>True</code> or <code>False</code></li>
-              </ul>
-            `,
-            ar: `
-              <h3>يعني إيه Variable؟</h3>
-              <p>المتغير هو اسم بنستخدمه علشان نشير لقيمة ونقدر نتعامل معاها جوه البرنامج.</p>
-              <pre>name = "Malak"
-age = 20
-is_student = True
+let activeCourseId = null;
+let activeLessonIndex = 0;
+let currentInterfaceLanguage = "ar";
+let toastTimer = null;
 
-print(name)
-print(age)</pre>
-              <h3>أنواع بيانات مهمة</h3>
-              <ul>
-                <li><code>str</code>: نص زي <code>"Hello"</code></li>
-                <li><code>int</code>: عدد صحيح زي <code>10</code></li>
-                <li><code>float</code>: عدد عشري زي <code>3.5</code></li>
-                <li><code>bool</code>: قيمة منطقية <code>True</code> أو <code>False</code></li>
-              </ul>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which data type represents True or False?",
-              ar: "أنهي نوع بيانات بيمثل True أو False؟"
-            },
-            options: [
-              { en: "str", ar: "str" },
-              { en: "bool", ar: "bool" },
-              { en: "float", ar: "float" }
-            ],
-            answer: 1
-          }
-        },
-        {
-          title: { en: "Conditions", ar: "الشروط" },
-          body: {
-            en: `
-              <h3>Making Decisions</h3>
-              <p>Conditions let a program choose what to do based on whether an expression is true or false.</p>
-              <pre>age = 18
+/* Course catalog */
 
-if age >= 18:
-    print("Adult")
-else:
-    print("Under 18")</pre>
-              <p>Python uses indentation to define the blocks inside <code>if</code> and <code>else</code>.</p>
-            `,
-            ar: `
-              <h3>اتخاذ القرارات</h3>
-              <p>الشروط بتخلّي البرنامج يختار يعمل إيه بناءً على نتيجة شرط معين.</p>
-              <pre>age = 18
-
-if age >= 18:
-    print("Adult")
-else:
-    print("Under 18")</pre>
-              <p>في Python المسافات البادئة (Indentation) مهمة لتحديد الأوامر اللي جوه <code>if</code> و<code>else</code>.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which keyword checks a condition in Python?",
-              ar: "أنهي كلمة بنستخدمها لفحص شرط في Python؟"
-            },
-            options: [
-              { en: "if", ar: "if" },
-              { en: "repeat", ar: "repeat" },
-              { en: "define", ar: "define" }
-            ],
-            answer: 0
-          }
-        },
-        {
-          title: { en: "Loops", ar: "الحلقات التكرارية" },
-          body: {
-            en: `
-              <h3>Repeating Instructions</h3>
-              <p>Loops repeat instructions without writing the same code many times.</p>
-              <pre>for number in range(1, 4):
-    print(number)</pre>
-              <p>This example prints 1, 2, and 3. The ending value in <code>range(1, 4)</code> is not included.</p>
-            `,
-            ar: `
-              <h3>تكرار التعليمات</h3>
-              <p>الحلقات التكرارية بتخلّينا نكرر الأوامر من غير ما نكتب نفس الكود مرات كتير.</p>
-              <pre>for number in range(1, 4):
-    print(number)</pre>
-              <p>الكود ده بيطبع 1 و2 و3؛ لأن الرقم الأخير في <code>range(1, 4)</code> مش بيكون ضمن النتائج.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "How many numbers does range(1, 4) produce?",
-              ar: "الدالة range(1, 4) بتنتج كام رقم؟"
-            },
-            options: [
-              { en: "2", ar: "رقمين" },
-              { en: "3", ar: "3 أرقام" },
-              { en: "4", ar: "4 أرقام" }
-            ],
-            answer: 1
-          }
-        },
-        {
-          title: { en: "Functions", ar: "الدوال" },
-          body: {
-            en: `
-              <h3>Reusable Code</h3>
-              <p>A function groups instructions under a name so you can reuse them.</p>
-              <pre>def greet(name):
-    return "Hello, " + name
-
-message = greet("Malak")
-print(message)</pre>
-              <p><code>def</code> defines the function, and <code>return</code> sends a result back to the caller.</p>
-            `,
-            ar: `
-              <h3>كود قابل لإعادة الاستخدام</h3>
-              <p>الدالة بتجمع مجموعة تعليمات تحت اسم واحد علشان نستخدمها كل ما نحتاجها.</p>
-              <pre>def greet(name):
-    return "Hello, " + name
-
-message = greet("Malak")
-print(message)</pre>
-              <p>الكلمة <code>def</code> لتعريف الدالة، و<code>return</code> بترجع نتيجة استدعاء الدالة.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which keyword defines a function in Python?",
-              ar: "أنهي كلمة بنستخدمها لتعريف دالة في Python؟"
-            },
-            options: [
-              { en: "class", ar: "class" },
-              { en: "def", ar: "def" },
-              { en: "loop", ar: "loop" }
-            ],
-            answer: 1
-          }
-        }
-      ]
-    },
-
-    {
-      id: "cs-basics",
-      icon: "CS",
-      title: { en: "Computer Science Basics", ar: "أساسيات علوم الحاسب" },
-      category: "fundamentals",
-      level: "Beginner",
-      description: {
-        en: "Understand algorithms, binary numbers, hardware, software, and how computers work.",
-        ar: "افهم الخوارزميات والأعداد الثنائية ومكونات الكمبيوتر والفرق بين Hardware وSoftware."
-      },
-      lessons: [
-        {
-          title: { en: "What Is Computer Science?", ar: "يعني إيه علوم حاسب؟" },
-          body: {
-            en: `
-              <h3>Computer Science</h3>
-              <p>Computer Science studies computation, algorithms, data, and the design of computer systems.</p>
-              <h3>Important Areas</h3>
-              <ul>
-                <li>Programming: writing instructions.</li>
-                <li>Algorithms: step-by-step solutions.</li>
-                <li>Data structures: organizing data.</li>
-                <li>Computer systems: understanding hardware and software.</li>
-              </ul>
-            `,
-            ar: `
-              <h3>علوم الحاسب</h3>
-              <p>علوم الحاسب مجال بيدرس العمليات الحسابية والخوارزميات والبيانات وتصميم أنظمة الكمبيوتر.</p>
-              <h3>مجالات مهمة</h3>
-              <ul>
-                <li>Programming: كتابة التعليمات.</li>
-                <li>Algorithms: خطوات لحل المشكلات.</li>
-                <li>Data Structures: تنظيم البيانات.</li>
-                <li>Computer Systems: فهم مكونات الكمبيوتر والبرامج.</li>
-              </ul>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What is an algorithm?",
-              ar: "يعني إيه Algorithm؟"
-            },
-            options: [
-              { en: "A step-by-step solution", ar: "خطوات مرتبة لحل مشكلة" },
-              { en: "A computer screen", ar: "شاشة كمبيوتر" },
-              { en: "A keyboard type", ar: "نوع لوحة مفاتيح" }
-            ],
-            answer: 0
-          }
-        },
-        {
-          title: { en: "Hardware and Software", ar: "الهاردوير والسوفت وير" },
-          body: {
-            en: `
-              <h3>Hardware</h3>
-              <p>Hardware refers to the physical parts of a computer, such as the CPU, RAM, and keyboard.</p>
-              <h3>Software</h3>
-              <p>Software refers to programs and instructions, such as operating systems and applications.</p>
-            `,
-            ar: `
-              <h3>Hardware</h3>
-              <p>الهاردوير هو الأجزاء المادية اللي نقدر نلمسها، زي المعالج والرامات ولوحة المفاتيح.</p>
-              <h3>Software</h3>
-              <p>السوفت وير هو البرامج والتعليمات، زي نظام التشغيل والتطبيقات.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which is an example of hardware?",
-              ar: "أنهي مثال على Hardware؟"
-            },
-            options: [
-              { en: "A web browser", ar: "متصفح إنترنت" },
-              { en: "RAM", ar: "RAM" },
-              { en: "An operating system", ar: "نظام تشغيل" }
-            ],
-            answer: 1
-          }
-        },
-        {
-          title: { en: "Algorithms", ar: "الخوارزميات" },
-          body: {
-            en: `
-              <h3>Step-by-Step Thinking</h3>
-              <p>An algorithm is a finite sequence of clear steps designed to solve a problem.</p>
-              <pre>1. Read two numbers.
-2. Add the numbers.
-3. Display the result.</pre>
-              <p>Algorithms can be written in plain language, pseudocode, or represented by flowcharts.</p>
-            `,
-            ar: `
-              <h3>التفكير خطوة بخطوة</h3>
-              <p>الخوارزمية هي مجموعة محدودة ومرتبة من الخطوات الواضحة لحل مشكلة.</p>
-              <pre>1. اقرأ رقمين.
-2. اجمع الرقمين.
-3. اعرض الناتج.</pre>
-              <p>ممكن نكتب الخوارزمية بلغة بسيطة أو Pseudocode أو نمثلها باستخدام Flowchart.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What is a key feature of an algorithm?",
-              ar: "إيه من صفات الخوارزمية؟"
-            },
-            options: [
-              { en: "Clear ordered steps", ar: "خطوات واضحة ومرتبة" },
-              { en: "No defined goal", ar: "من غير هدف محدد" },
-              { en: "It must be written in Python", ar: "لازم تكون مكتوبة بـ Python" }
-            ],
-            answer: 0
-          }
-        }
-      ]
-    },
-
-    {
-      id: "html-css",
-      icon: "Web",
-      title: { en: "HTML & CSS", ar: "HTML وCSS" },
-      category: "programming",
-      level: "Beginner",
-      description: {
-        en: "Build web page structures with HTML and style them using CSS.",
-        ar: "اتعلم بناء صفحات الويب باستخدام HTML وتنسيقها باستخدام CSS."
-      },
-      lessons: [
-        {
-          title: { en: "HTML Page Structure", ar: "هيكل صفحة HTML" },
-          body: {
-            en: `
-              <h3>What Is HTML?</h3>
-              <p>HTML describes the structure and content of a web page.</p>
-              <pre>&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;My Page&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Hello!&lt;/h1&gt;
-  &lt;p&gt;My first page.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
-            `,
-            ar: `
-              <h3>يعني إيه HTML؟</h3>
-              <p>HTML هي اللغة اللي بنحدد بيها هيكل ومحتوى صفحة الويب.</p>
-              <pre>&lt;!DOCTYPE html&gt;
-&lt;html lang="ar"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;صفحتي&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;أهلاً!&lt;/h1&gt;
-  &lt;p&gt;أول صفحة ليا.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which HTML tag creates the largest standard heading?",
-              ar: "أنهي وسم بيعمل أكبر عنوان أساسي في HTML؟"
-            },
-            options: [
-              { en: "<h6>", ar: "<h6>" },
-              { en: "<p>", ar: "<p>" },
-              { en: "<h1>", ar: "<h1>" }
-            ],
-            answer: 2
-          }
-        },
-        {
-          title: { en: "CSS Styling", ar: "تنسيق الصفحات باستخدام CSS" },
-          body: {
-            en: `
-              <h3>What Is CSS?</h3>
-              <p>CSS controls the appearance of HTML elements, including 
-colors, spacing, and layout.</p>
-              <pre>h1 {
-  color: purple;
-  font-size: 32px;
-}
-
-p {
-  line-height: 1.7;
-}</pre>
-            `,
-            ar: `
-              <h3>يعني إيه CSS؟</h3>
-              <p>CSS مسؤولة عن شكل عناصر HTML، زي الألوان والمسافات وتوزيع العناصر.</p>
-              <pre>h1 {
-  color: purple;
-  font-size: 32px;
-}
-
-p {
-  line-height: 1.7;
-}</pre>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which language styles HTML elements?",
-              ar: "أنهي لغة مسؤولة عن تنسيق عناصر HTML؟"
-            },
-            options: [
-              { en: "CSS", ar: "CSS" },
-              { en: "SQL", ar: "SQL" },
-              { en: "HTML only", ar: "HTML فقط" }
-            ],
-            answer: 0
-          }
-        }
-      ]
-    },
-
-    {
-      id: "csharp",
-      icon: "C#",
-      title: { en: "C# Programming", ar: "برمجة C#" },
-      category: "programming",
-      level: "Beginner",
-      description: {
-        en: "Learn C# syntax, variables, conditions, loops, methods, and object-oriented programming.",
-        ar: "اتعلم أساسيات C# والمتغيرات والشروط والحلقات والدوال ومبادئ OOP."
-      },
-      lessons: [
-        {
-          title: { en: "Your First C# Program", ar: "أول برنامج C#" },
-          body: {
-            en: `
-              <h3>Printing Output</h3>
-              <p>C# is a general-purpose programming language commonly used with .NET.</p>
-              <pre>using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Hello, World!");
-    }
-}</pre>
-              <p><code>Console.WriteLine()</code> displays a message and moves to a new line.</p>
-            `,
-            ar: `
-              <h3>طباعة أول نتيجة</h3>
-              <p>C# لغة برمجة عامة الاستخدام، وبتُستخدم كتير مع منصة .NET.</p>
-              <pre>using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Hello, World!");
-    }
-}</pre>
-              <p>الدالة <code>Console.WriteLine()</code> بتعرض رسالة وبعدها بتنقل لسطر جديد.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What does Console.WriteLine() do?",
-              ar: "إيه وظيفة Console.WriteLine()؟"
-            },
-            options: [
-              { en: "Displays output", ar: "بتعرض ناتج على الشاشة" },
-              { en: "Creates a database", ar: "بتنشئ قاعدة بيانات" },
-              { en: "Deletes a class", ar: "بتمسح Class" }
-            ],
-            answer: 0
-          }
-        },
-        {
-          title: { en: "Variables in C#", ar: "المتغيرات في C#" },
-          body: {
-            en: `
-              <h3>Declaring Variables</h3>
-              <p>C# is statically typed: a variable has a declared type.</p>
-              <pre>string name = "Malak";
-int age = 20;
-double score = 95.5;
-bool isStudent = true;
-
-Console.WriteLine(name);</pre>
-            `,
-            ar: `
-              <h3>تعريف المتغيرات</h3>
-              <p>C# لغة Static Typed، يعني بنحدد نوع المتغير وقت تعريفه.</p>
-              <pre>string name = "Malak";
-int age = 20;
-double score = 95.5;
-bool isStudent = true;
-
-Console.WriteLine(name);</pre>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which type stores a whole number in C#?",
-              ar: "أنهي نوع بيخزن عدد صحيح في C#؟"
-            },
-            options: [
-              { en: "string", ar: "string" },
-              { en: "int", ar: "int" },
-              { en: "bool", ar: "bool" }
-            ],
-            answer: 1
-          }
-        },
-        {
-          title: { en: "Object-Oriented Programming", ar: "البرمجة كائنية التوجه OOP" },
-          body: {
-            en: `
-              <h3>Classes and Objects</h3>
-              <p>A class defines a type. An object is an instance of that class.</p>
-              <pre>class Student
-{
-    public string Name { get; set; }
-
-    public void Introduce()
-    {
-        Console.WriteLine($"Hi, I am {Name}");
-    }
-}
-
-Student student = new Student();
-student.Name = "Malak";
-student.Introduce();</pre>
-            `,
-            ar: `
-              <h3>Classes وObjects</h3>
-              <p>الـ Class هو تعريف لنوع أو قالب، والـ Object هو نسخة فعلية من الـ Class.</p>
-              <pre>class Student
-{
-    public string Name { get; set; }
-
-    public void Introduce()
-    {
-        Console.WriteLine($"Hi, I am {Name}");
-    }
-}
-
-Student student = new Student();
-student.Name = "Malak";
-student.Introduce();</pre>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What is an object in OOP?",
-              ar: "يعني إيه Object في OOP؟"
-            },
-            options: [
-              { en: "An instance of a class", ar: "نسخة من Class" },
-              { en: "A CSS selector", ar: "محدد CSS" },
-              { en: "A database query", ar: "استعلام قاعدة بيانات" }
-            ],
-            answer: 0
-          }
-        }
-      ]
-    },
-
-    {
-      id: "sql",
-      icon: "SQL",
-      title: { en: "SQL & Databases", ar: "SQL وقواعد البيانات" },
-      category: "databases",
-      level: "Beginner",
-      description: {
-        en: "Understand tables, queries, filtering, inserting records, and relational database basics.",
-        ar: "افهم الجداول والاستعلامات والفلترة وإضافة البيانات وأساسيات قواعد البيانات العلائقية."
-      },
-      lessons: [
-        {
-          title: { en: "Database Basics", ar: "أساسيات قواعد البيانات" },
-          body: {
-            en: `
-              <h3>What Is a Database?</h3>
-              <p>A database organizes information so it can be stored, searched, updated, and managed.</p>
-              <p>Relational databases store data in tables made of rows and columns.</p>
-            `,
-            ar: `
-              <h3>يعني إيه Database؟</h3>
-              <p>قاعدة البيانات بتنظم المعلومات علشان نقدر نخزنها ونبحث فيها ونعدّلها.</p>
-              <p>قواعد البيانات العلائقية بتخزن البيانات في جداول مكوّنة من صفوف وأعمدة.</p>
-            `
-          },
-          quiz: {
-            question: {
-              en: "What is a row in a database table?",
-              ar: "الصف Row في الجدول بيمثل إيه غالبًا؟"
-            },
-            options: [
-              { en: "A single record", ar: "سجل واحد" },
-              { en: "A programming language", ar: "لغة برمجة" },
-              { en: "A website style", ar: "تنسيق موقع" }
-            ],
-            answer: 0
-          }
-        },
-        {
-          title: { en: "Your First SQL Query", ar: "أول استعلام SQL" },
-          body: {
-            en: `
-              <h3>Reading Data</h3>
-              <p>SQL is commonly used to query and manage relational databases.</p>
-              <pre>SELECT Name, Age
-FROM Students
-WHERE Age >= 18;</pre>
-              <ul>
-                <li><code>SELECT</code> chooses columns.</li>
-                <li><code>FROM</code> identifies the table.</li>
-                <li><code>WHERE</code> filters rows.</li>
-              </ul>
-            `,
-            ar: `
-              <h3>قراءة البيانات</h3>
-              <p>SQL لغة بنستخدمها للاستعلام عن البيانات وإدارتها في قواعد البيانات العلائقية.</p>
-              <pre>SELECT Name, Age
-FROM Students
-WHERE Age >= 18;</pre>
-              <ul>
-                <li><code>SELECT</code> بتحدد الأعمدة المطلوبة.</li>
-                <li><code>FROM</code> بتحدد الجدول.</li>
-                <li><code>WHERE</code> بتفلتر الصفوف حسب شرط.</li>
-              </ul>
-            `
-          },
-          quiz: {
-            question: {
-              en: "Which SQL keyword filters rows?",
-              ar: "أنهي كلمة في SQL بتفلتر الصفوف؟"
-            },
-            options: [
-              { en: "WHERE", ar: "WHERE" },
-              { en: "COLOR", ar: "COLOR" },
-              { en: "PRINT", ar: "PRINT" }
-            ],
-            answer: 0
-          }
-        }
-      ]
-    }
-  ];
-
-  const state = {
-    language: "en",
-    category: "all",
-    search: "",
-    currentCourse: null,
-    currentLesson: 0,
-    currentLevel: "Beginner",
-    completed: loadCompleted(),
-    quizAnswered: false,
-    selectedAnswer: null
-  };
-
-  function loadCompleted() {
-    try {
-      const saved = localStorage.getItem("csmate-completed-v1");
-      return saved ? JSON.parse(saved) : [];
-    } catch (error) {
-      return [];
-    }
+const courses = [
+  {
+    id: "csharp",
+    name: "C#",
+    logo: "C#",
+    category: "programming",
+    level: "مبتدئ إلى متقدم",
+    description: "تعلّم البرمجة الكائنية وبناء تطبيقات .NET.",
+    color: "#a78bfa",
+    lessons: []
+  },
+  {
+    id: "python",
+    name: "Python",
+    logo: "Py",
+    category: "programming",
+    level: "مبتدئ إلى متقدم",
+    description: "ابدأ بالأساسيات ثم انتقل إلى البرمجة المتقدمة.",
+    color: "#facc15",
+    lessons: []
+  },
+  {
+    id: "javascript",
+    name: "JavaScript",
+    logo: "JS",
+    category: "web",
+    level: "مبتدئ إلى متقدم",
+    description: "أضف التفاعل إلى صفحات الويب وتعلّم أساسيات الويب.",
+    color: "#f7df1e",
+    lessons: []
+  },
+  {
+    id: "java",
+    name: "Java",
+    logo: "☕",
+    category: "programming",
+    level: "مبتدئ إلى متقدم",
+    description: "تعلّم الكلاسات والأوبجكتس ومبادئ OOP.",
+    color: "#fb923c",
+    lessons: []
+  },
+  {
+    id: "cpp",
+    name: "C++",
+    logo: "C++",
+    category: "programming",
+    level: "مبتدئ إلى متقدم",
+    description: "تعلّم الأساسيات والخوارزميات وإدارة الذاكرة.",
+    color: "#60a5fa",
+    lessons: []
+  },
+  {
+    id: "html",
+    name: "HTML",
+    logo: "5",
+    category: "web",
+    level: "من الصفر",
+    description: "ابنِ هيكل صفحات الويب بطريقة صحيحة.",
+    color: "#fb923c",
+    lessons: []
+  },
+  {
+    id: "css",
+    name: "CSS",
+    logo: "3",
+    category: "web",
+    level: "من الصفر",
+    description: "نسّق الصفحات وأنشئ تصاميم متجاوبة.",
+    color: "#60a5fa",
+    lessons: []
+  },
+  {
+    id: "typescript",
+    name: "TypeScript",
+    logo: "TS",
+    category: "web",
+    level: "متوسط",
+    description: "اكتب JavaScript مع نظام أنواع أكثر وضوحًا.",
+    color: "#3b82f6",
+    lessons: []
+  },
+  {
+    id: "php",
+    name: "PHP",
+    logo: "PHP",
+    category: "web",
+    level: "مبتدئ إلى متقدم",
+    description: "تعرّف على البرمجة الخلفية وتطوير مواقع الويب.",
+    color: "#a5b4fc",
+    lessons: []
+  },
+  {
+    id: "sql",
+    name: "SQL",
+    logo: "SQL",
+    category: "database",
+    level: "من الصفر",
+    description: "استعلم عن البيانات وأضفها وعدّلها ونظّمها.",
+    color: "#38bdf8",
+    lessons: []
+  },
+  {
+    id: "dart",
+    name: "Dart",
+    logo: "Dart",
+    category: "mobile",
+    level: "مبتدئ إلى متقدم",
+    description: "تعلّم اللغة المستخدمة في تطوير تطبيقات Flutter.",
+    color: "#22d3ee",
+    lessons: []
+  },
+  {
+    id: "go",
+    name: "Go",
+    logo: "Go",
+    category: "programming",
+    level: "مبتدئ إلى متقدم",
+    description: "تعرّف على لغة مناسبة للخدمات والأنظمة الخلفية.",
+    color: "#67e8f9",
+    lessons: []
+  },
+  {
+    id: "kotlin",
+    name: "Kotlin",
+    logo: "K",
+    category: "mobile",
+    level: "مبتدئ إلى متقدم",
+    description: "تعلّم أساسيات تطوير تطبيقات Android.",
+    color: "#c084fc",
+    lessons: []
+  },
+  {
+    id: "swift",
+    name: "Swift",
+    logo: "S",
+    category: "mobile",
+    level: "مبتدئ إلى متقدم",
+    description: "اكتشف أساسيات البرمجة لتطبيقات Apple.",
+    color: "#fb7185",
+    lessons: []
+  },
+  {
+    id: "rust",
+    name: "Rust",
+    logo: "R",
+    category: "programming",
+    level: "متوسط إلى متقدم",
+    description: "تعرّف على الأنواع وإدارة الذاكرة بأمان.",
+    color: "#fdba74",
+    lessons: []
+  },
+  {
+    id: "react",
+    name: "React",
+    logo: "⚛",
+    category: "web",
+    level: "متوسط",
+    description: "أنشئ واجهات تفاعلية باستخدام المكوّنات.",
+    color: "#67e8f9",
+    lessons: []
+  },
+  {
+    id: "dotnet",
+    name: ".NET",
+    logo: ".NET",
+    category: "programming",
+    level: "متوسط إلى متقدم",
+    description: "تعرّف على منصة بناء تطبيقات الويب والخدمات.",
+    color: "#a78bfa",
+    lessons: []
   }
+];
 
-  function saveCompleted() {
-    try {
-      localStorage.setItem(
-        "csmate-completed-v1",
-        JSON.stringify(state.completed)
-      );
-    } catch (error) {
-      // Progress still works for the current session if storage is unavailable.
-    }
-  }
+/* Shared helpers */
 
-  function t(key) {
-    return translations[state.language][key] ??
-      translations.en[key] ??
-      key;
-  }
-
-  function localized(value) {
-    if (value && typeof value === "object") {
-      return value[state.language] ?? value.en ?? "";
-    }
-    return value ?? "";
-  }
-
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, function (character) {
-      const entities = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      };
-      return entities[character];
-    });
-  }
-
-  function getCourse(courseId) {
-    return courses.find(course => course.id === courseId);
-  }
-
-  function lessonKey(courseId, lessonIndex) {
-    return `${courseId}:${lessonIndex}`;
-  }
-
-  function isCompleted(courseId, lessonIndex) {
-    return state.completed.includes(lessonKey(courseId, lessonIndex));
-  }
-
-  function courseCompletedCount(course) {
-    return course.lessons.filter((lesson, index) =>
-      isCompleted(course.id, index)
-    ).length;
-  }
-
-  function totalLessons() {
-    return courses.reduce((sum, course) => sum + course.lessons.length, 0);
-  }
-
-  function totalCompleted() {
-    return courses.reduce(
-      (sum, course) => sum + courseCompletedCount(course),
-      0
-    );
-  }
-
-  function showToast(message) {
-    const toast = $("#toast");
-    if (!toast) return;
-
-    toast.textContent = message;
-    toast.classList.add("show");
-
-    clearTimeout(showToast.timeout);
-    showToast.timeout = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2600);
-  }
-
-  function updateStaticText() {
-    const html = document.documentElement;
-    html.lang = state.language;
-    html.dir = state.language === "ar" ? "rtl" : "ltr";
-
-    document.body.dir = html.dir;
-    document.body.dataset.language = state.language;
-
-    const textMap = {
-      ".eyebrow": "eyebrow",
-      ".hero-description": "heroDescription",
-      ".progress-panel h3": "progressTitle",
-      ".courses-kicker": "coursesKicker",
-      ".courses-title": "coursesTitle",
-      ".courses-description": "coursesDescription",
-      ".roadmap-kicker": "roadmapKicker",
-      ".roadmap-title": "roadmapTitle",
-      ".roadmap-description": "roadmapDescription"
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
     };
 
-    Object.entries(textMap).forEach(([selector, key]) => {
-      const element = $(selector);
-      if (element) element.textContent = t(key);
-    });
+    return entities[character];
+  });
+}
 
-    const heroTitle = $(".hero h1");
-    if (heroTitle) heroTitle.innerHTML = t("heroTitle");
+function getCourse(courseId) {
+  return courses.find((course) => course.id === courseId);
+}
 
-    const brand = $(".brand");
-    if (brand) {
-      brand.innerHTML =
-        '<span class="brand-icon">CS</span><span>CS <span>MATE</span></span>';
+function getAllLessonsCount() {
+  return courses.reduce(
+    (total, course) => total + course.lessons.length,
+    0
+  );
+}
+
+function showToast(message) {
+  if (!toastElement) return;
+
+  toastElement.textContent = message;
+  toastElement.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toastElement.classList.remove("show");
+  }, 2600);
+}
+
+function getActiveCourse() {
+  return getCourse(activeCourseId);
+}
+
+/* =====================================
+   Part 2: Lessons, examples and quizzes
+===================================== */
+
+const lessonLibrary = {
+  csharp: [
+    {
+      title: "المتغيرات وأنواع البيانات",
+      description: "Variables and Data Types",
+      blocks: [
+        { type: "heading", text: "ما هو المتغير؟" },
+        { type: "text", text: "المتغير مكان مسمّى في الذاكرة نخزن فيه قيمة. في C# نحدد نوع البيانات مثل int للأعداد الصحيحة وstring للنصوص وbool للقيم المنطقية." },
+        { type: "code", text: 'string name = "Malak";\nint age = 20;\ndouble price = 19.5;\nbool isStudent = true;\nConsole.WriteLine(name);\nConsole.WriteLine(age);' },
+        { type: "output", text: "Malak\n20" },
+        { type: "heading", text: "قواعد مهمة" },
+        { type: "list", items: ["كل تعليمة غالبًا تنتهي بفاصلة منقوطة ;", "اسم المتغير لا يبدأ برقم.", "استخدم النوع المناسب للقيمة.", "يمكن استخدام var عندما يستطيع المترجم استنتاج النوع."] },
+        { type: "quiz", question: "ما نوع البيانات المناسب لتخزين عدد صحيح مثل 25؟", options: ["string", "int", "bool"], answer: 1, explanation: "int يُستخدم للأعداد الصحيحة." }
+      ]
+    },
+    {
+      title: "الشروط والحلقات",
+      description: "Conditions and Loops",
+      blocks: [
+        { type: "heading", text: "اتخاذ القرار باستخدام if" },
+        { type: "text", text: "تسمح if بتنفيذ كود عند تحقق شرط. ويمكن استخدام else للتعامل مع الحالة الأخرى." },
+        { type: "code", text: 'int mark = 85;\n\nif (mark >= 50)\n{\n    Console.WriteLine("Passed");\n}\nelse\n{\n    Console.WriteLine("Failed");\n}' },
+        { type: "output", text: "Passed" },
+        { type: "heading", text: "الحلقات التكرارية" },
+        { type: "text", text: "تُستخدم for عندما يكون عدد التكرارات معروفًا غالبًا، بينما يمكن استخدام while ما دام الشرط صحيحًا." },
+        { type: "code", text: 'for (int i = 1; i <= 3; i++)\n{\n    Console.WriteLine(i);\n}' },
+        { type: "output", text: "1\n2\n3" },
+        { type: "quiz", question: "أي حلقة تناسب تكرارًا معروف العدد؟", options: ["for", "if", "class"], answer: 0, explanation: "حلقة for مناسبة عندما يكون عدد التكرارات معروفًا." }
+      ]
+    },
+    {
+      title: "الدوال والمصفوفات",
+      description: "Methods and Arrays",
+      blocks: [
+        { type: "heading", text: "الدوال Methods" },
+        { type: "text", text: "الدالة تجمع تعليمات في وحدة قابلة لإعادة الاستخدام. قد تستقبل parameters وتعيد نتيجة باستخدام return." },
+        { type: "code", text: 'static int Add(int a, int b)\n{\n    return a + b;\n}\n\nConsole.WriteLine(Add(4, 6));' },
+        { type: "output", text: "10" },
+        { type: "heading", text: "المصفوفات Arrays" },
+        { type: "text", text: "المصفوفة تخزن عدة قيم من النوع نفسه، ويبدأ الفهرس index من صفر." },
+        { type: "code", text: 'int[] numbers = { 10, 20, 30 };\nConsole.WriteLine(numbers[0]);\nConsole.WriteLine(numbers.Length);' },
+        { type: "output", text: "10\n3" },
+        { type: "quiz", question: "ما قيمة numbers[0] في المثال؟", options: ["0", "10", "20"], answer: 1, explanation: "أول عنصر في المصفوفة يحمل الفهرس صفر." }
+      ]
+    },
+    {
+      title: "البرمجة الكائنية OOP",
+      description: "Classes, Objects and Encapsulation",
+      blocks: [
+        { type: "heading", text: "Class و Object" },
+        { type: "text", text: "الكلاس Class هو مخطط يحدد البيانات والسلوك. أما الأوبجكت Object فهو نسخة من هذا الكلاس." },
+        { type: "code", text: 'class Student\n{\n    public string Name { get; set; }\n\n    public void Introduce()\n    {\n        Console.WriteLine($"I am {Name}");\n    }\n}\n\nStudent student = new Student();\nstudent.Name = "Ali";\nstudent.Introduce();' },
+        { type: "output", text: "I am Ali" },
+        { type: "heading", text: "المبادئ الأساسية" },
+        { type: "list", items: ["Encapsulation: حماية البيانات وتنظيم الوصول إليها.", "Inheritance: إنشاء كلاس مشتق من كلاس آخر.", "Polymorphism: التعامل مع كائنات مختلفة من خلال واجهة مشتركة.", "Abstraction: إظهار المهم وإخفاء تفاصيل التنفيذ."] },
+        { type: "quiz", question: "ما المقصود بـ Encapsulation؟", options: ["تكرار الكود", "حماية البيانات وتنظيم الوصول إليها", "حذف الكلاس"], answer: 1, explanation: "التغليف ينظم الوصول إلى البيانات ويخفي تفاصيلها الداخلية عند الحاجة." }
+      ]
     }
+  ],
 
-    const languageButton = $("#languageToggle");
-    if (languageButton) {
-      languageButton.textContent = t("language");
-      languageButton.setAttribute(
-        "aria-label",
-        state.language === "en" ? "Switch to Arabic" : "Switch to English"
-      );
+  python: [
+    {
+      title: "المتغيرات والطباعة",
+      description: "Variables and Output",
+      blocks: [
+        { type: "heading", text: "كتابة أول برنامج" },
+        { type: "text", text: "Python لغة سهلة القراءة. لا تحتاج عادةً إلى كتابة نوع المتغير مسبقًا؛ فاللغة تستنتج النوع من القيمة." },
+        { type: "code", text: 'name = "Malak"\nage = 20\nis_student = True\n\nprint(name)\nprint(age)\nprint(type(age))' },
+        { type: "output", text: "Malak\n20\n<class 'int'>" },
+        { type: "heading", text: "أنواع شائعة" },
+        { type: "list", items: ["int: الأعداد الصحيحة.", "float: الأعداد العشرية.", "str: النصوص.", "bool: True أو False.", "list: مجموعة مرتبة قابلة للتعديل."] },
+        { type: "quiz", question: "ما نوع القيمة \"Hello\"؟", options: ["int", "str", "bool"], answer: 1, explanation: "النصوص في Python من النوع str." }
+      ]
+    },
+    {
+      title: "الشروط والحلقات",
+      description: "Conditions and Loops",
+      blocks: [
+        { type: "heading", text: "الشروط" },
+        { type: "text", text: "تستخدم Python if وelif وelse لاتخاذ القرارات. المسافات البادئة Indentation جزء أساسي من تركيب اللغة." },
+        { type: "code", text: 'mark = 85\n\nif mark >= 90:\n    print("Excellent")\nelif mark >= 50:\n    print("Passed")\nelse:\n    print("Failed")' },
+        { type: "output", text: "Passed" },
+        { type: "heading", text: "الحلقات" },
+        { type: "code", text: 'for number in range(1, 4):\n    print(number)' },
+        { type: "output", text: "1\n2\n3" },
+        { type: "quiz", question: "ما وظيفة range(1, 4)؟", options: ["ينتج 1 و2 و3", "ينتج 1 و2 و3 و4", "ينتج 4 فقط"], answer: 0, explanation: "الحد الأخير في range غير مشمول." }
+      ]
+    },
+    {
+      title: "الدوال وهياكل البيانات",
+      description: "Functions and Data Structures",
+      blocks: [
+        { type: "heading", text: "كتابة دالة" },
+        { type: "code", text: 'def multiply(a, b):\n    return a * b\n\nresult = multiply(4, 5)\nprint(result)' },
+        { type: "output", text: "20" },
+        { type: "heading", text: "List و Dictionary" },
+        { type: "text", text: "القائمة List تخزن عناصر بترتيب، أما القاموس Dictionary فيربط كل مفتاح Key بقيمة Value." },
+        { type: "code", text: 'colors = ["red", "blue"]\ncolors.append("green")\n\nstudent = {"name": "Ali", "age": 21}\nprint(colors[0])\nprint(student["name"])' },
+        { type: "output", text: "red\nAli" },
+        { type: "quiz", question: "أي بنية تخزن البيانات في أزواج مفتاح وقيمة؟", options: ["Dictionary", "Integer", "Boolean"], answer: 0, explanation: "Dictionary تربط المفاتيح بالقيم." }
+      ]
+    },
+    {
+      title: "البرمجة الكائنية ومعالجة الأخطاء",
+      description: "OOP and Exceptions",
+      blocks: [
+        { type: "heading", text: "إنشاء Class" },
+        { type: "code", text: 'class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def bark(self):\n        print(self.name + " says Woof")\n\npet = Dog("Max")\npet.bark()' },
+        { type: "output", text: "Max says Woof" },
+        { type: "text", text: "تُستخدم __init__ لتهيئة الكائن، ويشير self إلى الكائن الحالي." },
+        { type: "heading", text: "معالجة الأخطاء" },
+        { type: "code", text: 'try:\n    number = int("abc")\nexcept ValueError:\n    print("Invalid number")' },
+        { type: "output", text: "Invalid number" },
+        { type: "quiz", question: "ما فائدة try وexcept؟", options: ["إنشاء قائمة", "التعامل مع الاستثناءات", "تعريف متغير فقط"], answer: 1, explanation: "تساعدان على التعامل مع أخطاء وقت التشغيل المتوقعة." }
+      ]
     }
+  ],
 
-    const themeButton = $("#themeToggle");
-    if (themeButton) {
-      themeButton.textContent = document.body.classList.contains("light-theme")
-        ? "🌙"
-        : "☀️";
-      themeButton.setAttribute(
-        "aria-label",
-        document.body.classList.contains("light-theme")
-          ? t("themeDark")
-          : t("themeLight")
-      );
+  javascript: [
+    {
+      title: "المتغيرات وأنواع البيانات",
+      description: "Variables and Data Types",
+      blocks: [
+        { type: "heading", text: "let و const" },
+        { type: "text", text: "تُستخدم let لمتغير يمكن إعادة إسناد قيمته، بينما const تمنع إعادة إسناد المتغير. JavaScript تدعم أنواعًا مثل string وnumber وboolean وobject." },
+        { type: "code", text: 'const name = "Malak";\nlet score = 10;\nscore = 15;\n\nconsole.log(name);\nconsole.log(score);' },
+        { type: "output", text: "Malak\n15" },
+        { type: "quiz", question: "أي كلمة تناسب قيمة لن نعيد إسنادها؟", options: ["const", "if", "for"], answer: 0, explanation: "const تمنع إعادة إسناد المتغير." }
+      ]
+    },
+    {
+      title: "الشروط والحلقات",
+      description: "Conditions and Loops",
+      blocks: [
+        { type: "heading", text: "الشروط" },
+        { type: "code", text: 'const age = 20;\n\nif (age >= 18) {\n  console.log("Adult");\n} else {\n  console.log("Minor");\n}' },
+        { type: "output", text: "Adult" },
+        { type: "heading", text: "الحلقات" },
+        { type: "code", text: 'for (let i = 1; i <= 3; i++) {\n  console.log(i);\n}' },
+        { type: "output", text: "1\n2\n3" },
+        { type: "quiz", question: "ما العامل الذي يعني مقارنة القيمة والنوع معًا؟", options: ["=", "===", "+"], answer: 1, explanation: "=== يقارن القيمة والنوع دون تحويل نوع تلقائي." }
+      ]
+    },
+    {
+      title: "الدوال والمصفوفات",
+      description: "Functions and Arrays",
+      blocks: [
+        { type: "heading", text: "الدوال" },
+        { type: "code", text: 'function add(a, b) {\n  return a + b;\n}\n\nconsole.log(add(3, 7));' },
+        { type: "output", text: "10" },
+        { type: "heading", text: "المصفوفات" },
+        { type: "code", text: 'const numbers = [2, 4, 6];\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled);' },
+        { type: "output", text: "[4, 8, 12]" },
+        { type: "text", text: "map تُنتج مصفوفة جديدة من نتائج تطبيق دالة على عناصر المصفوفة الأصلية." },
+        { type: "quiz", question: "ما الذي تعيده map؟", options: ["مصفوفة جديدة", "صفحة HTML", "ملف قاعدة بيانات"], answer: 0, explanation: "map تنشئ مصفوفة تحتوي على نتائج التحويل." }
+      ]
+    },
+    {
+      title: "التعامل مع صفحة الويب",
+      description: "DOM and Events",
+      blocks: [
+        { type: "heading", text: "ما هو DOM؟" },
+        { type: "text", text: "يمثل DOM صفحة HTML كشجرة من العناصر يمكن لـ JavaScript قراءتها وتعديلها." },
+        { type: "code", text: 'const title = document.querySelector("#title");\nconst button = document.querySelector("#changeButton");\n\nbutton.addEventListener("click", () => {\n  title.textContent = "Welcome!";\n});' },
+        { type: "text", text: "يبحث querySelector عن عنصر، بينما addEventListener يربط حدثًا مثل click بدالة تُنفّذ عند وقوعه." },
+        { type: "quiz", question: "ما وظيفة addEventListener؟", options: ["ربط حدث بدالة", "حذف JavaScript", "إنشاء قاعدة بيانات"], answer: 0, explanation: "تستخدم للاستجابة لأحداث المستخدم." }
+      ]
     }
+  ],
 
-    const trustItems = $$(".trust-item");
-    ["trust1", "trust2", "trust3"].forEach((key, index) => {
-      if (trustItems[index]) {
-        trustItems[index].textContent = t(key);
-      }
-    });
-
-    const buttons = $$(".hero-buttons .btn");
-    if (buttons[0]) buttons[0].textContent = t("startLearning");
-    if (buttons[1]) buttons[1].textContent = t("viewRoadmap");
-
-    const statLabels = $$(".stat-label");
-    ["stat1", "stat2", "stat3", "stat4"].forEach((key, index) => {
-      if (statLabels[index]) statLabels[index].textContent = t(key);
-    });
-
-    const progressDescription = $(".progress-panel p");
-    if (progressDescription) {
-      progressDescription.textContent =
-        totalCompleted() === 0
-          ? t("progressStart")
-          : t("progressDescription");
+  html: [
+    {
+      title: "بنية صفحة HTML",
+      description: "HTML Document Structure",
+      blocks: [
+        { type: "heading", text: "ما هي HTML؟" },
+        { type: "text", text: "HTML لغة توصيف تحدد هيكل ومحتوى الصفحة، وليست لغة برمجة عامة. العناصر تتكون عادةً من وسم بداية ومحتوى ووسم نهاية." },
+        { type: "code", text: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n  <p>My first page.</p>\n</body>\n</html>' },
+        { type: "heading", text: "عناصر مهمة" },
+        { type: "list", items: ["h1 إلى h6: العناوين.", "p: فقرة نصية.", "a: رابط.", "img: صورة.", "ul وol وli: القوائم.", "form وinput وbutton: النماذج والتفاعل الأساسي."] },
+        { type: "quiz", question: "أي عنصر يُستخدم لإنشاء رابط؟", options: ["<p>", "<a>", "<h1>"], answer: 1, explanation: "العنصر a يُستخدم للروابط." }
+      ]
+    },
+    {
+      title: "الروابط والصور والنماذج",
+      description: "Links, Images and Forms",
+      blocks: [
+        { type: "heading", text: "الروابط والصور" },
+        { type: "code", text: '<a href="https://example.com">Visit website</a>\n\n<img src="photo.jpg" alt="A landscape">' },
+        { type: "text", text: "تحدد href وجهة الرابط، وتحدد src مصدر الصورة. النص البديل alt يساعد المستخدمين الذين لا يستطيعون رؤية الصورة." },
+        { type: "heading", text: "النماذج" },
+        { type: "code", text: '<form>\n  <label for="email">Email</label>\n  <input id="email" type="email" required>\n  <button type="submit">Send</button>\n</form>' },
+        { type: "text", text: "يساعد label المستخدم على فهم الحقل. وتوفر خصائص مثل required وtype=email تحققًا أساسيًا من المدخلات." },
+        { type: "quiz", question: "لماذا نكتب alt للصورة؟", options: ["للوصولية ووصف الصورة", "لتغيير لون الصفحة", "لتشغيل JavaScript"], answer: 0, explanation: "النص البديل يصف الصورة عند تعذر عرضها أو لقارئات الشاشة." }
+      ]
     }
+  ],
 
-    const search = $("#courseSearch");
-    if (search) search.placeholder = t("searchPlaceholder");
-
-    const filterButtons = $$(".filter-btn");
-    const filterKeys = ["all", "programming", "fundamentals", "databases"];
-    filterButtons.forEach((button, index) => {
-      if (filterKeys[index]) {
-        button.textContent = t(filterKeys[index]);
-        button.dataset.category = filterKeys[index];
-      }
-    });
-
-    const roadmapSteps = $$(".roadmap-step");
-    const roadmapKeys = [
-      ["step1Title", "step1Text"],
-      ["step2Title", "step2Text"],
-      ["step3Title", "step3Text"],
-      ["step4Title", "step4Text"]
-    ];
-
-    roadmapSteps.forEach((step, index) => {
-      const heading = $("h3", step);
-      const paragraph = $("p", step);
-
-      if (heading && roadmapKeys[index]) {
-        heading.textContent = t(roadmapKeys[index][0]);
-      }
-      if (paragraph && roadmapKeys[index]) {
-        paragraph.textContent = t(roadmapKeys[index][1]);
-      }
-    });
-
-    const footer = $(".footer");
-    if (footer) {
-      const footerText = $(".footer-text", footer);
-      const footerBrand = $(".footer-brand", footer);
-
-      if (footerText) footerText.textContent = t("footerText");
-      if (footerBrand) footerBrand.textContent = t("footerMade");
+  css: [
+    {
+      title: "المحددات والألوان",
+      description: "Selectors and Colors",
+      blocks: [
+        { type: "heading", text: "ما هي CSS؟" },
+        { type: "text", text: "تتحكم CSS في مظهر عناصر HTML مثل الألوان والخطوط والمسافات والتخطيط." },
+        { type: "code", text: 'body {\n  font-family: Arial, sans-serif;\n  background: #f5f5f5;\n  color: #222;\n}\n\n.card {\n  padding: 20px;\n  border-radius: 12px;\n  background: white;\n}' },
+        { type: "heading", text: "أنواع المحددات" },
+        { type: "list", items: ["p يستهدف عناصر الفقرة.", ".card يستهدف العناصر ذات الكلاس card.", "#main يستهدف العنصر صاحب المعرّف main.", "يمكن جمع محددات متعددة في قاعدة واحدة."] },
+        { type: "quiz", question: "ما الرمز المستخدم قبل اسم class في CSS؟", options: ["#", ".", ":"], answer: 1, explanation: "النقطة . تُستخدم لاستهداف class." }
+      ]
+    },
+    {
+      title: "Flexbox وGrid والتجاوب",
+      description: "Layouts and Responsive Design",
+      blocks: [
+        { type: "heading", text: "Flexbox" },
+        { type: "code", text: '.container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 16px;\n}' },
+        { type: "text", text: "Flexbox مناسب لترتيب العناصر في اتجاه واحد، أفقي أو رأسي." },
+        { type: "heading", text: "Grid وMedia Queries" },
+        { type: "code", text: '.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}\n\n@media (max-width: 700px) {\n  .cards {\n    grid-template-columns: 1fr;\n  }\n}' },
+        { type: "text", text: "CSS Grid مناسب لتخطيطات الصفوف والأعمدة. وتساعد Media Queries على تكييف التصميم مع أحجام الشاشات المختلفة." },
+        { type: "quiz", question: "ما فائدة Media Query؟", options: ["تغيير التخطيط حسب ظروف العرض", "إنشاء متغير JavaScript", "الاتصال بقاعدة البيانات"], answer: 0, explanation: "تُستخدم لتطبيق قواعد CSS وفق عرض الشاشة أو خصائص أخرى." }
+      ]
     }
+  ],
 
-    const courseHeading = $(".section-heading");
-    if (courseHeading) {
-      const link = $(".text-link", courseHeading);
-      if (link) link.textContent = state.language === "en" ? "Explore all →" : "استكشف الكل ←";
+  sql: [
+    {
+      title: "SELECT وWHERE",
+      description: "Querying Data",
+      blocks: [
+        { type: "heading", text: "استرجاع البيانات" },
+        { type: "text", text: "SQL لغة للاستعلام عن قواعد البيانات العلائقية. SELECT تحدد الأعمدة المطلوبة، وFROM تحدد الجدول، وWHERE تصفي النتائج." },
+        { type: "code", text: 'SELECT Name, Age\nFROM Students\nWHERE Age >= 18\nORDER BY Name;' },
+        { type: "text", text: "يعرض الاستعلام أسماء وأعمار الطلاب الذين أعمارهم 18 أو أكثر، ويرتبهم حسب الاسم." },
+        { type: "heading", text: "عمليات أخرى" },
+        { type: "list", items: ["INSERT INTO: إضافة سجلات.", "UPDATE: تعديل سجلات.", "DELETE: حذف سجلات.", "COUNT: حساب عدد السجلات.", "GROUP BY: تجميع النتائج."] },
+        { type: "quiz", question: "أي كلمة تُستخدم لتصفية النتائج؟", options: ["WHERE", "ORDER", "TABLE"], answer: 0, explanation: "WHERE تحدد الشروط التي يجب أن تحققها السجلات." }
+      ]
+    },
+    {
+      title: "العلاقات وJOIN",
+      description: "Relational Databases",
+      blocks: [
+        { type: "heading", text: "المفاتيح" },
+        { type: "text", text: "Primary Key يميّز كل سجل داخل الجدول. Foreign Key يربط جدولًا بجدول آخر من خلال الإشارة إلى مفتاح مناسب." },
+        { type: "heading", text: "ربط الجداول" },
+        { type: "code", text: 'SELECT Students.Name, Courses.Title\nFROM Students\nINNER JOIN Courses\n  ON Students.CourseId = Courses.Id;' },
+        { type: "text", text: "يعيد INNER JOIN الصفوف التي تحقق شرط الربط في الجدولين. توجد أيضًا LEFT JOIN وغيرها بحسب الحاجة." },
+        { type: "quiz", question: "ما الغرض من Foreign Key؟", options: ["ربط الجداول", "تنسيق النص", "تغيير لون الصفحة"], answer: 0, explanation: "المفتاح الخارجي يربط سجلًا بسجل في جدول آخر." }
+      ]
     }
+  ],
 
-    const roadmapHeading = $("#roadmap");
-    if (roadmapHeading) {
-      const link = $(".text-link", roadmapHeading);
-      if (link) link.textContent = state.language === "en" ? "Your next step" : "خطوتك الجاية";
+  java: [
+    {
+      title: "المتغيرات والأنواع",
+      description: "Variables and Types",
+      blocks: [
+        { type: "heading", text: "الأنواع الأساسية" },
+        { type: "code", text: 'String name = "Ali";\nint age = 21;\ndouble price = 12.5;\nboolean active = true;\n\nSystem.out.println(name);\nSystem.out.println(age);' },
+        { type: "output", text: "Ali\n21" },
+        { type: "text", text: "Java لغة ذات أنواع ثابتة؛ لذلك يجب تحديد نوع المتغير أو استخدام صيغة مناسبة تسمح للمترجم باستنتاجه." },
+        { type: "quiz", question: "ما نوع البيانات المنطقي في Java؟", options: ["boolean", "String", "double"], answer: 0, explanation: "boolean يخزن true أو false." }
+      ]
+    },
+    {
+      title: "الحلقات والدوال",
+      description: "Loops and Methods",
+      blocks: [
+        { type: "heading", text: "حلقة for" },
+        { type: "code", text: 'for (int i = 1; i <= 3; i++) {\n    System.out.println(i);\n}' },
+        { type: "output", text: "1\n2\n3" },
+        { type: "heading", text: "Method" },
+        { type: "code", text: 'static int square(int number) {\n    return number * number;\n}\n\nSystem.out.println(square(5));' },
+        { type: "output", text: "25" },
+        { type: "quiz", question: "ما وظيفة return؟", options: ["إعادة نتيجة من الدالة", "إنشاء حلقة", "تعريف كلاس فقط"], answer: 0, explanation: "تعيد return قيمة إلى المكان الذي استدعى الدالة." }
+      ]
+    },
+    {
+      title: "الكلاسات والأوبجكتس",
+      description: "Object-Oriented Programming",
+      blocks: [
+        { type: "heading", text: "تعريف كلاس" },
+        { type: "code", text: 'class Student {\n    String name;\n\n    Student(String studentName) {\n        name = studentName;\n    }\n\n    void introduce() {\n        System.out.println("I am " + name);\n    }\n}' },
+        { type: "text", text: "الـ constructor يهيّئ الكائن عند إنشائه. ويمكن إنشاء نسخة باستخدام new ثم استدعاء الدوال والحقول المتاحة." },
+        { type: "code", text: 'Student student = new Student("Sara");\nstudent.introduce();' },
+        { type: "output", text: "I am Sara" },
+        { type: "quiz", question: "ما وظيفة constructor؟", options: ["تهيئة الكائن", "حذف كل المتغيرات", "تكرار حلقة"], answer: 0, explanation: "يُستدعى الـ constructor عند إنشاء الكائن لتهيئته." }
+      ]
     }
+  ],
 
-    updateProgress();
-    renderCourses();
-  }
-
-  function renderCourses() {
-    const grid = $("#languageGrid");
-    if (!grid) return;
-
-    const query = state.search.trim().toLowerCase();
-
-    const filtered = courses.filter(course => {
-      const matchesCategory =
-        state.category === "all" || course.category === state.category;
-
-      const searchableText = [
-        localized(course.title),
-        localized(course.description),
-        course.id,
-        course.level
-      ].join(" ").toLowerCase();
-
-      const matchesSearch = !query || searchableText.includes(query);
-
-      return matchesCategory && matchesSearch;
-    });
-
-    if (filtered.length === 0) {
-      grid.innerHTML = `<div class="empty-state">${escapeHTML(t("noResults"))}</div>`;
-      return;
+  php: [
+    {
+      title: "المتغيرات والطباعة",
+      description: "PHP Basics",
+      blocks: [
+        { type: "heading", text: "بداية PHP" },
+        { type: "text", text: "تُستخدم PHP غالبًا في الخادم Server لتوليد محتوى صفحات الويب والتعامل مع الطلبات والبيانات." },
+        { type: "code", text: '<?php\n$name = "Malak";\n$age = 20;\n\necho $name;\necho $age;\n?>' },
+        { type: "output", text: "Malak20" },
+        { type: "text", text: "تبدأ أسماء المتغيرات في PHP بعلامة $. ويُستخدم echo لإخراج النصوص والقيم." },
+        { type: "quiz", question: "بماذا يبدأ اسم المتغير في PHP؟", options: ["$", "#", "@"], answer: 0, explanation: "تبدأ أسماء المتغيرات في PHP بعلامة الدولار." }
+      ]
+    },
+    {
+      title: "الدوال والمصفوفات",
+      description: "Functions and Arrays",
+      blocks: [
+        { type: "heading", text: "الدوال" },
+        { type: "code", text: '<?php\nfunction add($a, $b) {\n    return $a + $b;\n}\necho add(3, 4);\n?>' },
+        { type: "output", text: "7" },
+        { type: "heading", text: "المصفوفات" },
+        { type: "code", text: '<?php\n$colors = ["red", "blue"];\necho $colors[0];\n?>' },
+        { type: "output", text: "red" },
+        { type: "quiz", question: "كيف نصل إلى أول عنصر في المصفوفة؟", options: ["$colors[0]", "$colors[1]", "$colors[first]"], answer: 0, explanation: "يبدأ فهرس المصفوفة في هذا المثال من صفر." }
+      ]
     }
+  ],
 
-    grid.innerHTML = filtered.map(course => {
-      const done = courseCompletedCount(course);
-      const count = course.lessons.length;
-      const percent = Math.round((done / count) * 100);
-
-      return `
-        <article class="language-card">
-          <div class="card-top">
-            <div class="language-icon">${escapeHTML(course.icon)}</div>
-            <span class="level-badge">${escapeHTML(
-              course.level === "Beginner"
-                ? t("levelBeginner")
-                : course.level
-            )}</span>
-          </div>
-          <h3>${escapeHTML(localized(course.title))}</h3>
-          <p>${escapeHTML(localized(course.description))}</p>
-          <div class="card-meta">
-            <span>📚 ${count} ${escapeHTML(t("lessons"))}</span>
-            <span>🎯 ${escapeHTML(t("levelBeginner"))}</span>
-          </div>
-          <div class="card-footer">
-            <span class="card-progress-text">${done}/${count} · ${percent}%</span>
-            <button class="card-open-btn" data-open-course="${course.id}">
-              ${escapeHTML(t("openCourse"))}
-            </button>
-          </div>
-        </article>
-      `;
-    }).join("");
-  }
-
-  function updateProgress() {
-    const completed = totalCompleted();
-    const total = totalLessons();
-    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-    const fill = $("#progressFill");
-    const value = $("#progressValue");
-
-    if (fill) fill.style.width = `${percentage}%`;
-    if (value) value.textContent = `${percentage}%`;
-
-    const progressDescription = $(".progress-panel p");
-    if (progressDescription) {
-      progressDescription.textContent =
-        completed === 0 ? t("progressStart") : t("progressDescription");
+  dart: [
+    {
+      title: "المتغيرات والدوال",
+      description: "Dart Fundamentals",
+      blocks: [
+        { type: "heading", text: "تعريف المتغيرات" },
+        { type: "code", text: 'void main() {\n  String name = "Malak";\n  int age = 20;\n  final city = "Benha";\n  print(name);\n  print(age);\n  print(city);\n}' },
+        { type: "output", text: "Malak\n20\nBenha" },
+        { type: "text", text: "تستخدم Dart أنواعًا مثل String وint وdouble وbool. تُستخدم final للقيمة التي تُسند مرة واحدة، بينما const للقيم الثابتة وقت الترجمة." },
+        { type: "heading", text: "الدوال" },
+        { type: "code", text: 'int multiply(int a, int b) {\n  return a * b;\n}\n\nvoid main() {\n  print(multiply(3, 4));\n}' },
+        { type: "output", text: "12" },
+        { type: "quiz", question: "ما الكلمة التي تعني قيمة لا يعاد إسنادها بعد التهيئة؟", options: ["final", "while", "break"], answer: 0, explanation: "final تسمح بإسناد القيمة مرة واحدة." }
+      ]
+    },
+    {
+      title: "الكلاسات وFlutter",
+      description: "Classes and Widgets",
+      blocks: [
+        { type: "heading", text: "Class في Dart" },
+        { type: "code", text: 'class Person {\n  final String name;\n  Person(this.name);\n  void greet() {\n    print("Hello $name");\n  }\n}\n\nvoid main() {\n  Person person = Person("Ali");\n  person.greet();\n}' },
+        { type: "output", text: "Hello Ali" },
+        { type: "text", text: "Flutter إطار عمل لبناء واجهات تطبيقات متعددة المنصات باستخدام Dart. الواجهات تُبنى من Widgets مثل Text وColumn وRow." },
+        { type: "code", text: 'Column(\n  children: const [\n    Text("Welcome"),\n    Text("Learn Flutter"),\n  ],\n)' },
+        { type: "quiz", question: "ما اللغة المستخدمة عادةً مع Flutter؟", options: ["Dart", "SQL", "CSS"], answer: 0, explanation: "Dart هي اللغة الأساسية لتطوير تطبيقات Flutter." }
+      ]
     }
+  ],
 
-    const statNumbers = $$(".stat-number");
-    if (statNumbers[0]) statNumbers[0].textContent = courses.length;
-    if (statNumbers[1]) statNumbers[1].textContent = "3";
-    if (statNumbers[2]) statNumbers[2].textContent = total;
-    if (statNumbers[3]) statNumbers[3].textContent = `${percentage}%`;
-  }
-
-  function openCourse(courseId, lessonIndex = 0) {
-    const course = getCourse(courseId);
-    if (!course) return;
-
-    state.currentCourse = course;
-    state.currentLesson = Math.max(
-      0,
-      Math.min(lessonIndex, course.lessons.length - 1)
-    );
-    state.quizAnswered = false;
-    state.selectedAnswer = null;
-
-    const modal = $("#lessonModal");
-    if (!modal) {
-      showToast(t("lessonNotFound"));
-      return;
+  typescript: [
+    {
+      title: "الأنواع والمتغيرات",
+      description: "Type Safety",
+      blocks: [
+        { type: "heading", text: "إضافة أنواع إلى JavaScript" },
+        { type: "code", text: 'let username: string = "Ali";\nlet age: number = 21;\nlet isActive: boolean = true;\nconsole.log(username, age, isActive);' },
+        { type: "text", text: "TypeScript تضيف نظام أنواع إلى JavaScript وتساعد على اكتشاف كثير من أخطاء الأنواع أثناء التطوير." },
+        { type: "quiz", question: "ما النوع المناسب للنص؟", options: ["string", "number", "boolean"], answer: 0, explanation: "string هو نوع النصوص في TypeScript." }
+      ]
+    },
+    {
+      title: "Interfaces والدوال",
+      description: "Interfaces and Functions",
+      blocks: [
+        { type: "heading", text: "تعريف Interface" },
+        { type: "code", text: 'interface User {\n  name: string;\n  age: number;\n}\n\nfunction greet(user: User): string {\n  return `Hello ${user.name}`;\n}\n\nconsole.log(greet({ name: "Sara", age: 20 }));' },
+        { type: "output", text: "Hello Sara" },
+        { type: "text", text: "تصف interface شكل الكائن والخصائص المطلوبة، وتحدد الدالة نوع المدخلات ونوع القيمة التي تعيدها." },
+        { type: "quiz", question: "ما الغرض من interface؟", options: ["وصف شكل الكائن", "تشغيل قاعدة بيانات تلقائيًا", "تنسيق الصفحة"], answer: 0, explanation: "تحدد interface العقد الخاص بخصائص الكائن وأنواعها." }
+      ]
     }
+  ],
 
-    modal.classList.add("show");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-
-    renderLesson();
-  }
-
-  function closeCourse() {
-    const modal = $("#lessonModal");
-    if (!modal) return;
-
-    modal.classList.remove("show");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-    state.currentCourse = null;
-  }
-
-  function renderLesson() {
-    const course = state.currentCourse;
-    if (!course) return;
-
-    const lesson = course.lessons[state.currentLesson];
-    if (!lesson) return;
-
-    const heading = $("#lessonTitle");
-    const description = $("#lessonDescription");
-    const levels = $("#lessonLevels");
-    const body = $("#lessonBody");
-    const quizBox = $("#quizBox");
-    const completeButton = $("#completeLesson");
-    const nextButton = $("#nextLesson");
-
-    if (heading) {
-      heading.textContent = localized(lesson.title);
+  go: [
+    {
+      title: "المتغيرات والدوال",
+      description: "Go Fundamentals",
+      blocks: [
+        { type: "heading", text: "برنامج Go بسيط" },
+        { type: "code", text: 'package main\n\nimport "fmt"\n\nfunc main() {\n    name := "Malak"\n    age := 20\n    fmt.Println(name, age)\n}' },
+        { type: "output", text: "Malak 20" },
+        { type: "text", text: "تستخدم := لتعريف متغير واستنتاج نوعه داخل الدالة. وتستخدم fmt للطباعة والتنسيق." },
+        { type: "code", text: 'func add(a int, b int) int {\n    return a + b\n}' },
+        { type: "quiz", question: "ما الذي تعيده الدالة في المثال؟", options: ["مجموع العددين", "نصًا دائمًا", "قائمة تلقائيًا"], answer: 0, explanation: "تعيد الدالة مجموع a وb كقيمة من النوع int." }
+      ]
     }
+  ],
 
-    if (description) {
-      description.textContent =
-        `${localized(course.title)} · ${t("lesson")} ${state.currentLesson + 1} / ${course.lessons.length}`;
+  kotlin: [
+    {
+      title: "المتغيرات والدوال",
+      description: "Kotlin Fundamentals",
+      blocks: [
+        { type: "heading", text: "val وvar" },
+        { type: "code", text: 'fun main() {\n    val name = "Malak"\n    var score = 10\n    score = 15\n    println(name)\n    println(score)\n}' },
+        { type: "output", text: "Malak\n15" },
+        { type: "text", text: "val لا يسمح بإعادة إسناد المتغير، بينما var يسمح بذلك. وتدعم Kotlin استنتاج الأنواع." },
+        { type: "code", text: 'fun square(number: Int): Int {\n    return number * number\n}' },
+        { type: "quiz", question: "أي كلمة تسمح بإعادة إسناد المتغير؟", options: ["var", "val", "fun"], answer: 0, explanation: "var يسمح بتغيير القيمة المسندة إلى المتغير." }
+      ]
     }
+  ],
 
-    if (levels) {
-      levels.innerHTML = ["Beginner", "Intermediate", "Advanced"]
-        .map(level => `
-          <button
-            class="level-btn ${state.currentLevel === level ? "active" : ""}"
-            data-level="${level}"
-          >
-            ${escapeHTML(
-              level === "Beginner"
-                ? t("levelBeginner")
-                : level === "Intermediate"
-                  ? t("levelIntermediate")
-                  : t("levelAdvanced")
-            )}
-          </button>
-        `).join("");
+  swift: [
+    {
+      title: "المتغيرات والدوال",
+      description: "Swift Fundamentals",
+      blocks: [
+        { type: "heading", text: "let وvar" },
+        { type: "code", text: 'let name = "Malak"\nvar score = 10\nscore = 20\nprint(name)\nprint(score)' },
+        { type: "output", text: "Malak\n20" },
+        { type: "text", text: "تستخدم Swift كلمة let للقيم غير القابلة لإعادة الإسناد، وvar للمتغيرات القابلة للتغيير." },
+        { type: "code", text: 'func add(_ a: Int, _ b: Int) -> Int {\n    return a + b\n}\n\nprint(add(2, 5))' },
+        { type: "output", text: "7" },
+        { type: "quiz", question: "ما الكلمة المستخدمة لتعريف دالة في Swift؟", options: ["func", "method", "define"], answer: 0, explanation: "تُستخدم func لتعريف الدوال في Swift." }
+      ]
     }
+  ],
 
-    if (body) {
-      body.innerHTML = localized(lesson.body);
+  rust: [
+    {
+      title: "المتغيرات والدوال",
+      description: "Rust Fundamentals",
+      blocks: [
+        { type: "heading", text: "المتغيرات" },
+        { type: "code", text: 'fn main() {\n    let name = "Malak";\n    let mut score = 10;\n    score = 20;\n    println!("{name}");\n    println!("{score}");\n}' },
+        { type: "output", text: "Malak\n20" },
+        { type: "text", text: "المتغيرات في Rust غير قابلة للتغيير افتراضيًا. تسمح mut بتعديل القيمة. وتهتم اللغة بسلامة الذاكرة من خلال قواعد الملكية والاستعارة." },
+        { type: "code", text: 'fn add(a: i32, b: i32) -> i32 {\n    a + b\n}' },
+        { type: "quiz", question: "ما وظيفة mut؟", options: ["السماح بتغيير القيمة", "إنشاء حلقة", "تعريف ملف"], answer: 0, explanation: "mut تجعل المتغير قابلًا للتغيير." }
+      ]
     }
+  ],
 
-    if (quizBox) {
-      quizBox.innerHTML = `
-        <h3>${escapeHTML(t("quizTitle"))}</h3>
-        <p class="quiz-question">${escapeHTML(localized(lesson.quiz.question))}</p>
-        <div class="quiz-options">
-          ${lesson.quiz.options.map((option, index) => `
-            <button
-              class="quiz-option"
-              data-answer="${index}"
-              aria-label="${escapeHTML(localized(option))}"
-            >${escapeHTML(localized(option))}</button>
-          `).join("")}
-        </div>
-        <p class="quiz-feedback" aria-live="polite"></p>
-      `;
+  cpp: [
+    {
+      title: "المتغيرات والطباعة",
+      description: "C++ Fundamentals",
+      blocks: [
+        { type: "heading", text: "أول برنامج" },
+        { type: "code", text: '#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name = "Ali";\n    int age = 20;\n    cout << name << "\\n";\n    cout << age << "\\n";\n    return 0;\n}' },
+        { type: "output", text: "Ali\n20" },
+        { type: "text", text: "تُستخدم cout للطباعة، وcin لقراءة المدخلات، وint لتخزين الأعداد الصحيحة، وstring للنصوص." },
+        { type: "quiz", question: "ما الأداة المستخدمة للطباعة في المثال؟", options: ["cout", "cin", "return"], answer: 0, explanation: "cout ترسل البيانات إلى مخرج البرنامج." }
+      ]
     }
+  ],
 
-    const feedback = quizBox.querySelector(".quiz-feedback");
-    const options = quizBox.querySelectorAll(".quiz-option");
-
-    options.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (quizBox.dataset.answered === "true") return;
-
-        quizBox.dataset.answered = "true";
-
-        const question = lesson.quiz;
-        const selectedAnswer = Number(button.dataset.answer);
-        const isCorrect = selectedAnswer === question.correct;
-
-        options.forEach((option, index) => {
-          option.disabled = true;
-
-          if (index === question.correct) {
-            option.classList.add("correct");
-          } else if (index === selectedAnswer) {
-            option.classList.add("incorrect");
-          }
-        });
-
-        feedback.textContent = isCorrect
-          ? localized({
-              en: "Correct! Great job.",
-              ar: "إجابة صحيحة! أحسنتِ."
-            })
-          : localized({
-              en: "Not quite. Review the lesson and try the next question.",
-              ar: "الإجابة مش صحيحة. راجعي الدرس وجربي السؤال التالي."
-            });
-
-        if (isCorrect) {
-          const key = `${currentCourseId}-${currentLessonIndex}`;
-          completedLessons.add(key);
-          saveProgress();
-          updateProgress();
-        }
-      });
-    });
-  }
-
-  function openLesson(courseId, lessonIndex) {
-    const course = courses.find((item) => item.id === courseId);
-    if (!course || !course.lessons[lessonIndex]) return;
-
-    currentCourseId = courseId;
-    currentLessonIndex = lessonIndex;
-
-    const lesson = course.lessons[lessonIndex];
-
-    $("#lessonTitle").textContent = localized(lesson.title);
-    $("#lessonDescription").textContent = localized(lesson.description);
-    $("#lessonLevels").textContent = localized(lesson.level || {
-      en: "Beginner",
-      ar: "مبتدئ"
-    });
-
-    $("#lessonBody").innerHTML = lesson.content
-      .map((section) => `
-        <section class="lesson-section">
-          <h3>${escapeHTML(localized(section.heading))}</h3>
-          <p>${escapeHTML(localized(section.text))}</p>
-          ${
-            section.code
-              ? `<pre><code>${escapeHTML(section.code)}</code></pre>`
-              : ""
-          }
-        </section>
-      `)
-      .join("");
-
-    renderQuiz(lesson);
-
-    $("#lessonModal").classList.add("open");
-    $("#lessonModal").setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-
-    $("#completeLesson").textContent = completedLessons.has(
-      `${courseId}-${lessonIndex}`
-    )
-      ? localized({ en: "Completed ✓", ar: "تم إكمال الدرس ✓" })
-      : localized({ en: "Mark as complete", ar: "تحديد كمكتمل" });
-
-    $("#nextLesson").disabled =
-      lessonIndex >= course.lessons.length - 1;
-  }
-
-  function closeLesson() {
-    const modal = $("#lessonModal");
-    if (!modal) return;
-
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
-  }
-
-  function markLessonComplete() {
-    if (!currentCourseId) return;
-
-    const key = `${currentCourseId}-${currentLessonIndex}`;
-    completedLessons.add(key);
-
-    saveProgress();
-    updateProgress();
-
-    $("#completeLesson").textContent = localized({
-      en: "Completed ✓",
-      ar: "تم إكمال الدرس ✓"
-    });
-
-    showToast({
-      en: "Lesson marked as complete!",
-      ar: "تم تسجيل الدرس كمكتمل!"
-    });
-  }
-
-  function goToNextLesson() {
-    const course = courses.find(
-      (item) => item.id === currentCourseId
-    );
-
-    if (!course) return;
-
-    if (currentLessonIndex < course.lessons.length - 1) {
-      openLesson(currentCourseId, currentLessonIndex + 1);
+  react: [
+    {
+      title: "المكونات وJSX",
+      description: "Components and JSX",
+      blocks: [
+        { type: "heading", text: "ما هو React؟" },
+        { type: "text", text: "React مكتبة JavaScript لبناء واجهات المستخدم. تُقسّم الواجهة إلى Components يمكن إعادة استخدامها." },
+        { type: "code", text: 'function Welcome() {\n  return <h1>Hello, student!</h1>;\n}\n\nexport default Welcome;' },
+        { type: "text", text: "JSX صياغة تسمح بكتابة شكل قريب من HTML داخل JavaScript." },
+        { type: "quiz", question: "ما الفكرة الأساسية في React؟", options: ["المكونات القابلة لإعادة الاستخدام", "كتابة SQL فقط", "إدارة نظام التشغيل"], answer: 0, explanation: "تُبنى الواجهات في React باستخدام المكونات." }
+      ]
+    },
+    {
+      title: "الحالة والأحداث",
+      description: "State and Events",
+      blocks: [
+        { type: "heading", text: "useState" },
+        { type: "code", text: 'import { useState } from "react";\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  return (\n    <button onClick={() => setCount(count + 1)}>\n      Count: {count}\n    </button>\n  );\n}\n\nexport default Counter;' },
+        { type: "text", text: "useState تسمح للمكوّن بتخزين حالة. استدعاء دالة التحديث يطلب من React إعادة عرض المكوّن بالقيمة الجديدة." },
+        { type: "quiz", question: "ما وظيفة setCount؟", options: ["تحديث الحالة", "حذف المكوّن", "إنشاء قاعدة بيانات"], answer: 0, explanation: "تحدّث setCount قيمة الحالة count." }
+      ]
     }
-  }
+  ],
 
-  function showToast(message) {
-    const toast = $("#toast");
-    if (!toast) return;
-
-    toast.textContent = localized(message);
-    toast.classList.add("show");
-
-    window.setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2500);
-  }
-
-  function saveProgress() {
-    try {
-      localStorage.setItem(
-        "csmate-progress",
-        JSON.stringify([...completedLessons])
-      );
-    } catch (error) {
-      console.warn("Progress could not be saved.", error);
+  dotnet: [
+    {
+      title: "ما هي منصة .NET؟",
+      description: "Runtime, SDK and Applications",
+      blocks: [
+        { type: "heading", text: "المنصة واللغة" },
+        { type: "text", text: ".NET منصة تطوير وتشغيل تطبيقات، بينما C# لغة شائعة تُستخدم معها. يوفر .NET مكتبات وأدوات لبناء تطبيقات الويب والخدمات والبرامج." },
+        { type: "list", items: ["SDK: أدوات بناء وتطوير التطبيقات.", "Runtime: البيئة التي تشغّل التطبيق.", "ASP.NET Core: إطار لبناء مواقع الويب وواجهات API.", "NuGet: نظام إدارة حزم ومكتبات .NET."] },
+        { type: "heading", text: "مثال API بسيط" },
+        { type: "code", text: 'var builder = WebApplication.CreateBuilder(args);\nvar app = builder.Build();\napp.MapGet("/", () => "Hello from .NET");\napp.Run();' },
+        { type: "text", text: "ينشئ المثال تطبيق ويب بسيطًا ويربط طلب GET على المسار / بنص استجابة. يحتاج إلى مشروع ASP.NET Core مُعدّ بشكل صحيح." },
+        { type: "quiz", question: "أي إطار يُستخدم لبناء Web APIs في .NET؟", options: ["ASP.NET Core", "CSS", "HTML"], answer: 0, explanation: "ASP.NET Core يُستخدم لتطوير تطبيقات الويب وواجهات API." }
+      ]
     }
-  }
+  ]
+};
 
-  function loadProgress() {
-    try {
-      const saved = JSON.parse(
-        localStorage.getItem("csmate-progress") || "[]"
-      );
+/* Attach lesson content to courses */
 
-      completedLessons = new Set(saved);
-    } catch (error) {
-      completedLessons = new Set();
-    }
-  }
-
-  function updateProgress() {
-    const totalLessons = courses.reduce(
-      (total, course) => total + course.lessons.length,
-      0
-    );
-
-    const completed = completedLessons.size;
-    const percentage = totalLessons
-      ? Math.min(100, Math.round((completed / totalLessons) * 100))
-      : 0;
-
-    const progressBar = $("#progressBar");
-    const progressText = $("#progressText");
-    const completedCount = $("#completedCount");
-
-    if (progressBar) {
-      progressBar.style.width = `${percentage}%`;
-      progressBar.setAttribute("aria-valuenow", percentage);
-    }
-
-    if (progressText) {
-      progressText.textContent = `${percentage}%`;
-    }
-
-    if (completedCount) {
-      completedCount.textContent = `${completed} / ${totalLessons}`;
-    }
-  }
-
-  function filterCourses() {
-    const searchInput = $("#searchInput");
-    const categoryFilter = $("#categoryFilter");
-
-    const searchTerm = searchInput
-      ? searchInput.value.trim().toLowerCase()
-      : "";
-
-    const selectedCategory = categoryFilter
-      ? categoryFilter.value
-      : "all";
-
-    const filteredCourses = courses.filter((course) => {
-      const title = localized(course.title).toLowerCase();
-      const description = localized(course.description).toLowerCase();
-
-      const matchesSearch =
-        title.includes(searchTerm) ||
-        description.includes(searchTerm);
-
-      const matchesCategory =
-        selectedCategory === "all" ||
-        course.category === selectedCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-
-    renderCourses(filteredCourses);
-  }
-
-  function renderCourses(list = courses) {
-    const grid = $("#languageGrid");
-    if (!grid) return;
-
-    if (!list.length) {
-      grid.innerHTML = `
-        <p class="empty-state">
-          ${localized({
-            en: "No courses found. Try another search.",
-            ar: "ملقيناش كورسات. جربي بحث تاني."
-          })}
-        </p>
-      `;
-      return;
-    }
-
-    grid.innerHTML = list.map((course) => {
-      const total = course.lessons.length;
-
-      const completed = course.lessons.filter((_, index) =>
-        completedLessons.has(`${course.id}-${index}`)
-      ).length;
-
-      return `
-        <article class="course-card">
-          <div class="course-icon" aria-hidden="true">
-            ${escapeHTML(course.icon || "📘")}
-          </div>
-
-          <span class="course-category">
-            ${escapeHTML(localized(course.categoryLabel || {
-              en: course.category,
-              ar: course.category
-            }))}
-          </span>
-
-          <h3>${escapeHTML(localized(course.title))}</h3>
-
-          <p>${escapeHTML(localized(course.description))}</p>
-
-          <div class="course-meta">
-            <span>${total} ${localized({
-              en: "lessons",
-              ar: "دروس"
-            })}</span>
-            <span>${completed}/${total} ${localized({
-              en: "completed",
-              ar: "مكتمل"
-            })}</span>
-          </div>
-
-          <button class="course-button" data-course="${escapeHTML(course.id)}">
-            ${localized({
-              en: "Start learning",
-              ar: "ابدئي التعلم"
-            })}
-          </button>
-        </article>
-      `;
-    }).join("");
-
-    grid.querySelectorAll("[data-course]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const course = courses.find(
-          (item) => item.id === button.dataset.course
-        );
-
-        if (course) openLesson(course.id, 0);
-      });
-    });
-  }
-
-  function applyLanguage() {
-    document.documentElement.lang = currentLanguage;
-    document.documentElement.dir =
-      currentLanguage === "ar" ? "rtl" : "ltr";
-
-    $$("[data-i18n]").forEach((element) => {
-      const key = element.dataset.i18n;
-      if (translations[key]) {
-        element.textContent = localized(translations[key]);
-      }
-    });
-
-    const languageButton = $("#languageToggle");
-    if (languageButton) {
-      languageButton.textContent =
-        currentLanguage === "ar" ? "English" : "العربية";
-    }
-
-    renderCourses();
-    updateProgress();
-
-    if (currentCourseId) {
-      const modal = $("#lessonModal");
-      if (modal && modal.classList.contains("open")) {
-        openLesson(currentCourseId, currentLessonIndex);
-      }
-    }
-  }
-
-  function toggleTheme() {
-    const isDark = document.documentElement.dataset.theme !== "light";
-
-    document.documentElement.dataset.theme =
-      isDark ? "light" : "dark";
-
-    try {
-      localStorage.setItem(
-        "csmate-theme",
-        document.documentElement.dataset.theme
-      );
-    } catch (error) {
-      // Theme still works for this session.
-    }
-  }
-
-  function loadTheme() {
-    try {
-      const savedTheme = localStorage.getItem("csmate-theme");
-
-      if (savedTheme === "light" || savedTheme === "dark") {
-        document.documentElement.dataset.theme = savedTheme;
-      }
-    } catch (error) {
-      document.documentElement.dataset.theme = "dark";
-    }
-  }
-
-  function init() {
-    loadProgress();
-    loadTheme();
-    renderCourses();
-    updateProgress();
-
-    const searchInput = $("#searchInput");
-    const categoryFilter = $("#categoryFilter");
-    const languageToggle = $("#languageToggle");
-    const themeToggle = $("#themeToggle");
-    const closeButton = $("#closeLesson");
-    const completeButton = $("#completeLesson");
-    const nextButton = $("#nextLesson");
-    const modal = $("#lessonModal");
-
-    if (searchInput) {
-      searchInput.addEventListener("input", filterCourses);
-    }
-
-    if (categoryFilter) {
-      categoryFilter.addEventListener("change", filterCourses);
-    }
-
-    if (languageToggle) {
-      languageToggle.addEventListener("click", () => {
-        currentLanguage =
-          currentLanguage === "en" ? "ar" : "en";
-        applyLanguage();
-      });
-    }
-
-    if (themeToggle) {
-      themeToggle.addEventListener("click", toggleTheme);
-    }
-
-    if (closeButton) {
-      closeButton.addEventListener("click", closeLesson);
-    }
-
-    if (completeButton) {
-      completeButton.addEventListener("click", markLessonComplete);
-    }
-
-    if (nextButton) {
-      nextButton.addEventListener("click", goToNextLesson);
-    }
-
-    if (modal) {
-      modal.addEventListener("click", (event) => {
-        if (event.target === modal) closeLesson();
-      });
-    }
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeLesson();
-    });
-
-    applyLanguage();
-  }
-
-  init();
+courses.forEach((course) => {
+  course.lessons = lessonLibrary[course.id] || [];
 });
 
+/* =====================================
+   Part 3: Course Cards, Search and Filters
+===================================== */
 
-   
+function getCategoryName(category) {
+  const names = {
+    programming: "Programming",
+    web: "Web Development",
+    database: "Database",
+    mobile: "Mobile Development"
+  };
+
+  return names[category] || "Programming";
+}
+
+function renderCourseCards() {
+  if (!languageGrid) return;
+
+  const searchTerm = searchInput
+    ? searchInput.value.trim().toLowerCase()
+    : "";
+
+  const selectedCategory = categoryFilter
+    ? categoryFilter.value
+    : "all";
+
+  const filteredCourses = courses.filter((course) => {
+    const searchableText = [
+      course.name,
+      course.description,
+      course.level,
+      getCategoryName(course.category)
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = searchableText.includes(searchTerm);
+
+    const matchesCategory =
+      selectedCategory === "all" ||
+      course.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  languageGrid.innerHTML = filteredCourses.map((course) => {
+    const lessonTotal = course.lessons.length;
+
+    return `
+      <article class="language-card" data-course-id="${escapeHTML(course.id)}">
+        <div class="card-top">
+          <div
+            class="language-logo"
+            style="--logo-color: ${escapeHTML(course.color)}"
+          >
+            ${escapeHTML(course.logo)}
+          </div>
+
+          <span class="card-category">
+            ${escapeHTML(getCategoryName(course.category))}
+          </span>
+        </div>
+
+        <h3>${escapeHTML(course.name)}</h3>
+
+        <p class="card-description">
+          ${escapeHTML(course.description)}
+        </p>
+
+        <div class="card-meta">
+          <span>📚 ${lessonTotal} Lessons</span>
+          <span>🎯 ${escapeHTML(course.level)}</span>
+        </div>
+
+        <button
+          class="card-button"
+          type="button"
+          data-open-course="${escapeHTML(course.id)}"
+        >
+          ابدأ التعلّم
+          <span aria-hidden="true">←</span>
+        </button>
+      </article>
+    `;
+  }).join("");
+
+  if (emptyState) {
+    emptyState.hidden = filteredCourses.length !== 0;
+  }
+}
+
+function updateCourseStats() {
+  if (languageCount) {
+    languageCount.textContent = courses.length;
+  }
+
+  if (lessonCount) {
+    lessonCount.textContent = getAllLessonsCount();
+  }
+
+  if (currentYear) {
+    currentYear.textContent = new Date().getFullYear();
+  }
+}
+
+/* Search while typing */
+
+if (searchInput) {
+  searchInput.addEventListener("input", renderCourseCards);
+}
+
+/* Filter by category */
+
+if (categoryFilter) {
+  categoryFilter.addEventListener("change", renderCourseCards);
+}
+
+/* Open the selected course */
+
+if (languageGrid) {
+  languageGrid.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-open-course]");
+
+    if (!button) return;
+
+    const courseId = button.dataset.openCourse;
+
+    if (typeof openCourse === "function") {
+      openCourse(courseId);
+    }
+  });
+}
+
+/* Initial rendering */
+
+updateCourseStats();
+renderCourseCards();
+
+/* =====================================
+   Part 4: Lesson Modal and Navigation
+===================================== */
+
+function openCourse(courseId) {
+  const course = getCourse(courseId);
+
+  if (!course || course.lessons.length === 0) {
+    showToast("لا توجد دروس متاحة لهذا الكورس حاليًا.");
+    return;
+  }
+
+  activeCourseId = courseId;
+  activeLessonIndex = 0;
+
+  renderLessonNavigation();
+  renderCurrentLesson();
+
+  if (lessonModal) {
+    lessonModal.classList.add("open");
+    lessonModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function renderLessonNavigation() {
+  const course = getActiveCourse();
+
+  if (!course || !lessonNavigation) return;
+
+  lessonNavigation.innerHTML = course.lessons.map((lesson, index) => `
+    <button
+      type="button"
+      class="lesson-nav-button ${index === activeLessonIndex ? "active" : ""}"
+      data-lesson-index="${index}"
+    >
+      <span>${index + 1}</span>
+      <span>${escapeHTML(lesson.title)}</span>
+    </button>
+  `).join("");
+}
+
+function renderCurrentLesson() {
+  const course = getActiveCourse();
+
+  if (!course || !course.lessons[activeLessonIndex]) return;
+
+  const lesson = course.lessons[activeLessonIndex];
+
+  if (lessonLanguage) {
+    lessonLanguage.textContent = course.name;
+  }
+
+  if (lessonTitle) {
+    lessonTitle.textContent =
+      `${activeLessonIndex + 1}. ${lesson.title}`;
+  }
+
+  if (lessonDescription) {
+    lessonDescription.textContent =
+      lesson.description || "تعلّم المفهوم ثم جرّب المثال بنفسك.";
+  }
+
+  if (lessonContent) {
+    lessonContent.innerHTML = lesson.sections.map((section) => {
+      if (section.type === "heading") {
+        return `<h3>${escapeHTML(section.text)}</h3>`;
+      }
+
+      if (section.type === "text") {
+        return `<p>${escapeHTML(section.text)}</p>`;
+      }
+
+      if (section.type === "code") {
+        return `
+          <pre class="lesson-code"><code>${escapeHTML(section.text)}</code></pre>
+        `;
+      }
+
+      if (section.type === "output") {
+        return `
+          <div class="lesson-output">
+            <strong>الناتج المتوقع:</strong>
+            <pre>${escapeHTML(section.text)}</pre>
+          </div>
+        `;
+      }
+
+      if (section.type === "quiz") {
+        return `
+          <div class="lesson-quiz" data-correct-answer="${section.answer}">
+            <h3>اختبر فهمك</h3>
+            <p>${escapeHTML(section.question)}</p>
+
+            <div class="quiz-options">
+              ${section.options.map((option, index) => `
+                <button
+                  type="button"
+                  class="quiz-option"
+                  data-option-index="${index}"
+                >
+                  ${escapeHTML(option)}
+                </button>
+              `).join("")}
+            </div>
+
+            <p class="quiz-feedback" aria-live="polite"></p>
+          </div>
+        `;
+      }
+
+      return "";
+    }).join("");
+  }
+
+  if (previousLessonButton) {
+    previousLessonButton.disabled = activeLessonIndex === 0;
+  }
+
+  if (nextLessonButton) {
+    nextLessonButton.disabled =
+      activeLessonIndex === course.lessons.length - 1;
+  }
+
+  if (completeLessonButton) {
+    completeLessonButton.textContent = "✓ إكمال الدرس";
+  }
+
+  renderLessonNavigation();
+}
+
+function closeLessonModal() {
+  if (!lessonModal) return;
+
+  lessonModal.classList.remove("open");
+  lessonModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+if (lessonNavigation) {
+  lessonNavigation.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-lesson-index]");
+
+    if (!button) return;
+
+    const index = Number(button.dataset.lessonIndex);
+    const course = getActiveCourse();
+
+    if (!course || !Number.isInteger(index)) return;
+    if (index < 0 || index >= course.lessons.length) return;
+
+    activeLessonIndex = index;
+    renderCurrentLesson();
+
+    if (lessonContent) {
+      lessonContent.scrollTop = 0;
+    }
+  });
+}
+
+if (lessonContent) {
+  lessonContent.addEventListener("click", (event) => {
+    const optionButton = event.target.closest("[data-option-index]");
+
+    if (!optionButton) return;
+
+    const quiz = optionButton.closest(".lesson-quiz");
+
+    if (!quiz || optionButton.disabled) return;
+
+    const correctAnswer = Number(quiz.dataset.correctAnswer);
+    const selectedAnswer = Number(optionButton.dataset.optionIndex);
+    const feedback = quiz.querySelector(".quiz-feedback");
+    const options = quiz.querySelectorAll("[data-option-index]");
+
+    options.forEach((option) => {
+      option.disabled = true;
+      option.classList.remove("correct", "incorrect");
+    });
+
+    const isCorrect = selectedAnswer === correctAnswer;
+
+    optionButton.classList.add(isCorrect ? "correct" : "incorrect");
+
+    if (isCorrect) {
+      feedback.textContent = "إجابة صحيحة! أحسنت.";
+    } else {
+      options[correctAnswer].classList.add("correct");
+      feedback.textContent = "مش بالضبط. راجع الإجابة الصحيحة باللون الأخضر.";
+    }
+  });
+}
+
+if (previousLessonButton) {
+  previousLessonButton.addEventListener("click", () => {
+    if (activeLessonIndex <= 0) return;
+
+    activeLessonIndex--;
+    renderCurrentLesson();
+  });
+}
+
+if (nextLessonButton) {
+  nextLessonButton.addEventListener("click", () => {
+    const course = getActiveCourse();
+
+    if (!course || activeLessonIndex >= course.lessons.length - 1) {
+      return;
+    }
+
+    activeLessonIndex++;
+    renderCurrentLesson();
+  });
+}
+
+if (closeLessonButton) {
+  closeLessonButton.addEventListener("click", closeLessonModal);
+}
+
+if (lessonModal) {
+  lessonModal.addEventListener("click", (event) => {
+    if (event.target === lessonModal) {
+      closeLessonModal();
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeLessonModal();
+  }
+});
+
+/* =====================================
+   Part 5: Progress, Theme and Settings
+===================================== */
+
+/* Save completed lessons */
+
+const STORAGE_KEY = "csMateCompletedLessons";
+const THEME_KEY = "csMateTheme";
+
+function getCompletedLessons() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveCompletedLessons(completed) {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(completed)
+    );
+  } catch (error) {
+    showToast("تعذّر حفظ التقدم على هذا الجهاز.");
+  }
+}
+
+function getLessonKey(courseId, lessonIndex) {
+  return `${courseId}-${lessonIndex}`;
+}
+
+function updateProgressDisplay() {
+  const completed = getCompletedLessons();
+  const total = getAllLessonsCount();
+
+  const progressElement = $("#progressBar");
+  const progressText = $("#progressText");
+
+  const percentage = total === 0
+    ? 0
+    : Math.round((completed.length / total) * 100);
+
+  if (progressElement) {
+    progressElement.style.width = `${percentage}%`;
+    progressElement.setAttribute("aria-valuenow", percentage);
+  }
+
+  if (progressText) {
+    progressText.textContent =
+      `${percentage}% — ${completed.length} من ${total} درس`;
+  }
+
+  if (completeLessonButton) {
+    const key = getLessonKey(activeCourseId, activeLessonIndex);
+    completeLessonButton.textContent = completed.includes(key)
+      ? "✓ تم إكمال الدرس"
+      : "✓ إكمال الدرس";
+  }
+}
+
+if (completeLessonButton) {
+  completeLessonButton.addEventListener("click", () => {
+    if (!activeCourseId) return;
+
+    const completed = getCompletedLessons();
+    const key = getLessonKey(activeCourseId, activeLessonIndex);
+
+    if (!completed.includes(key)) {
+      completed.push(key);
+      saveCompletedLessons(completed);
+      showToast("أحسنت! تم تسجيل إكمال الدرس.");
+    } else {
+      showToast("هذا الدرس مكتمل بالفعل.");
+    }
+
+    updateProgressDisplay();
+  });
+}
+
+/* Theme toggle */
+
+function applyTheme(theme) {
+  const selectedTheme = theme === "light" ? "light" : "dark";
+
+  document.documentElement.dataset.theme = selectedTheme;
+
+  const themeButton = $("#themeToggle");
+
+  if (themeButton) {
+    themeButton.textContent =
+      selectedTheme === "dark" ? "☀️" : "🌙";
+
+    themeButton.setAttribute(
+      "aria-label",
+      selectedTheme === "dark"
+        ? "تفعيل الوضع النهاري"
+        : "تفعيل الوضع الليلي"
+    );
+  }
+
+  try {
+    localStorage.setItem(THEME_KEY, selectedTheme);
+  } catch (error) {
+    // The theme still works for the current page.
+  }
+}
+
+let savedTheme = "dark";
+
+try {
+  savedTheme = localStorage.getItem(THEME_KEY) || "dark";
+} catch (error) {
+  savedTheme = "dark";
+}
+
+applyTheme(savedTheme);
+
+const themeToggle = $("#themeToggle");
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentTheme =
+      document.documentElement.dataset.theme || "dark";
+
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+  });
+}
+
+/* Interface language toggle */
+
+const languageToggle = $("#languageToggle");
+
+if (languageToggle) {
+  languageToggle.addEventListener("click", () => {
+    currentInterfaceLanguage =
+      currentInterfaceLanguage === "ar" ? "en" : "ar";
+
+    const isEnglish = currentInterfaceLanguage === "en";
+
+    document.documentElement.lang = isEnglish ? "en" : "ar";
+    document.documentElement.dir = isEnglish ? "ltr" : "rtl";
+
+    languageToggle.textContent = isEnglish ? "AR" : "EN";
+
+    showToast(
+      isEnglish
+        ? "The page direction changed. Some lesson content remains in Arabic."
+        : "تم تغيير اتجاه الصفحة. بعض محتوى الدروس ما زال بالعربية."
+    );
+  });
+}
+
+/* Refresh progress when the page opens */
+
+updateProgressDisplay();
+
+/* Refresh progress after changing lessons */
+
+const originalRenderCurrentLesson = renderCurrentLesson;
+
+renderCurrentLesson = function () {
+  originalRenderCurrentLesson();
+  updateProgressDisplay();
+};
