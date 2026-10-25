@@ -2797,3 +2797,314 @@ csMateRenderLesson = function () {
 };
 
 console.log("CS MATE: Lesson search is ready.");
+/* =========================================
+   CS MATE — HTML LESSONS ENHANCEMENT
+   Append this section at the END of script.js
+========================================= */
+
+const csMateHTMLDetailedLessons = [
+  {
+    intro: "في الدرس ده هنتعرف على الهيكل الأساسي لأي صفحة HTML، وإزاي المتصفح بيقرأ عناصر الصفحة.",
+    explanation: [
+      "HTML هي لغة توصيف بتحدد عناصر صفحة الويب، زي العناوين والفقرات والصور والروابط.",
+      "وسم DOCTYPE بيعرّف المتصفح إن المستند بيستخدم HTML5.",
+      "عنصر html بيحتوي على الصفحة كلها، وhead بيحتوي على معلومات الصفحة، أما body ففيه المحتوى الظاهر للمستخدم.",
+      "خاصية lang بتحدد لغة المحتوى، وmeta charset بتساعد على عرض الحروف بشكل صحيح."
+    ],
+    code: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>My First Page</title>\n</head>\n<body>\n  <h1>Hello World!</h1>\n  <p>My first web page.</p>\n</body>\n</html>',
+    output: "هتظهر صفحة فيها عنوان كبير Hello World! وتحته فقرة My first web page.",
+    exercise: "اعملي صفحة باسمك، واكتبي عنوانًا رئيسيًا وفقرة بتعرّف بنفسك.",
+    mistakes: [
+      "نسيان إغلاق بعض العناصر.",
+      "كتابة محتوى الصفحة خارج body.",
+      "نسيان حفظ الملف بامتداد .html."
+    ]
+  },
+  {
+    intro: "هنتعلم إزاي نستخدم العناوين والفقرات لتنظيم محتوى الصفحة.",
+    explanation: [
+      "العناصر h1 إلى h6 بتُستخدم للعناوين بمستويات مختلفة.",
+      "غالبًا بنستخدم h1 للعنوان الرئيسي، وبعده h2 للعناوين الفرعية، ثم h3 للعناوين الأقل مستوى.",
+      "عنصر p مخصص لكتابة الفقرات.",
+      "اختيار مستوى العنوان بيكون حسب أهمية المحتوى وترتيبه، مش حسب الحجم اللي عايزينه فقط."
+    ],
+    code: '<h1>My Website</h1>\n<h2>About Me</h2>\n<p>I am learning web development.</p>\n<h3>My Goal</h3>\n<p>I want to build useful websites.</p>',
+    output: "هيظهر عنوان رئيسي، ثم عنوان فرعي وفقرة، وبعدها عنوان أصغر وفقرة تانية.",
+    exercise: "اكتبي عنوانًا رئيسيًا بعنوان My Skills، وتحته عنوانين فرعيين وفقرة تحت كل واحد.",
+    mistakes: [
+      "استخدام h1 لكل النصوص بدل تنظيم مستويات العناوين.",
+      "استخدام عدة أسطر فارغة بدل تقسيم المحتوى بعناصر مناسبة.",
+      "الاعتماد على حجم العنوان وحده لتحديد أهميته."
+    ]
+  },
+  {
+    intro: "الدرس ده بيوضح إزاي نعمل روابط تنقل المستخدم لموقع أو صفحة تانية.",
+    explanation: [
+      "عنصر a هو العنصر الأساسي لإنشاء الروابط.",
+      "الخاصية href بتحدد العنوان اللي الرابط هيفتحه.",
+      "ممكن الرابط يفتح موقعًا خارجيًا أو صفحة تانية داخل مشروعك.",
+      "لو استخدمنا target=\"_blank\" فالرابط غالبًا هيفتح في تبويب جديد."
+    ],
+    code: '<a href="https://www.google.com">Visit Google</a>\n\n<a href="about.html">About Us</a>\n\n<a href="https://example.com" target="_blank" rel="noopener noreferrer">Open Example</a>',
+    output: "هيظهر نص قابل للضغط؛ الرابط الأول يفتح Google، والثاني يفتح صفحة about.html لو موجودة.",
+    exercise: "اعملي رابطًا لموقع بتحبيه ورابطًا لصفحة contact.html داخل مشروعك.",
+    mistakes: [
+      "نسيان href أو كتابة العنوان بشكل غير صحيح.",
+      "الخلط بين اسم الصفحة والمسار الخاص بها.",
+      "استخدام target=\"_blank\" دون داعٍ."
+    ]
+  },
+  {
+    intro: "هنتعلم إضافة الصور لصفحات الويب والتحكم في وصفها.",
+    explanation: [
+      "عنصر img بيعرض صورة داخل الصفحة، وهو عنصر لا يحتاج إلى وسم إغلاق منفصل.",
+      "الخاصية src بتحدد مكان الصورة.",
+      "الخاصية alt بتقدم وصفًا بديلًا للصورة، وده مفيد لإمكانية الوصول ولما الصورة ما تظهرش.",
+      "ممكن نستخدم width لتحديد عرض الصورة، لكن تنسيق الحجم غالبًا بيكون أفضل باستخدام CSS."
+    ],
+    code: '<img src="images/profile.jpg" alt="My profile photo" width="250">',
+    output: "هتظهر الصورة الموجودة في المسار images/profile.jpg بعرض 250 بكسل تقريبًا.",
+    exercise: "ضيفي صورة لمشروعك، واكتبي وصفًا مناسبًا في الخاصية alt.",
+    mistakes: [
+      "كتابة مسار الصورة بطريقة غير صحيحة.",
+      "نسيان رفع الصورة إلى GitHub مع المشروع.",
+      "ترك alt فارغًا لصورة مهمة من غير سبب."
+    ]
+  },
+  {
+    intro: "هنتعلم إنشاء القوائم النقطية والمرقمة في HTML.",
+    explanation: [
+      "العنصر ul بيُستخدم للقوائم غير المرقمة.",
+      "العنصر ol بيُستخدم للقوائم المرقمة.",
+      "كل عنصر داخل القائمة بيُكتب باستخدام li.",
+      "القوائم بتساعد على عرض المهارات والخطوات والمعلومات بطريقة منظمة."
+    ],
+    code: '<h2>My Skills</h2>\n<ul>\n  <li>HTML</li>\n  <li>CSS</li>\n  <li>JavaScript</li>\n</ul>\n\n<h2>Learning Steps</h2>\n<ol>\n  <li>Learn HTML</li>\n  <li>Learn CSS</li>\n  <li>Learn JavaScript</li>\n</ol>',
+    output: "هتظهر قائمة مهارات بنقاط، وبعدها قائمة خطوات بأرقام.",
+    exercise: "اعملي قائمة نقطية بثلاث هوايات، وقائمة مرقمة بثلاث خطوات لتعلم البرمجة.",
+    mistakes: [
+      "كتابة عناصر li خارج قائمة ul أو ol.",
+      "استخدام ol عندما لا يكون الترتيب مهمًا.",
+      "نسيان إغلاق عناصر القائمة."
+    ]
+  },
+  {
+    intro: "في الدرس ده هنتعرف على الجداول المناسبة لعرض البيانات في صفوف وأعمدة.",
+    explanation: [
+      "عنصر table بيحتوي على الجدول.",
+      "عنصر tr بيحدد صفًا، وth بيحدد خلية عنوان، وtd بيحدد خلية بيانات.",
+      "ممكن نستخدم thead لرؤوس الجدول وtbody لمحتواه.",
+      "الجداول مناسبة للبيانات المنظمة، لكنها مش أفضل اختيار لتقسيم تصميم الصفحة."
+    ],
+    code: '<table>\n  <thead>\n    <tr><th>Course</th><th>Hours</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>HTML</td><td>5</td></tr>\n    <tr><td>CSS</td><td>8</td></tr>\n  </tbody>\n</table>',
+    output: "هيظهر جدول بعمودين: اسم الكورس وعدد الساعات، وتحته صفان للبيانات.",
+    exercise: "اعملي جدولًا فيه ثلاثة مواد دراسية ودرجاتها.",
+    mistakes: [
+      "وضع خلايا الجدول خارج صف tr.",
+      "الخلط بين th للعناوين وtd للبيانات.",
+      "استخدام الجداول لبناء تخطيط الصفحة بدل CSS."
+    ]
+  },
+  {
+    intro: "هنتعلم تنسيق النصوص باستخدام عناصر HTML الدلالية.",
+    explanation: [
+      "عنصر strong بيدل على أهمية النص، وغالبًا بيظهر بخط عريض.",
+      "عنصر em بيدل على التشديد في النص، وغالبًا بيظهر بميل.",
+      "عنصر mark بيحدد نصًا مميزًا أو مظللًا.",
+      "الأفضل اختيار العنصر حسب معنى النص، مش حسب شكله فقط."
+    ],
+    code: '<p><strong>Important:</strong> Save your work.</p>\n<p><em>Practice</em> every day.</p>\n<p>This is <mark>highlighted</mark> text.</p>',
+    output: "هتظهر كلمة Important بخط عريض، وكلمة Practice بميل، وكلمة highlighted بخلفية مميزة.",
+    exercise: "اكتبي فقرة فيها معلومة مهمة ونص مشدد وكلمة مميزة.",
+    mistakes: [
+      "استخدام العناصر الشكلية بدل العناصر المناسبة لمعنى المحتوى.",
+      "نسيان إغلاق العنصر في مكانه الصحيح.",
+      "الاعتقاد إن HTML وحدها كافية لكل أنواع التنسيق."
+    ]
+  },
+  {
+    intro: "هنتعرف على النماذج Forms اللي بتسمح للمستخدم بإدخال البيانات.",
+    explanation: [
+      "عنصر form بيجمع حقول الإدخال في نموذج واحد.",
+      "عنصر label بيوضح للمستخدم وظيفة الحقل.",
+      "عنصر input بيُستخدم لأنواع مختلفة من البيانات، زي النص والبريد الإلكتروني.",
+      "الخاصية required بتطلب إدخال قيمة قبل إرسال النموذج، لكنها لا تغني عن التحقق من البيانات على الخادم."
+    ],
+    code: '<form>\n  <label for="username">Name:</label>\n  <input id="username" name="username" type="text" required>\n\n  <label for="email">Email:</label>\n  <input id="email" name="email" type="email" required>\n\n  <button type="submit">Submit</button>\n</form>',
+    output: "هيظهر حقل للاسم وحقل للبريد الإلكتروني وزر Submit. المتصفح هيطلب ملء الحقول المطلوبة قبل الإرسال.",
+    exercise: "اعملي نموذج تسجيل بسيط فيه الاسم والبريد الإلكتروني وكلمة المرور.",
+    mistakes: [
+      "عدم ربط label بالحقل عن طريق for وid.",
+      "نسيان name في الحقول اللي هتتبعت بياناتها.",
+      "الاعتقاد إن required وحدها بتحمي البيانات من كل المدخلات غير الصحيحة."
+    ]
+  },
+  {
+    intro: "هنتعلم العناصر الدلالية اللي بتوضح وظيفة كل جزء في الصفحة.",
+    explanation: [
+      "عنصر header بيحتوي عادةً على مقدمة الصفحة أو القسم.",
+      "عنصر nav مخصص لمجموعة روابط التنقل.",
+      "عنصر main بيحتوي على المحتوى الرئيسي للصفحة.",
+      "عنصر section بيجمع محتوى مرتبطًا، وfooter بيحتوي عادةً على معلومات نهاية الصفحة.",
+      "العناصر الدلالية بتحسن تنظيم الكود وإمكانية الوصول، لكنها لا تضيف تصميمًا تلقائيًا."
+    ],
+    code: '<header><h1>My Portfolio</h1></header>\n<nav><a href="index.html">Home</a></nav>\n<main>\n  <section>\n    <h2>About Me</h2>\n    <p>I am learning web development.</p>\n  </section>\n</main>\n<footer><p>My Portfolio</p></footer>',
+    output: "هيظهر عنوان الموقع ورابط التنقل وقسم About Me وتذييل الصفحة.",
+    exercise: "قسمي صفحة شخصية إلى header وnav وmain وsection وfooter.",
+    mistakes: [
+      "استخدام العناصر الدلالية لمجرد شكلها بدل وظيفتها.",
+      "وجود أكثر من main للمحتوى الرئيسي نفسه دون داعٍ.",
+      "نسيان تنظيم العناوين داخل الأقسام."
+    ]
+  },
+  {
+    intro: "هنجمع أهم أساسيات HTML في مشروع صغير يوضح إزاي عناصر الصفحة بتشتغل مع بعض.",
+    explanation: [
+      "ابدئي بتحديد هيكل الصفحة باستخدام html وhead وbody.",
+      "ضيفي عنوانًا رئيسيًا ووصفًا مختصرًا وصورة وروابط أو قائمة.",
+      "استخدمي العناصر الدلالية لتنظيم الصفحة.",
+      "اختبري الصفحة في المتصفح وتأكدي إن الصور والروابط بتشتغل.",
+      "HTML مسؤولة عن بنية المحتوى، أما الألوان والمسافات والتصميم فغالبًا بنستخدم CSS."
+    ],
+    code: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>My Portfolio</title>\n</head>\n<body>\n  <header><h1>My Portfolio</h1></header>\n  <main>\n    <section>\n      <h2>About Me</h2>\n      <p>I am learning HTML.</p>\n      <ul><li>Learning</li><li>Building</li></ul>\n    </section>\n  </main>\n  <footer><p>Thank you for visiting!</p></footer>\n</body>\n</html>',
+    output: "هتظهر صفحة شخصية بسيطة فيها عنوان رئيسي، وقسم تعريفي، وقائمة، ورسالة في نهاية الصفحة.",
+    exercise: "اعملي صفحة Portfolio بسيطة عن نفسك، وضيفي عنوانًا وصورة وقائمة مهارات ورابط تواصل.",
+    mistakes: [
+      "نسيان إغلاق العناصر أو ترتيبها بشكل صحيح.",
+      "وجود روابط أو صور بمسارات غير صحيحة.",
+      "الاعتماد على HTML وحدها لتنسيق الشكل النهائي."
+    ]
+  }
+];
+
+/* Find the existing HTML course without changing the old catalog. */
+function csMateFindHTMLCourse() {
+  if (typeof courseCatalog === "undefined") return null;
+
+  return courseCatalog.find(function (course) {
+    const searchable = [
+      course.id,
+      course.title,
+      course.name,
+      course.language,
+      course.label
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    return searchable.includes("html");
+  }) || null;
+}
+
+/* Add detailed sections after the existing lesson renderer runs. */
+if (typeof csMateRenderLesson === "function") {
+  const csMateRenderLessonBeforeHTMLDetails = csMateRenderLesson;
+
+  csMateRenderLesson = function () {
+    csMateRenderLessonBeforeHTMLDetails();
+
+    const course = csMateFindHTMLCourse();
+    const content = document.getElementById("lessonContent");
+
+    if (!course || course !== csMateCurrentCourse || !content) return;
+
+    const index = Number(csMateCurrentLesson);
+    const details = csMateHTMLDetailedLessons[index];
+
+    if (!details) return;
+
+    const section = document.createElement("section");
+    section.className = "cs-mate-detailed-lesson";
+
+    const makeHeading = function (text) {
+      const heading = document.createElement("h3");
+      heading.textContent = text;
+      return heading;
+    };
+
+    const makeParagraph = function (text) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = text;
+      return paragraph;
+    };
+
+    section.appendChild(makeHeading("📘 Lesson Introduction"));
+    section.appendChild(makeParagraph(details.intro));
+
+    section.appendChild(makeHeading("🧠 Detailed Explanation"));
+    details.explanation.forEach(function (item, i) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = (i + 1) + ". " + item;
+      section.appendChild(paragraph);
+    });
+
+    section.appendChild(makeHeading("💻 Additional Example"));
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.textContent = details.code;
+    pre.appendChild(code);
+    section.appendChild(pre);
+
+    section.appendChild(makeHeading("👀 Expected Output"));
+    section.appendChild(makeParagraph(details.output));
+
+    section.appendChild(makeHeading("✍️ Practice Exercise"));
+    section.appendChild(makeParagraph(details.exercise));
+
+    section.appendChild(makeHeading("⚠️ Common Mistakes"));
+    const list = document.createElement("ul");
+
+    details.mistakes.forEach(function (mistake) {
+      const item = document.createElement("li");
+      item.textContent = mistake;
+      list.appendChild(item);
+    });
+
+    section.appendChild(list);
+    content.appendChild(section);
+
+    if (typeof csMateAddCopyButtons === "function") {
+      csMateAddCopyButtons();
+    }
+  };
+}
+
+/* Styles for the added lesson content. */
+(function csMateAddHTMLLessonStyles() {
+  if (document.getElementById("csMateHTMLLessonStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "csMateHTMLLessonStyles";
+  style.textContent = `
+    .cs-mate-detailed-lesson {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 16px;
+      background: var(--card-bg, rgba(100, 140, 200, 0.08));
+      border: 1px solid var(--border-color, rgba(120, 160, 220, 0.25));
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+    .cs-mate-detailed-lesson h3 {
+      margin: 20px 0 10px;
+      line-height: 1.5;
+    }
+    .cs-mate-detailed-lesson h3:first-child {
+      margin-top: 0;
+    }
+    .cs-mate-detailed-lesson p,
+    .cs-mate-detailed-lesson li {
+      line-height: 1.9;
+    }
+    .cs-mate-detailed-lesson pre {
+      max-width: 100%;
+      overflow-x: auto;
+      white-space: pre;
+      padding: 14px;
+      border-radius: 10px;
+    }
+    .cs-mate-detailed-lesson code {
+      white-space: pre;
+    }
+  `;
+
+  document.head.appendChild(style);
+})();
