@@ -1334,3 +1334,108 @@ console.log("HTML lessons 13–16 added.");
 
   console.log("CS MATE: HTML lesson click handler ready.");
 })();
+
+/* =========================================
+   CS MATE — FINAL HTML COURSE FIX
+   Connect the HTML course to the existing UI
+========================================= */
+
+(function () {
+  "use strict";
+
+  // Make the HTML lesson data available to the existing app.
+  window.HTML_LESSONS = HTML_LESSONS;
+
+  // Update the displayed number of HTML lessons.
+  const htmlCourse = COURSES.find(course => course.id === "html");
+
+  if (htmlCourse) {
+    htmlCourse.lessons = HTML_LESSONS.length;
+  }
+
+  // Use the original lesson viewer and lesson list.
+  const originalRenderLesson = window.renderLesson;
+  const originalRenderList = window.renderCourseLessonList;
+
+  // Show HTML lessons in the existing lesson list.
+  window.renderCourseLessonList = function (courseId) {
+    if (courseId !== "html") {
+      if (typeof originalRenderList === "function") {
+        return originalRenderList.call(this, courseId);
+      }
+      return;
+    }
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    const language = getCurrentLanguage();
+
+    viewer.innerHTML = `
+      <div class="lesson-header">
+        <h2>${language === "ar" ? "كورس HTML" : "HTML Course"}</h2>
+        <p>${language === "ar"
+          ? `عدد الدروس: ${HTML_LESSONS.length}`
+          : `Total lessons: ${HTML_LESSONS.length}`}</p>
+      </div>
+
+      <div class="lesson-list">
+        ${HTML_LESSONS.map((lesson, index) => `
+          <button
+            type="button"
+            class="lesson-list-item"
+            data-html-index="${index}">
+            <span>${index + 1}</span>
+            <span>${lesson.title[language] || lesson.title.en}</span>
+            <span>${lesson.duration}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <button id="closeLessonList" type="button">
+        ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+      </button>
+    `;
+
+    viewer.hidden = false;
+
+    viewer.querySelectorAll("[data-html-index]").forEach(button => {
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.htmlIndex);
+        const lesson = HTML_LESSONS[index];
+
+        if (!lesson || typeof originalRenderLesson !== "function") {
+          return;
+        }
+
+        originalRenderLesson.call(window, lesson);
+      });
+    });
+
+    document.querySelector("#closeLessonList")
+      ?.addEventListener("click", () => {
+        viewer.hidden = true;
+        document.body.classList.remove("cs-mate-learning-open");
+        document.body.style.overflow = "";
+      });
+
+    viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // Route HTML course clicks to the HTML lesson list.
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-open-course='html']");
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (typeof CourseNavigation !== "undefined") {
+      CourseNavigation.currentCourseId = "html";
+    }
+
+    window.renderCourseLessonList("html");
+  }, true);
+
+  console.log("CS MATE: HTML course integration initialized.");
+})();
