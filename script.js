@@ -2599,6 +2599,345 @@ console.info("CS MATE lesson list is ready.");
   console.info("CS MATE: final learning repair loaded.");
 })();
 
+/* =========================================
+   CS MATE — PART 21
+   Lesson 3: Operators in C#
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-03",
+
+  title: {
+    ar: "3. العمليات والمعاملات في C#",
+    en: "3. Operators in C#"
+  },
+
+  duration: "25 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `المعاملات (Operators) هي رموز بنستخدمها لتنفيذ عمليات على القيم والمتغيرات.
+
+أولًا: المعاملات الحسابية Arithmetic Operators:
+• + للجمع.
+• - للطرح.
+• * للضرب.
+• / للقسمة.
+• % للحصول على باقي القسمة.
+
+مثال: 10 % 3 نتيجته 1، لأن باقي قسمة 10 على 3 يساوي 1.
+
+ثانيًا: معاملات المقارنة Comparison Operators:
+• == للتحقق من تساوي قيمتين.
+• != للتحقق من عدم التساوي.
+• > أكبر من.
+• < أصغر من.
+• >= أكبر من أو يساوي.
+• <= أصغر من أو يساوي.
+
+نتيجة المقارنة تكون true أو false.
+
+ثالثًا: المعاملات المنطقية Logical Operators:
+• && تعني AND، وتكون true إذا كان الشرطان صحيحين.
+• || تعني OR، وتكون true إذا كان شرط واحد على الأقل صحيحًا.
+• ! تعكس القيمة المنطقية.
+
+رابعًا: معاملات الإسناد Assignment Operators:
+• = لإسناد قيمة.
+• += لإضافة قيمة إلى المتغير الحالي.
+• -= لطرح قيمة من المتغير الحالي.
+
+انتبهي للفرق بين = و ==:
+الأولى لإسناد قيمة، والثانية للمقارنة بين قيمتين.`,
+
+    en: `Operators are symbols used to perform operations on values and variables.
+
+1. Arithmetic operators:
+• + adds values.
+• - subtracts values.
+• * multiplies values.
+• / divides values.
+• % returns the remainder of division.
+
+For example, 10 % 3 returns 1.
+
+2. Comparison operators:
+• == checks equality.
+• != checks inequality.
+• > means greater than.
+• < means less than.
+• >= means greater than or equal to.
+• <= means less than or equal to.
+
+Comparison expressions return true or false.
+
+3. Logical operators:
+• && means AND: both conditions must be true.
+• || means OR: at least one condition must be true.
+• ! reverses a Boolean value.
+
+4. Assignment operators:
+• = assigns a value.
+• += adds to the current variable value.
+• -= subtracts from the current variable value.
+
+Remember: = assigns a value, while == compares two values.`
+  },
+
+  code: `int a = 10;
+int b = 3;
+
+Console.WriteLine(a + b);  // 13
+Console.WriteLine(a - b);  // 7
+Console.WriteLine(a * b);  // 30
+Console.WriteLine(a / b);  // 3
+Console.WriteLine(a % b);  // 1
+
+Console.WriteLine(a > b);  // True
+Console.WriteLine(a == b); // False
+
+bool hasID = true;
+bool isAdult = false;
+
+Console.WriteLine(hasID && isAdult); // False
+Console.WriteLine(hasID || isAdult); // True`,
+
+  codeExplanation: {
+    ar: `أنشأنا متغيرين صحيحين a و b.
+
+الجمع والطرح والضرب تنفذ العمليات الحسابية المعتادة.
+
+عند قسمة عددين من النوع int، تكون النتيجة عددًا صحيحًا؛ لذلك 10 / 3 تساوي 3، وليس 3.333.
+
+المعامل % يعطينا باقي القسمة.
+
+المقارنة a > b نتيجتها true لأن 10 أكبر من 3.
+
+أما && فتحتاج إلى أن تكون القيمتان true، بينما || تحتاج إلى قيمة واحدة صحيحة على الأقل.`,
+
+    en: `We created two integer variables, a and b.
+
+Addition, subtraction, and multiplication perform standard arithmetic.
+
+Dividing two int values produces an integer result, so 10 / 3 equals 3 rather than 3.333.
+
+The % operator returns the remainder.
+
+The expression a > b is true because 10 is greater than 3.
+
+The && operator requires both values to be true, while || requires at least one true value.`
+  },
+
+  commonMistakes: {
+    ar: [
+      "الخلط بين = للإسناد و == للمقارنة.",
+      "توقع أن قسمة int على int ستعطي نتيجة عشرية.",
+      "نسيان أن نتيجة المقارنة قيمة منطقية true أو false.",
+      "الخلط بين && و ||."
+    ],
+
+    en: [
+      "Confusing = assignment with == equality comparison.",
+      "Expecting integer division to produce a decimal result.",
+      "Forgetting that comparisons return Boolean values.",
+      "Confusing && with ||."
+    ]
+  },
+
+  exercise: {
+    ar: `اكتبي برنامجًا ينشئ متغيرين x = 17 و y = 5، ثم يطبع:
+1. ناتج الجمع.
+2. ناتج الضرب.
+3. باقي القسمة.
+4. هل x أكبر من y؟
+5. هل العددان متساويان؟
+
+تحدٍ إضافي: أنشئي متغيرين من النوع bool واستخدمي && و || لعرض نتائج منطقية.`,
+
+    en: `Write a program with x = 17 and y = 5, then print:
+1. Their sum.
+2. Their product.
+3. The remainder of division.
+4. Whether x is greater than y.
+5. Whether the two values are equal.
+
+Extra challenge: Create two bool variables and use && and || to display logical results.`
+  },
+
+  summary: {
+    ar: `المعاملات تسمح لنا بإجراء الحسابات والمقارنات والعمليات المنطقية في C#.
+
+تذكري:
++ و - و * و / و % للحسابات.
+== و != و > و < للمقارنة.
+&& و || و ! للمنطق.
+= للإسناد، و+= و-= لتحديث قيمة المتغير.`,
+
+    en: `Operators let us perform arithmetic, comparisons, and logical operations in C#.
+
+Remember:
++, -, *, /, and % perform arithmetic.
+==, !=, >, and < compare values.
+&&, ||, and ! perform logical operations.
+= assigns a value, while += and -= update a variable.`
+  }
+});
+
+console.info("CS MATE: Lesson 3 added.");
+
+/* =========================================
+   CS MATE — PART 22
+   Lesson 4: Input, Output and Conversion
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-04",
+
+  title: {
+    ar: "4. إدخال البيانات والإخراج وتحويل الأنواع",
+    en: "4. Input, Output and Type Conversion"
+  },
+
+  duration: "30 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `في الدرس الأول استخدمنا Console.WriteLine لعرض النصوص على الشاشة. الآن سنتعلم كيف نجعل المستخدم يدخل بيانات إلى البرنامج.
+
+أولًا: عرض البيانات:
+• Console.WriteLine() تعرض البيانات ثم تنتقل إلى سطر جديد.
+• Console.Write() تعرض البيانات وتبقى في السطر نفسه.
+
+ثانيًا: إدخال البيانات:
+Console.ReadLine() تقرأ السطر الذي يكتبه المستخدم.
+
+القيمة التي تعيدها ReadLine تكون نصًا string، لذلك إذا أدخل المستخدم رقمًا، نحتاج إلى تحويله إلى نوع رقمي قبل إجراء العمليات الحسابية.
+
+ثالثًا: تحويل الأنواع:
+• int.Parse() تحوّل نصًا إلى عدد صحيح، لكنها قد تسبب استثناء إذا كان النص غير صالح.
+• Convert.ToInt32() طريقة أخرى للتحويل.
+• int.TryParse() تحاول التحويل وتسمح لنا بالتعامل مع الإدخال غير الصحيح دون حدوث استثناء بسبب فشل التحويل.
+
+رابعًا: التحقق من الإدخال:
+استخدام TryParse مفيد عندما لا نضمن أن المستخدم سيكتب رقمًا صحيحًا.
+
+مثال:
+إذا كتب المستخدم 20، يمكن تحويلها إلى int.
+أما إذا كتب كلمة hello، فستفشل محاولة التحويل ويمكننا عرض رسالة مناسبة.`,
+
+    en: `In Lesson 1, we used Console.WriteLine to display text. Now we will learn how to accept user input.
+
+1. Displaying output:
+• Console.WriteLine() displays data and moves to a new line.
+• Console.Write() displays data without moving to a new line.
+
+2. Reading input:
+Console.ReadLine() reads a line entered by the user.
+
+ReadLine returns text as a string, so numeric input must be converted before performing numeric calculations.
+
+3. Type conversion:
+• int.Parse() converts text to an integer but can throw an exception if the text is invalid.
+• Convert.ToInt32() is another conversion method.
+• int.TryParse() attempts conversion and lets us handle invalid input without an exception caused by a failed parse.
+
+4. Validating input:
+TryParse is useful when we cannot guarantee that the user will enter a valid integer.
+
+For example, "20" can be converted to an int, while "hello" cannot. We can display an appropriate message when conversion fails.`
+  },
+
+  code: `Console.Write("Enter your age: ");
+
+string? input = Console.ReadLine();
+
+if (int.TryParse(input, out int age))
+{
+    Console.WriteLine("Your age is " + age);
+    Console.WriteLine("Next year you will be " + (age + 1));
+}
+else
+{
+    Console.WriteLine("Please enter a valid whole number.");
+}`,
+
+  codeExplanation: {
+    ar: `Console.Write تعرض السؤال من غير الانتقال إلى سطر جديد، حتى يكتب المستخدم بجانبه.
+
+Console.ReadLine تقرأ ما كتبه المستخدم وتخزنه في المتغير input.
+
+string? تعني أن المتغير النصي قد يحتوي على null، وهو ما يناسب احتمال عدم وجود إدخال.
+
+int.TryParse تحاول تحويل النص إلى عدد صحيح. إذا نجحت، يصبح الشرط true وتُخزّن النتيجة في age.
+
+out int age تعرّف المتغير الذي ستضع فيه TryParse الرقم بعد نجاح التحويل.
+
+إذا أدخل المستخدم رقمًا صحيحًا، نطبع عمره والعمر في السنة القادمة. وإذا أدخل نصًا غير صالح، تظهر رسالة تطلب منه إدخال عدد صحيح.`,
+
+    en: `Console.Write displays the prompt without moving to a new line.
+
+Console.ReadLine reads the user's input into the input variable.
+
+string? indicates that the string may be null, which is appropriate when input may be missing.
+
+int.TryParse attempts to convert the text into an integer. If conversion succeeds, the condition is true and the result is stored in age.
+
+out int age declares the variable that receives the converted number when conversion succeeds.
+
+A valid integer displays the entered age and the age next year. Invalid input displays a helpful message.`
+  },
+
+  commonMistakes: {
+    ar: [
+      "نسيان أن Console.ReadLine تقرأ نصًا حتى لو كتب المستخدم أرقامًا.",
+      "استخدام النص في عملية حسابية دون تحويله إلى نوع رقمي.",
+      "استخدام int.Parse مع إدخال غير مضمون دون التعامل مع الأخطاء.",
+      "نسيان الأقواس حول الشرط أو جسم if و else."
+    ],
+
+    en: [
+      "Forgetting that Console.ReadLine returns text, even when the user enters digits.",
+      "Using text in arithmetic without converting it to a numeric type.",
+      "Using int.Parse on untrusted input without handling errors.",
+      "Forgetting braces around if and else blocks."
+    ]
+  },
+
+  exercise: {
+    ar: `اكتبي برنامجًا يطلب من المستخدم إدخال رقمين صحيحين، ثم:
+1. يتحقق من صحة الرقم الأول باستخدام int.TryParse.
+2. يتحقق من صحة الرقم الثاني.
+3. يطبع مجموع الرقمين إذا كان الإدخال صحيحًا.
+4. يعرض رسالة واضحة إذا أدخل المستخدم قيمة غير صالحة.
+
+تحدٍ إضافي: اجعلي البرنامج يطبع حاصل ضرب الرقمين أيضًا.`,
+
+    en: `Write a program that asks the user for two integers and:
+1. Validates the first number using int.TryParse.
+2. Validates the second number.
+3. Prints their sum if both inputs are valid.
+4. Displays a clear message if either input is invalid.
+
+Extra challenge: Also print the product of the two numbers.`
+  },
+
+  summary: {
+    ar: `Console.Write و Console.WriteLine لعرض البيانات، وConsole.ReadLine لاستقبال إدخال المستخدم.
+
+تذكري أن ReadLine تعيد نصًا، وأن TryParse طريقة مناسبة لتحويل الإدخال إلى رقم مع التحقق من صحته.
+
+تحويل البيانات مهم لأن العمليات الحسابية تحتاج إلى أنواع بيانات مناسبة.`,
+
+    en: `Use Console.Write and Console.WriteLine to display output, and Console.ReadLine to receive user input.
+
+Remember that ReadLine returns text and TryParse is a useful way to convert input into a number while validating it.
+
+Type conversion matters because arithmetic operations require suitable data types.`
+  }
+});
+
+console.info("CS MATE: Lesson 4 added.");
+
 
     
  
