@@ -776,6 +776,11 @@ console.info("CS MATE quiz system is ready.");/* ===============================
    Course navigation
 ========================================= */
 
+/* =========================================
+   CS MATE — PART 9
+   Course navigation and lesson opening
+========================================= */
+
 const CourseNavigation = {
   currentCourseId: null,
 
@@ -791,19 +796,28 @@ const CourseNavigation = {
 
     this.currentCourseId = courseId;
 
-    document.dispatchEvent(
-      new CustomEvent("csmate:courseopen", {
-        detail: { course }
-      })
+    if (courseId === "csharp") {
+      renderCourseLessonList(courseId);
+return;
+    }
+
+    const language = getCurrentLanguage();
+
+    alert(
+      language === "ar"
+        ? "دروس هذا الكورس قيد الإعداد."
+        : "Lessons for this course are being prepared."
     );
   },
 
   close() {
     this.currentCourseId = null;
 
-    document.dispatchEvent(
-      new CustomEvent("csmate:courseclose")
-    );
+    const viewer = $("#lessonViewer");
+
+    if (viewer) {
+      viewer.hidden = true;
+    }
   },
 
   getCurrentCourse() {
@@ -825,13 +839,17 @@ function initializeCourseNavigation() {
 
     if (!button) return;
 
-    const courseId = button.dataset.openCourse;
-
-    CourseNavigation.open(courseId);
+    CourseNavigation.open(
+      button.dataset.openCourse
+    );
   });
 }
 
-console.info("CS MATE course navigation is ready.");/* =========================================
+console.info("CS MATE course navigation is ready.");
+
+
+    
+  /* =========================================
    CS MATE — PART 10
    Mobile navigation menu
 ========================================= */
@@ -972,3 +990,527 @@ document.addEventListener(
   initializeApp,
   { once: true }
 );
+
+/* =========================================
+   CS MATE — PART 13
+   C# Course: Real lesson content
+========================================= */
+
+const CSHARP_LESSONS = [
+  {
+    id: "csharp-01",
+    title: {
+      ar: "1. مقدمة إلى البرمجة و C#",
+      en: "1. Introduction to Programming and C#"
+    },
+    duration: "15 min",
+    level: "Beginner",
+    explanation: {
+      ar: `البرمجة هي عملية كتابة تعليمات واضحة للحاسوب حتى ينفذ مهمة معينة.
+
+لغة C# (تُنطق سي شارب) لغة برمجة قوية من تطوير Microsoft، وتُستخدم في تطبيقات سطح المكتب والويب والألعاب والأنظمة المختلفة.
+
+قبل كتابة الكود، نحتاج إلى فهم ثلاثة مفاهيم:
+1. Source Code: التعليمات التي يكتبها المبرمج.
+2. Compiler: أداة تحوّل الكود إلى صيغة يستطيع النظام تشغيلها.
+3. Output: النتيجة التي تظهر بعد تنفيذ البرنامج.
+
+في تطبيقات .NET، يُترجم كود C# عادةً إلى Intermediate Language، ثم تتولى بيئة .NET تشغيله.
+
+أول برنامج سنكتبه سيعرض رسالة على الشاشة.`,
+      en: `Programming is the process of writing instructions that tell a computer how to perform a task.
+
+C# is a modern programming language developed by Microsoft. It is used for web applications, desktop software, games, and many other systems.
+
+Three important concepts:
+1. Source code: Instructions written by a programmer.
+2. Compiler: A tool that translates source code into an executable intermediate representation.
+3. Output: The result produced by a running program.
+
+In .NET applications, C# code is typically compiled into Intermediate Language, which the .NET runtime executes.
+
+Our first program will display a message.`
+    },
+    code: `Console.WriteLine("Hello, World!");`,
+    codeExplanation: {
+      ar: `Console تتيح التعامل مع نافذة الإدخال والإخراج.
+WriteLine تطبع النص ثم تنتقل إلى سطر جديد.
+النص المكتوب بين علامتي الاقتباس هو الرسالة التي ستظهر.`,
+      en: `Console provides access to console input and output.
+WriteLine prints text and moves to a new line.
+The quoted text is the message displayed to the user.`
+    },
+    commonMistakes: {
+      ar: [
+        "نسيان علامة ; في نهاية التعليمة عند الحاجة إليها.",
+        "نسيان علامتي الاقتباس حول النص."
+      ],
+      en: [
+        "Forgetting the semicolon where required.",
+        "Forgetting quotation marks around text."
+      ]
+    },
+    exercise: {
+      ar: "عدّلي البرنامج ليطبع اسمك في سطر، وعبارة I am learning C# في سطر آخر.",
+      en: "Modify the program to print your name on one line and I am learning C# on another."
+    },
+    summary: {
+      ar: "البرمجة هي إعطاء الحاسوب تعليمات. C# لغة متعددة الاستخدامات، وConsole.WriteLine تُستخدم لطباعة النص.",
+      en: "Programming means giving instructions to a computer. C# is a versatile language, and Console.WriteLine prints text."
+    }
+  },
+
+  {
+    id: "csharp-02",
+    title: {
+      ar: "2. المتغيرات وأنواع البيانات",
+      en: "2. Variables and Data Types"
+    },
+    duration: "20 min",
+    level: "Beginner",
+    explanation: {
+      ar: `المتغير (Variable) اسم يشير إلى مكان تُخزَّن فيه قيمة أثناء تشغيل البرنامج.
+
+لكل متغير نوع بيانات يحدد نوع القيم التي يمكنه تخزينها.
+
+أهم الأنواع الأساسية:
+• int: للأعداد الصحيحة.
+• double: للأعداد العشرية.
+• decimal: مناسب للحسابات المالية التي تحتاج دقة عشرية.
+• char: لحرف واحد.
+• string: للنصوص.
+• bool: لقيمة منطقية، إما true أو false.
+
+عند تعريف متغير نكتب نوعه ثم اسمه، ويمكننا إسناد قيمة إليه باستخدام علامة =.`,
+      en: `A variable is a named storage location used to hold a value while a program runs.
+
+Every variable has a data type that determines what kind of value it can store.
+
+Common types include:
+• int: Whole numbers.
+• double: Floating-point numbers.
+• decimal: Decimal values often useful for financial calculations.
+• char: A single character.
+• string: Text.
+• bool: A logical value, either true or false.
+
+To declare a variable, write its type and name. Use = to assign a value.`
+    },
+    code: `int age = 19;
+double temperature = 25.5;
+string studentName = "Malak";
+char grade = 'A';
+bool isLearning = true;
+
+Console.WriteLine(studentName);
+Console.WriteLine(age);`,
+    codeExplanation: {
+      ar: `age متغير من النوع int.
+temperature يخزن قيمة عشرية.
+studentName يخزن نصًا بين علامتي اقتباس مزدوجتين.
+grade يخزن حرفًا واحدًا بين علامتي اقتباس مفردتين.
+isLearning يخزن قيمة منطقية.
+
+تذكري أن علامة = في هذا المثال تُستخدم لإسناد قيمة للمتغير، وليست اختبارًا للمساواة.`,
+      en: `age is an int variable.
+temperature stores a decimal number.
+studentName stores text in double quotes.
+grade stores one character in single quotes.
+isLearning stores a Boolean value.
+
+Remember that = assigns a value; it does not test equality.`
+    },
+    commonMistakes: {
+      ar: [
+        "كتابة النصوص بين علامتي اقتباس مفردتين بدلًا من المزدوجتين.",
+        "إسناد قيمة نصية إلى متغير رقمي دون تحويل مناسب.",
+        "استخدام اسم متغير بطريقة مختلفة في الحروف الكبيرة والصغيرة."
+      ],
+      en: [
+        "Using single quotes for a string instead of double quotes.",
+        "Assigning text to a numeric variable without conversion.",
+        "Changing the capitalization of a variable name."
+      ]
+    },
+    exercise: {
+      ar: "أنشئي متغيرًا لاسمك، ومتغيرًا لعمرك، ومتغيرًا يحدد هل تدرسين البرمجة أم لا، ثم اطبعي القيم.",
+      en: "Create variables for your name, age, and whether you are studying programming, then print their values."
+    },
+    summary: {
+      ar: "المتغير يخزن قيمة، ونوع البيانات يحدد طبيعة هذه القيمة. اختاري النوع المناسب للبيانات التي تتعاملين معها.",
+      en: "A variable stores a value, and its data type determines the kind of value. Choose a suitable type for your data."
+    }
+  }
+];
+
+console.info(
+  `CS MATE: ${CSHARP_LESSONS.length} C# lessons loaded.`
+);
+
+/* =========================================
+   CS MATE — PART 14
+   Lesson viewer interface
+========================================= */
+
+function createLessonViewer() {
+  let viewer = $("#lessonViewer");
+
+  if (viewer) {
+    return viewer;
+  }
+
+  viewer = document.createElement("section");
+  viewer.id = "lessonViewer";
+  viewer.className = "lesson-viewer";
+  viewer.hidden = true;
+
+  viewer.setAttribute("aria-live", "polite");
+
+  const courseSection = $("#coursesGrid");
+
+  if (courseSection) {
+    courseSection.parentElement.appendChild(viewer);
+  } else {
+    document.body.appendChild(viewer);
+  }
+
+  return viewer;
+}
+
+function renderLesson(lesson) {
+  if (!lesson) return;
+
+  const viewer = createLessonViewer();
+  const language = getCurrentLanguage();
+
+  const getText = (value) => {
+    if (typeof value === "string") {
+      return value;
+    }
+
+    return value?.[language] ?? value?.en ?? "";
+  };
+
+  const mistakes = getText(
+    lesson.commonMistakes
+  );
+
+  const mistakeItems = (
+    lesson.commonMistakes?.[language] ??
+    lesson.commonMistakes?.en ??
+    []
+  );
+
+  viewer.innerHTML = `
+    <div class="lesson-header">
+      <button
+        type="button"
+        id="closeLessonButton"
+      >
+        ${language === "ar" ? "← العودة للكورسات" : "← Back to courses"}
+      </button>
+
+      <p class="lesson-duration">
+        ${lesson.duration}
+      </p>
+
+      <h2>${getText(lesson.title)}</h2>
+    </div>
+
+    <article class="lesson-section">
+      <h3>${language === "ar" ? "شرح الدرس" : "Lesson Explanation"}</h3>
+      <p class="lesson-text">${getText(lesson.explanation)}</p>
+    </article>
+
+    <article class="lesson-section">
+      <h3>${language === "ar" ? "مثال عملي" : "Code Example"}</h3>
+
+      <pre><code></code></pre>
+
+      <button
+        type="button"
+        id="copyLessonCode"
+      >
+        ${language === "ar" ? "نسخ الكود" : "Copy Code"}
+      </button>
+
+      <p class="lesson-text">
+        ${getText(lesson.codeExplanation)}
+      </p>
+    </article>
+
+    <article class="lesson-section">
+      <h3>${language === "ar" ? "أخطاء شائعة" : "Common Mistakes"}</h3>
+
+      <ul class="lesson-mistakes">
+        ${mistakeItems.map((item) => `<li>${item}</li>`).join("")}
+      </ul>
+    </article>
+
+    <article class="lesson-section">
+      <h3>${language === "ar" ? "تدريب" : "Exercise"}</h3>
+      <p class="lesson-text">${getText(lesson.exercise)}</p>
+    </article>
+
+    <article class="lesson-section">
+      <h3>${language === "ar" ? "ملخص الدرس" : "Lesson Summary"}</h3>
+      <p class="lesson-text">${getText(lesson.summary)}</p>
+    </article>
+
+    <button
+      type="button"
+      id="completeLessonButton"
+      data-lesson-id="${lesson.id}"
+    >
+      ${language === "ar" ? "✓ إكمال الدرس" : "✓ Mark as Completed"}
+    </button>
+  `;
+
+  const codeElement = $("pre code", viewer);
+
+  if (codeElement) {
+    codeElement.textContent = lesson.code;
+  }
+
+  viewer.hidden = false;
+
+  viewer.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  $("#closeLessonButton", viewer)?.addEventListener(
+    "click",
+    () => {
+      viewer.hidden = true;
+
+      $("#coursesGrid")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  );
+
+  $("#copyLessonCode", viewer)?.addEventListener(
+    "click",
+    async () => {
+      try {
+        await navigator.clipboard.writeText(lesson.code);
+
+        $("#copyLessonCode", viewer).textContent =
+          language === "ar" ? "تم نسخ الكود ✓" : "Code Copied ✓";
+      } catch (error) {
+        alert(
+          language === "ar"
+            ? "تعذر النسخ تلقائيًا. حددي الكود وانسخيه يدويًا."
+            : "Copy failed. Select the code and copy it manually."
+        );
+      }
+    }
+  );
+
+  $("#completeLessonButton", viewer)?.addEventListener(
+    "click",
+    (event) => {
+      const button = event.currentTarget;
+
+      const completed = toggleLessonCompleted(
+        button.dataset.lessonId
+      );
+
+      button.textContent = completed
+        ? language === "ar"
+          ? "✓ تم إكمال الدرس"
+          : "✓ Lesson Completed"
+        : language === "ar"
+          ? "✓ إكمال الدرس"
+          : "✓ Mark as Completed";
+    }
+  );
+}
+
+console.info("CS MATE lesson viewer is ready.");
+
+/* =========================================
+   CS MATE — PART 15
+   Connect C# course to its lessons
+========================================= */
+
+function openCourseLessons(courseId) {
+  const course = COURSES.find(
+    (item) => item.id === courseId
+  );
+
+  if (!course) return;
+
+  if (courseId === "csharp") {
+    const firstLesson = CSHARP_LESSONS[0];
+
+    if (firstLesson) {
+      renderLesson(firstLesson);
+    }
+
+    return;
+  }
+
+  const language = getCurrentLanguage();
+
+  const message = language === "ar"
+    ? "محتوى هذا الكورس قيد الإعداد. سنضيف دروسه تباعًا."
+    : "This course content is being prepared. Lessons will be added soon.";
+
+  alert(message);
+}
+
+function initializeLessonNavigation() {
+  const grid = $("#coursesGrid");
+
+  if (!grid) return;
+
+  grid.addEventListener("click", (event) => {
+    const button = event.target.closest(
+      "[data-open-course]"
+    );
+
+    if (!button) return;
+
+    event.preventDefault();
+
+    openCourseLessons(
+      button.dataset.openCourse
+    );
+  });
+}
+
+console.info("CS MATE lesson navigation is ready.");
+/* =========================================
+   CS MATE — PART 16
+   C# lesson list
+========================================= */
+
+function renderCourseLessonList(courseId) {
+  const course = COURSES.find(
+    (item) => item.id === courseId
+  );
+
+  if (!course) return;
+
+  const language = getCurrentLanguage();
+
+  const lessons = courseId === "csharp"
+    ? CSHARP_LESSONS
+    : [];
+
+  const viewer = createLessonViewer();
+
+  if (lessons.length === 0) {
+    viewer.innerHTML = `
+      <h2>
+        ${language === "ar"
+          ? "الدروس قيد الإعداد"
+          : "Lessons coming soon"}
+      </h2>
+
+      <p>
+        ${language === "ar"
+          ? "سيُضاف محتوى هذا الكورس قريبًا."
+          : "This course content will be added soon."}
+      </p>
+
+      <button id="closeLessonList" type="button">
+        ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+      </button>
+    `;
+
+    viewer.hidden = false;
+
+    $("#closeLessonList", viewer)?.addEventListener(
+      "click",
+      () => {
+        viewer.hidden = true;
+      }
+    );
+
+    viewer.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    return;
+  }
+
+  viewer.innerHTML = `
+    <div class="lesson-header">
+      <h2>
+        ${language === "ar"
+          ? "كورس C# — محتوى الدروس"
+          : "C# Course — Lesson Contents"}
+      </h2>
+
+      <p>
+        ${language === "ar"
+          ? `عدد الدروس المتاحة: ${lessons.length}`
+          : `Available lessons: ${lessons.length}`}
+      </p>
+    </div>
+
+    <div class="lesson-list">
+      ${lessons.map((lesson, index) => {
+        const title = lesson.title[language] || lesson.title.en;
+
+        const completed = isLessonCompleted(lesson.id);
+
+        return `
+          <button
+            type="button"
+            class="lesson-list-item"
+            data-lesson-index="${index}"
+          >
+            <span>${completed ? "✓" : index + 1}</span>
+
+            <span>${title}</span>
+
+            <span>
+              ${completed
+                ? language === "ar" ? "مكتمل" : "Completed"
+                : lesson.duration}
+            </span>
+          </button>
+        `;
+      }).join("")}
+    </div>
+
+    <button id="closeLessonList" type="button">
+      ${language === "ar" ? "إغلاق الدروس" : "Close lessons"}
+    </button>
+  `;
+
+  viewer.hidden = false;
+
+  viewer.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  $$(".lesson-list-item", viewer).forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.lessonIndex);
+
+      const selectedLesson = lessons[index];
+
+      if (selectedLesson) {
+        renderLesson(selectedLesson);
+      }
+    });
+  });
+
+  $("#closeLessonList", viewer)?.addEventListener(
+    "click",
+    () => {
+      viewer.hidden = true;
+    }
+  );
+}
+
+console.info("CS MATE lesson list is ready.");
+
