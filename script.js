@@ -4218,7 +4218,182 @@ second.MakeSound();`,
     ar: "يسمح تعدد الأشكال باستدعاء سلوك مختلف عبر نوع أساسي مشترك. ويُعد virtual وoverride من أهم أدوات تحقيق ذلك في C#.",
     en: "Polymorphism allows different behavior through a shared base type. virtual and override are important tools for implementing it in C#."
   }
-});
+});/* =========================================
+   CS MATE — C# LESSONS 19 & 20
+========================================= */
+
+CSHARP_LESSONS.push(
+  {
+    id: "csharp-19",
+    title: {
+      ar: "Abstract Classes & Interfaces",
+      en: "Abstract Classes & Interfaces"
+    },
+    duration: "20 min",
+    level: "Intermediate",
+    explanation: {
+      ar: "الـ Abstract Class هو كلاس مينفعش نعمل منه Object مباشرة، وبنستخدمه كقاعدة لكلاسات تانية. أما الـ Interface فهو عقد بيحدد الميثودز اللي الكلاس لازم ينفذها.",
+      en: "An abstract class cannot be instantiated directly and can serve as a base class. An interface defines a contract that implementing classes must follow."
+    },
+    code: `using System;
+
+abstract class Animal
+{
+    public abstract void MakeSound();
+}
+
+interface IWalkable
+{
+    void Walk();
+}
+
+class Dog : Animal, IWalkable
+{
+    public override void MakeSound()
+    {
+        Console.WriteLine("Woof!");
+    }
+
+    public void Walk()
+    {
+        Console.WriteLine("Dog is walking.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Dog dog = new Dog();
+
+        dog.MakeSound();
+        dog.Walk();
+    }
+}`,
+    codeExplanation: {
+      ar: [
+        "Animal كلاس مجرد يحتوي على ميثود مجردة.",
+        "IWalkable واجهة بتحدد ميثود Walk.",
+        "Dog يرث من Animal وينفذ IWalkable.",
+        "override بتستخدم لإعادة تعريف الميثود المجردة.",
+        "في Main أنشأنا Object من Dog واستدعينا الميثودز."
+      ],
+      en: [
+        "Animal is an abstract class containing an abstract method.",
+        "IWalkable defines the Walk method.",
+        "Dog inherits from Animal and implements IWalkable.",
+        "override provides the implementation of the abstract method.",
+        "Main creates a Dog object and calls its methods."
+      ]
+    },
+    commonMistakes: {
+      ar: [
+        "محاولة إنشاء Object مباشرة من Abstract Class.",
+        "نسيان تنفيذ الميثود المجردة في الكلاس المشتق.",
+        "الخلط بين الوراثة من Class وتنفيذ Interface."
+      ],
+      en: [
+        "Trying to instantiate an abstract class directly.",
+        "Forgetting to implement an abstract method in a derived class.",
+        "Confusing class inheritance with interface implementation."
+      ]
+    },
+    exercise: {
+      ar: "أنشئي Abstract Class باسم Shape يحتوي على ميثود مجردة اسمها CalculateArea، ثم أنشئي Circle ترث منه وتنفذ الميثود.",
+      en: "Create an abstract class named Shape with an abstract method called CalculateArea. Then create a Circle class that inherits from it and implements the method."
+    },
+    summary: {
+      ar: "الـ Abstract Class مناسب لمشاركة الأساس المشترك بين الكلاسات، والـ Interface مناسب لتحديد سلوك يجب على الكلاسات تنفيذه.",
+      en: "Abstract classes provide a shared base, while interfaces define behaviors that implementing classes must provide."
+    }
+  },
+
+  {
+    id: "csharp-20",
+    title: {
+      ar: "Composition — Has-A Relationship",
+      en: "Composition — Has-A Relationship"
+    },
+    duration: "15 min",
+    level: "Intermediate",
+    explanation: {
+      ar: "الـ Composition أسلوب بنبني فيه كلاس باستخدام Object من كلاس تاني. بنسمي العلاقة دي Has-A، يعني كائن يمتلك أو يحتوي على كائن آخر. مثال: السيارة تحتوي على محرك.",
+      en: "Composition builds a class using an object of another class. This is called a Has-A relationship. For example, a car has an engine."
+    },
+    code: `using System;
+
+class Engine
+{
+    public void Start()
+    {
+        Console.WriteLine("Engine started.");
+    }
+}
+
+class Car
+{
+    private Engine engine;
+
+    public Car()
+    {
+        engine = new Engine();
+    }
+
+    public void StartCar()
+    {
+        engine.Start();
+        Console.WriteLine("Car is ready.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Car car = new Car();
+        car.StartCar();
+    }
+}`,
+    codeExplanation: {
+      ar: [
+        "Engine كلاس بيمثل المحرك.",
+        "Start هي الميثود المسؤولة عن تشغيل المحرك.",
+        "Car يحتوي على Object من Engine.",
+        "الـ Constructor في Car بينشئ المحرك.",
+        "StartCar بتشغل المحرك وبعدها بتطبع رسالة جاهزية السيارة."
+      ],
+      en: [
+        "Engine represents the car's engine.",
+        "Start is responsible for starting the engine.",
+        "Car contains an Engine object.",
+        "The Car constructor creates the engine.",
+        "StartCar starts the engine and then prints a readiness message."
+      ]
+    },
+    commonMistakes: {
+      ar: [
+        "نسيان إنشاء Object من الكلاس الداخلي قبل استخدامه.",
+        "الخلط بين Has-A في Composition و Is-A في Inheritance.",
+        "الاعتقاد إن Composition معناه إن كلاس لازم يرث من كلاس آخر."
+      ],
+      en: [
+        "Forgetting to initialize the contained object before using it.",
+        "Confusing Has-A composition with Is-A inheritance.",
+        "Assuming composition requires class inheritance."
+      ]
+    },
+    exercise: {
+      ar: "أنشئي كلاس باسم Battery يحتوي على ميثود Charge، وكلاس Phone يحتوي على Object من Battery ويستخدمه لشحن الهاتف.",
+      en: "Create a Battery class with a Charge method, and a Phone class containing a Battery object that it uses to charge the phone."
+    },
+    summary: {
+      ar: "الـ Composition بيسمح لكلاس باستخدام وظائف كلاس آخر عن طريق احتوائه على Object منه، وده بيساعد على تنظيم الكود وإعادة استخدامه.",
+      en: "Composition allows a class to use another class's functionality by containing its object, improving code organization and reuse."
+    }
+  }
+);
+
+console.log("C# lessons 19 and 20 added successfully.");
 
 
     
