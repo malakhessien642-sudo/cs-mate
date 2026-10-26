@@ -3478,6 +3478,748 @@ for (int i = 0; i < courses.Count; i++)
   }
 });
 
+/* =========================================
+   CS MATE — PART 29
+   Lesson 11: Lists, Searching and Sorting
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-11",
+  title: {
+    ar: "11. القوائم والبحث والترتيب",
+    en: "11. Lists, Searching and Sorting"
+  },
+  duration: "35 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `تسمح List<T> بتخزين مجموعة من العناصر مع إمكانية زيادة عددها أو تقليله. يمكن استخدام Contains للبحث عن عنصر، وIndexOf لمعرفة موقعه، وSort لترتيب العناصر، وRemove لإزالة عنصر.`,
+    en: `List<T> stores a collection of items whose size can grow or shrink. Use Contains to search for an item, IndexOf to find its position, Sort to order the items, and Remove to delete an item.`
+  },
+
+  code: `using System;
+using System.Collections.Generic;
+
+List<int> numbers = new List<int>
+{
+    40, 10, 30, 20
+};
+
+Console.WriteLine(numbers.Contains(30));
+Console.WriteLine(numbers.IndexOf(20));
+
+numbers.Sort();
+
+foreach (int number in numbers)
+{
+    Console.WriteLine(number);
+}
+
+numbers.Remove(30);
+
+Console.WriteLine("Count: " + numbers.Count);`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا قائمة أعداد صحيحة.",
+      "Contains تتحقق من وجود العدد 30.",
+      "IndexOf تعيد فهرس العدد 20، ويبدأ الفهرس من صفر.",
+      "Sort ترتب الأعداد تصاعديًا.",
+      "foreach تمر على كل عنصر وتطبعه.",
+      "Remove تحذف العدد 30 إذا كان موجودًا.",
+      "Count تعيد عدد العناصر المتبقية."
+    ],
+    en: [
+      "We created a list of integers.",
+      "Contains checks whether 30 exists in the list.",
+      "IndexOf returns the index of 20; indexing starts at zero.",
+      "Sort orders the numbers in ascending order.",
+      "foreach visits and prints each item.",
+      "Remove deletes 30 if it exists.",
+      "Count returns the number of remaining items."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "استخدام Length بدلًا من Count مع List.",
+      "نسيان أن IndexOf تعيد -1 إذا لم تجد العنصر.",
+      "الاعتقاد أن Sort تنشئ قائمة مرتبة جديدة؛ بل ترتب القائمة نفسها.",
+      "الخلط بين الفهرس وترتيب العنصر الذي يراه المستخدم."
+    ],
+    en: [
+      "Using Length instead of Count with a List.",
+      "Forgetting that IndexOf returns -1 when an item is not found.",
+      "Assuming Sort creates a new sorted list; it sorts the existing list.",
+      "Confusing an index with a human-readable position."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي قائمة بخمسة أرقام، وابحثي عن رقم تختارينه، ثم رتبي القائمة واطبعيها.",
+    en: "Create a list of five numbers, search for a number of your choice, then sort and print the list."
+  },
+
+  summary: {
+    ar: "تساعد Contains وIndexOf في البحث داخل القائمة، بينما Sort للترتيب وRemove للحذف وCount لمعرفة عدد العناصر.",
+    en: "Contains and IndexOf help search a list, while Sort orders it, Remove deletes an item, and Count returns the item count."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 30
+   Lesson 12: The foreach Loop
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-12",
+  title: {
+    ar: "12. حلقة foreach",
+    en: "12. The foreach Loop"
+  },
+  duration: "25 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `تُستخدم foreach للمرور على عناصر مجموعة مثل Array أو List دون الحاجة إلى إدارة فهرس يدوي. في كل دورة، يحصل المتغير على قيمة العنصر الحالي. وهي مناسبة عندما نريد قراءة العناصر أو تنفيذ عملية عليها.`,
+    en: `foreach iterates through the items of a collection, such as an array or List, without manually managing an index. During each iteration, the variable receives the current item. It is useful for reading or processing items.`
+  },
+
+  code: `string[] subjects =
+{
+    "C#",
+    "SQL",
+    "HTML",
+    "CSS"
+};
+
+foreach (string subject in subjects)
+{
+    Console.WriteLine(subject);
+}
+
+int total = 0;
+int[] marks = { 80, 75, 90 };
+
+foreach (int mark in marks)
+{
+    total += mark;
+}
+
+Console.WriteLine("Total: " + total);`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا مصفوفة بأسماء المواد.",
+      "foreach تمر على كل مادة وتطبعها.",
+      "أنشأنا متغير total لاحتساب المجموع.",
+      "في كل دورة نضيف الدرجة الحالية إلى total.",
+      "المجموع النهائي للدرجات هو 245."
+    ],
+    en: [
+      "We created an array of subject names.",
+      "foreach visits and prints each subject.",
+      "We created total to calculate the sum.",
+      "During each iteration, the current mark is added to total.",
+      "The final sum of the marks is 245."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "كتابة in بطريقة خاطئة أو نسيانها.",
+      "استخدام نوع متغير لا يناسب نوع العناصر.",
+      "توقع أن foreach تمنحنا فهرس العنصر تلقائيًا.",
+      "تعديل بنية القائمة أثناء المرور عليها، مما قد يسبب استثناءً."
+    ],
+    en: [
+      "Writing the in keyword incorrectly or forgetting it.",
+      "Using a variable type that does not match the items.",
+      "Expecting foreach to provide an index automatically.",
+      "Modifying a collection's structure during iteration, which can cause an exception."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي قائمة بأسماء خمسة أصدقاء أو مواد دراسية، واطبعي كل عنصر باستخدام foreach. ثم احسبي مجموع خمس درجات باستخدام الحلقة نفسها.",
+    en: "Create a list of five names or subjects and print each item using foreach. Then calculate the sum of five marks using the same loop."
+  },
+
+  summary: {
+    ar: "تجعل foreach المرور على عناصر المصفوفات والقوائم أسهل عندما لا نحتاج إلى فهرس يدوي.",
+    en: "foreach simplifies iteration over arrays and lists when a manual index is not needed."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 31
+   Lesson 13: Organizing Project Files
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-13",
+  title: {
+    ar: "13. تنظيم ملفات مشروع C#",
+    en: "13. Organizing C# Project Files"
+  },
+  duration: "30 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `عندما يكبر المشروع، من الأفضل تقسيم المسؤوليات إلى ملفات منفصلة. يمكن وضع الكلاسات في ملفات مستقلة، مثل Calculator.cs، ثم استخدام الكلاس من Program.cs. يجب أن يكون كل ملف جزءًا من المشروع، وأن تتطابق مساحة الأسماء عند الحاجة.
+
+في المشاريع الحديثة، قد يضيف قالب Console بعض التعليمات تلقائيًا؛ لذلك راجعي شكل المشروع قبل إضافة using أو تعريفات إضافية.`,
+    en: `As a project grows, separating responsibilities into different files improves organization. Classes can be placed in separate files, such as Calculator.cs, and then used from Program.cs. Each file must belong to the project, and namespaces must match when required.
+
+Modern Console templates may generate some statements automatically, so check the project structure before adding imports or declarations.`
+  },
+
+  code: `// File: Calculator.cs
+namespace CSMate;
+
+public class Calculator
+{
+    public int Add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+// File: Program.cs
+using CSMate;
+
+Calculator calculator = new Calculator();
+
+int result = calculator.Add(10, 5);
+
+Console.WriteLine(result);`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا كلاس Calculator في ملف مستقل.",
+      "الدالة Add تستقبل عددين وتعيد مجموعهما.",
+      "namespace CSMate تحدد مساحة الأسماء للكلاس.",
+      "في Program.cs استخدمنا using CSMate للوصول إلى الكلاس.",
+      "أنشأنا كائنًا من Calculator واستدعينا Add.",
+      "في المشروع الحقيقي، يجب وضع كل جزء في الملف الصحيح، وليس نسخ التعليقات التي تحدد الملفات داخل ملف واحد."
+    ],
+    en: [
+      "We created the Calculator class in a separate file.",
+      "Add accepts two numbers and returns their sum.",
+      "namespace CSMate declares the class namespace.",
+      "In Program.cs, using CSMate makes the namespace available.",
+      "We created a Calculator object and called Add.",
+      "In a real project, place each section in its correct file rather than copying the file-label comments into one file."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "وضع الكود في ملف لا يشارك في المشروع.",
+      "اختلاف اسم مساحة الأسماء عن مساحة أسماء الكلاس.",
+      "نسيان public عندما نحتاج إلى الوصول للكلاس من خارج نطاقه.",
+      "وضع تعريف الكلاس أو using في مكان غير مناسب حسب نوع قالب المشروع."
+    ],
+    en: [
+      "Placing code in a file that is not included in the project.",
+      "Using inconsistent namespace names.",
+      "Forgetting public when the class must be accessible externally.",
+      "Placing class declarations or using directives incorrectly for the selected project template."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس باسم Greeting في ملف منفصل، يحتوي على دالة ترجع رسالة ترحيب، ثم استخدميه من Program.cs.",
+    en: "Create a Greeting class in a separate file with a method that returns a welcome message, then use it from Program.cs."
+  },
+
+  summary: {
+    ar: "تقسيم المشروع إلى ملفات يجعل الكود أسهل في القراءة والصيانة والتطوير، ويساعد على فصل مسؤوليات الكلاسات.",
+    en: "Splitting a project into files improves readability, maintenance, and development by separating class responsibilities."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 32
+   Lesson 14: Introduction to OOP
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-14",
+  title: {
+    ar: "14. مقدمة إلى البرمجة الكائنية OOP",
+    en: "14. Introduction to Object-Oriented Programming"
+  },
+  duration: "35 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `البرمجة الكائنية OOP أسلوب لتنظيم البرنامج حول الكلاسات والكائنات.
+
+Class هو قالب يحدد البيانات والسلوك.
+Object هو نسخة يتم إنشاؤها من الكلاس.
+Properties تمثل بيانات الكائن، وMethods تمثل السلوك الذي يمكنه تنفيذه.
+
+تساعد OOP على تنظيم البرامج الكبيرة، وإعادة استخدام الكود، وفصل المسؤوليات.`,
+    en: `Object-Oriented Programming (OOP) organizes a program around classes and objects.
+
+A class is a blueprint that defines data and behavior.
+An object is an instance created from a class.
+Properties represent an object's data, and methods represent behavior.
+
+OOP helps organize large programs, reuse code, and separate responsibilities.`
+  },
+
+  code: `class Student
+{
+    public string Name { get; set; }
+    public int Grade { get; set; }
+
+    public void Introduce()
+    {
+        Console.WriteLine(
+            "My name is " + Name +
+            " and my grade is " + Grade
+        );
+    }
+}
+
+Student student = new Student();
+
+student.Name = "Malak";
+student.Grade = 90;
+
+student.Introduce();`,
+
+  codeExplanation: {
+    ar: [
+      "عرّفنا كلاس Student يمثل الطالب.",
+      "Name وGrade خصائص لتخزين الاسم والدرجة.",
+      "Introduce دالة تطبع معلومات الطالب.",
+      "new Student() تنشئ كائنًا جديدًا من الكلاس.",
+      "عيّنا قيم الخصائص للكائن.",
+      "استدعينا Introduce لتنفيذ السلوك.",
+      "في مشروع C# عادي، يوضع الكلاس خارج Main عند استخدام بنية Program التقليدية."
+    ],
+    en: [
+      "We defined a Student class to represent a student.",
+      "Name and Grade are properties that store the name and mark.",
+      "Introduce prints information about the student.",
+      "new Student() creates a new object from the class.",
+      "We assigned values to the object's properties.",
+      "We called Introduce to execute its behavior.",
+      "In a regular C# project, place the class outside Main when using the traditional Program structure."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "الخلط بين الكلاس والكائن.",
+      "نسيان إنشاء الكائن باستخدام new في هذا المثال.",
+      "محاولة استدعاء خاصية أو دالة غير موجودة في الكلاس.",
+      "الخلط بين الخصائص والدوال."
+    ],
+    en: [
+      "Confusing a class with an object.",
+      "Forgetting to create the object using new in this example.",
+      "Calling a property or method that does not exist in the class.",
+      "Confusing properties with methods."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس باسم Book يحتوي على Title وAuthor، ثم أضيفي دالة DisplayInfo تطبع بيانات الكتاب، وأنشئي كائنًا واستخدميه.",
+    en: "Create a Book class with Title and Author properties. Add a DisplayInfo method that prints the book details, then create and use an object."
+  },
+
+  summary: {
+    ar: "تعتمد OOP على الكلاسات والكائنات. الكلاس يحدد البيانات والسلوك، والكائن يمثل نسخة فعلية من هذا القالب.",
+    en: "OOP uses classes and objects. A class defines data and behavior, while an object is an actual instance of that blueprint."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 33
+   Lesson 15: Encapsulation
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-15",
+  title: {
+    ar: "15. التغليف Encapsulation",
+    en: "15. Encapsulation"
+  },
+  duration: "35 min",
+  level: "Intermediate",
+
+  explanation: {
+    ar: `التغليف هو مبدأ في OOP يهدف إلى حماية البيانات والتحكم في طريقة الوصول إليها. نستخدم private لمنع الوصول المباشر إلى العضو من خارج الكلاس، ونستخدم Properties لتحديد كيفية قراءة القيمة أو تعديلها.
+
+يمكن استخدام get للقراءة وset للتعديل، مع وضع شروط للتحقق من صحة البيانات.`,
+    en: `Encapsulation is an OOP principle that protects data and controls access to it. The private modifier prevents direct access to a member from outside its class, while properties control how values are read or changed.
+
+Use get to read a value and set to change it, with validation when needed.`
+  },
+
+  code: `class BankAccount
+{
+    public string Owner { get; set; }
+
+    private decimal balance;
+
+    public decimal Balance
+    {
+        get { return balance; }
+    }
+
+    public BankAccount(string owner)
+    {
+        Owner = owner;
+        balance = 0;
+    }
+
+    public void Deposit(decimal amount)
+    {
+        if (amount > 0)
+        {
+            balance += amount;
+        }
+    }
+}
+
+BankAccount account = new BankAccount("Malak");
+
+account.Deposit(500);
+
+Console.WriteLine(account.Owner);
+Console.WriteLine(account.Balance);`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا كلاس BankAccount يمثل حسابًا بنكيًا.",
+      "المتغير balance خاص private ولا يمكن الوصول إليه مباشرة من خارج الكلاس.",
+      "الخاصية Balance تسمح بقراءة الرصيد دون تعديله مباشرة.",
+      "الـ Constructor يحدد اسم صاحب الحساب ويبدأ الرصيد بصفر.",
+      "الدالة Deposit تسمح بإضافة مبلغ موجب فقط.",
+      "بعد إيداع 500 يصبح الرصيد 500."
+    ],
+    en: [
+      "We created a BankAccount class to represent a bank account.",
+      "The balance field is private and cannot be accessed directly from outside the class.",
+      "The Balance property allows reading the balance without directly changing it.",
+      "The constructor sets the owner's name and initializes the balance to zero.",
+      "Deposit accepts only a positive amount.",
+      "After depositing 500, the balance becomes 500."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "اعتبار private وpublic متشابهين؛ فلكل منهما مستوى وصول مختلف.",
+      "السماح بتعديل البيانات الحساسة دون التحقق من صحتها.",
+      "الاعتقاد أن التغليف يعني إخفاء كل بيانات الكلاس تمامًا.",
+      "نسيان أن الكود داخل الكلاس نفسه يستطيع الوصول إلى أعضائه الخاصة."
+    ],
+    en: [
+      "Treating private and public as having the same accessibility.",
+      "Allowing sensitive data to change without validation.",
+      "Assuming encapsulation means hiding every part of a class.",
+      "Forgetting that code inside a class can access its own private members."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس Student يحتوي على اسم ودرجة خاصة، واجعلي تغيير الدرجة متاحًا فقط من خلال دالة تتحقق أن الدرجة بين 0 و100.",
+    en: "Create a Student class with a name and a private grade. Allow the grade to change only through a method that checks whether it is between 0 and 100."
+  },
+
+  summary: {
+    ar: "التغليف يحمي البيانات من التعديل غير المنضبط، ويتيح التحكم في الوصول إليها من خلال أعضاء عامة وعمليات تحقق.",
+    en: "Encapsulation protects data from uncontrolled changes and manages access through public members and validation."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 34
+   Lesson 16: Constructors
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-16",
+  title: {
+    ar: "16. الباني Constructors",
+    en: "16. Constructors"
+  },
+  duration: "30 min",
+  level: "Intermediate",
+
+  explanation: {
+    ar: `الـ Constructor هو عضو خاص يُنفذ عند إنشاء كائن جديد من الكلاس. يُستخدم عادةً لتهيئة البيانات الأولية.
+
+يحمل اسم الـ Constructor اسم الكلاس نفسه، ولا يملك نوع إرجاع. يمكن تعريف أكثر من Constructor بمعاملات مختلفة، وهذا يسمى Constructor Overloading.`,
+    en: `A constructor is a special member executed when a new object is created. It is commonly used to initialize data.
+
+A constructor has the same name as its class and has no return type. Multiple constructors with different parameter lists can be defined; this is called constructor overloading.`
+  },
+
+  code: `class Student
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public Student()
+    {
+        Name = "Unknown";
+        Age = 0;
+    }
+
+    public Student(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+
+    public void DisplayInfo()
+    {
+        Console.WriteLine(Name + " - " + Age);
+    }
+}
+
+Student first = new Student();
+Student second = new Student("Malak", 19);
+
+first.DisplayInfo();
+second.DisplayInfo();`,
+
+  codeExplanation: {
+    ar: [
+      "الكلاس Student يحتوي على خاصيتي الاسم والعمر.",
+      "الـ Constructor الأول يضع قيمًا افتراضية.",
+      "الـ Constructor الثاني يستقبل الاسم والعمر.",
+      "اختيار الـ Constructor يعتمد على المعاملات المستخدمة عند إنشاء الكائن.",
+      "استدعاء DisplayInfo يطبع بيانات كل كائن."
+    ],
+    en: [
+      "The Student class has Name and Age properties.",
+      "The first constructor assigns default values.",
+      "The second constructor accepts a name and age.",
+      "The selected constructor depends on the arguments used when creating the object.",
+      "Calling DisplayInfo prints each object's data."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "كتابة نوع إرجاع مثل void أمام اسم الـ Constructor.",
+      "كتابة اسم مختلف عن اسم الكلاس.",
+      "استدعاء Constructor بمعاملات لا تطابق أي تعريف متاح.",
+      "الخلط بين الـ Constructor والدالة العادية."
+    ],
+    en: [
+      "Adding a return type such as void to a constructor.",
+      "Using a name different from the class name.",
+      "Calling a constructor with arguments that match no available overload.",
+      "Confusing a constructor with a regular method."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس Book يحتوي على Title وAuthor، ثم أضيفي Constructor يستقبل العنوان والمؤلف، واطبعي بيانات الكتاب.",
+    en: "Create a Book class with Title and Author properties. Add a constructor that accepts the title and author, then print the book information."
+  },
+
+  summary: {
+    ar: "تُستخدم Constructors لتهيئة الكائنات وقت إنشائها، ويمكن تعريف عدة Constructors لتوفير طرق مختلفة للإنشاء.",
+    en: "Constructors initialize objects when they are created. Multiple constructors can provide different ways to initialize an object."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 35
+   Lesson 17: Inheritance
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-17",
+  title: {
+    ar: "17. الوراثة Inheritance",
+    en: "17. Inheritance"
+  },
+  duration: "35 min",
+  level: "Intermediate",
+
+  explanation: {
+    ar: `الوراثة تسمح لكلاس جديد بالاستفادة من أعضاء كلاس موجود. الكلاس الأساسي يسمى Base Class، والكلاس المشتق يسمى Derived Class.
+
+تُكتب علامة النقطتين : بعد اسم الكلاس المشتق ثم اسم الكلاس الأساسي. في C# يمكن للكلاس أن يرث مباشرة من كلاس واحد، مع إمكانية تطبيق عدة Interfaces.`,
+    en: `Inheritance allows a new class to reuse accessible members of an existing class. The original class is the base class, and the new class is the derived class.
+
+Write a colon after the derived class name followed by the base class name. In C#, a class can directly inherit from one class, while it can implement multiple interfaces.`
+  },
+
+  code: `class Animal
+{
+    public string Name { get; set; }
+
+    public void Eat()
+    {
+        Console.WriteLine(Name + " is eating.");
+    }
+}
+
+class Dog : Animal
+{
+    public void Bark()
+    {
+        Console.WriteLine(Name + " is barking.");
+    }
+}
+
+Dog dog = new Dog();
+dog.Name = "Max";
+
+dog.Eat();
+dog.Bark();`,
+
+  codeExplanation: {
+    ar: [
+      "الكلاس Animal هو الكلاس الأساسي.",
+      "الكلاس Dog يرث من Animal باستخدام النقطتين.",
+      "يرث Dog الخاصية Name والدالة Eat لأنهما عامتان public.",
+      "أضفنا الدالة Bark داخل Dog فقط.",
+      "أنشأنا كائنًا من Dog واستطعنا استخدام أعضاء الكلاس الأساسي والمشتق."
+    ],
+    en: [
+      "Animal is the base class.",
+      "Dog inherits from Animal using a colon.",
+      "Dog inherits the public Name property and Eat method.",
+      "We added Bark specifically to Dog.",
+      "We created a Dog object and used members from both classes."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "الخلط بين الوراثة وإنشاء كائن داخل كلاس آخر.",
+      "محاولة الوصول إلى أعضاء private للكلاس الأساسي مباشرة من الكلاس المشتق.",
+      "نسيان أن C# لا تدعم الوراثة المباشرة من أكثر من كلاس واحد.",
+      "إنشاء علاقة وراثة غير منطقية بين الكلاسات."
+    ],
+    en: [
+      "Confusing inheritance with creating an object inside another class.",
+      "Trying to access private base-class members directly from the derived class.",
+      "Forgetting that C# does not support direct inheritance from multiple classes.",
+      "Creating an inheritance relationship that does not make logical sense."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس Vehicle يحتوي على دالة Start، ثم أنشئي Car يرث منه ويضيف دالة Drive، وجرّبي استدعاء الدالتين.",
+    en: "Create a Vehicle class with a Start method, then create a Car class that inherits from it and adds a Drive method. Test both methods."
+  },
+
+  summary: {
+    ar: "تساعد الوراثة على إعادة استخدام السلوك المشترك بين الكلاسات، مع إمكانية إضافة سلوك جديد في الكلاس المشتق.",
+    en: "Inheritance reuses shared behavior between classes while allowing derived classes to add new behavior."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 36
+   Lesson 18: Polymorphism
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-18",
+  title: {
+    ar: "18. تعدد الأشكال Polymorphism",
+    en: "18. Polymorphism"
+  },
+  duration: "40 min",
+  level: "Intermediate",
+
+  explanation: {
+    ar: `تعدد الأشكال يسمح باستخدام واجهة أو نوع أساسي للتعامل مع كائنات مختلفة، بحيث يمكن لكل كائن تنفيذ السلوك بطريقته.
+
+من أشهر أمثلته Method Overriding باستخدام virtual في الكلاس الأساسي وoverride في الكلاس المشتق. عند استدعاء الدالة من خلال مرجع من النوع الأساسي، يُنفذ الإصدار المناسب لنوع الكائن الفعلي.`,
+    en: `Polymorphism allows code to work with different objects through a common base type or interface, while each object can provide its own behavior.
+
+A common example is method overriding using virtual in the base class and override in a derived class. Calling the method through a base-type reference executes the implementation appropriate to the actual object type.`
+  },
+
+  code: `class Animal
+{
+    public virtual void MakeSound()
+    {
+        Console.WriteLine("Some animal sound");
+    }
+}
+
+class Dog : Animal
+{
+    public override void MakeSound()
+    {
+        Console.WriteLine("Woof!");
+    }
+}
+
+class Cat : Animal
+{
+    public override void MakeSound()
+    {
+        Console.WriteLine("Meow!");
+    }
+}
+
+Animal first = new Dog();
+Animal second = new Cat();
+
+first.MakeSound();
+second.MakeSound();`,
+
+  codeExplanation: {
+    ar: [
+      "الدالة MakeSound معرفة باستخدام virtual في Animal.",
+      "الكلاس Dog يعيد تعريف السلوك باستخدام override.",
+      "الكلاس Cat يقدم تنفيذًا مختلفًا للدالة نفسها.",
+      "المتغيران من النوع Animal، لكن الكائنات الفعلية Dog وCat.",
+      "بسبب تعدد الأشكال، يستدعي كل كائن نسخته المناسبة من MakeSound."
+    ],
+    en: [
+      "MakeSound is declared virtual in Animal.",
+      "Dog overrides the behavior using override.",
+      "Cat provides a different implementation of the same method.",
+      "Both variables have the Animal type, but their actual objects are Dog and Cat.",
+      "Polymorphism ensures that each object calls its appropriate MakeSound implementation."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "استخدام override دون وجود دالة virtual أو abstract مناسبة في الكلاس الأساسي.",
+      "الخلط بين Method Overriding وMethod Overloading.",
+      "الاعتقاد أن نوع المرجع وحده يحدد دائمًا الدالة المنفذة.",
+      "اختلاف توقيع الدالة في الكلاس المشتق عن الدالة التي يراد إعادة تعريفها."
+    ],
+    en: [
+      "Using override without a suitable virtual or abstract base method.",
+      "Confusing method overriding with method overloading.",
+      "Assuming the reference type alone always determines the executed implementation.",
+      "Changing the method signature so it no longer overrides the intended method."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي كلاس Shape يحتوي على دالة افتراضية Draw، ثم أنشئي Circle وRectangle يعيدان تعريفها برسائل مختلفة، واستدعي الدالة من خلال متغيرات من النوع Shape.",
+    en: "Create a Shape class with a virtual Draw method. Then create Circle and Rectangle classes that override it with different messages. Call the method through Shape variables."
+  },
+
+  summary: {
+    ar: "يسمح تعدد الأشكال باستدعاء سلوك مختلف عبر نوع أساسي مشترك. ويُعد virtual وoverride من أهم أدوات تحقيق ذلك في C#.",
+    en: "Polymorphism allows different behavior through a shared base type. virtual and override are important tools for implementing it in C#."
+  }
+});
+
 
     
  
