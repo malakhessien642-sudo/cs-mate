@@ -1979,6 +1979,236 @@ console.info("CS MATE lesson list is ready.");
   console.info("CS MATE learning features initialized.");
 })();
 
+/* =========================================
+   CS MATE — PART 20
+   Fix learning progress and navigation
+========================================= */
+
+(function fixCSMateLearningFeatures() {
+  "use strict";
+
+  let currentCourse = "csharp";
+
+  function getLessons() {
+    return typeof CSHARP_LESSONS !== "undefined"
+      ? CSHARP_LESSONS
+      : [];
+  }
+
+  function getCurrentLesson() {
+    const viewer = document.querySelector("#lessonViewer");
+    const button = viewer?.querySelector("#completeLessonButton");
+
+    if (!button) return null;
+
+    return getLessons().find(
+      lesson => String(lesson.id) === button.dataset.lessonId
+    ) || null;
+  }
+
+  function updateProgress() {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    const lessons = getLessons();
+    const completed = lessons.filter(
+      lesson => isLessonCompleted(lesson.id)
+    ).length;
+
+    const percent = lessons.length
+      ? Math.round(completed / lessons.length * 100)
+      : 0;
+
+    const language = getCurrentLanguage();
+
+    let progress = viewer.querySelector(".lesson-progress");
+
+    if (!progress) {
+      progress = document.createElement("section");
+      progress.className = "lesson-progress";
+
+      const list = viewer.querySelector(".lesson-list");
+      const header = viewer.querySelector(".lesson-header");
+
+      if (list) {
+        list.before(progress);
+      } else if (header) {
+        header.after(progress);
+      } else {
+        viewer.prepend(progress);
+      }
+    }
+
+    progress.innerHTML = `
+      <div class="lesson-progress-info">
+        <strong>
+          ${language === "ar" ? "تقدمك في التعلم" : "Learning Progress"}
+        </strong>
+        <span>
+          ${completed} / ${lessons.length}
+          — ${percent}%
+        </span>
+      </div>
+      <div class="lesson-progress-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="${percent}">
+        <div class="lesson-progress-fill"
+             style="width:${percent}%"></div>
+      </div>
+    `;
+  }
+
+  function updateLessonActions(lesson) {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer || !lesson) return;
+
+    viewer.querySelector(".lesson-actions")?.remove();
+
+    const lessons = getLessons();
+    const index = lessons.findIndex(item => item.id === lesson.id);
+    const language = getCurrentLanguage();
+    const bookmarked = isBookmarked(lesson.id);
+
+    const actions = document.createElement("div");
+    actions.className = "lesson-actions";
+
+    actions.innerHTML = `
+      <button type="button" data-fix-action="back">
+        ${language === "ar" ? "← قائمة الدروس" : "← Lesson List"}
+      </button>
+
+      <button type="button" data-fix-action="previous"
+        ${index <= 0 ? "disabled" : ""}>
+        ${language === "ar" ? "السابق" : "Previous"}
+      </button>
+
+      <button type="button" data-fix-action="bookmark"
+        class="lesson-bookmark-button ${bookmarked ? "is-bookmarked" : ""}">
+        ${bookmarked
+          ? (language === "ar" ? "★ في المفضلة" : "★ Bookmarked")
+          : (language === "ar" ? "☆ أضف للمفضلة" : "☆ Bookmark")}
+      </button>
+
+      <button type="button" data-fix-action="next"
+        ${index < 0 || index >= lessons.length - 1 ? "disabled" : ""}>
+        ${language === "ar" ? "التالي →" : "Next →"}
+      </button>
+    `;
+
+    const progress = viewer.querySelector(".lesson-progress");
+
+    if (progress) {
+      progress.after(actions);
+    } else {
+      viewer.prepend(actions);
+    }
+  }
+
+  function refreshList() {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    viewer.querySelectorAll(".lesson-list-item").forEach(button => {
+      const lesson = getLessons()[Number(button.dataset.lessonIndex)];
+      if (!lesson) return;
+
+      const completed = isLessonCompleted(lesson.id);
+      const number = button.querySelector("span:first-child");
+      const status = button.querySelector("span:last-child");
+
+      if (number) {
+        number.textContent = completed
+          ? "✓"
+          : Number(button.dataset.lessonIndex) + 1;
+      }
+
+      if (status) {
+        status.textContent = completed
+          ? (getCurrentLanguage() === "ar" ? "مكتمل" : "Completed")
+          : lesson.duration;
+      }
+    });
+  }
+
+  if (typeof window.renderCourseLessonList === "function") {
+    const originalList = window.renderCourseLessonList;
+
+    window.renderCourseLessonList = function(courseId) {
+      currentCourse = courseId;
+      originalList.call(this, courseId);
+      updateProgress();
+    };
+  }
+
+  if (typeof window.renderLesson === "function") {
+    const originalRender = window.renderLesson;
+
+    window.renderLesson = function(lesson) {
+      originalRender.call(this, lesson);
+      if (!lesson) return;
+
+      updateProgress();
+      updateLessonActions(lesson);
+    };
+  }
+
+  // Capture our navigation buttons before older handlers.
+  document.addEventListener("click", function(event) {
+    const button = event.target.closest("[data-fix-action]");
+    if (!button) return;
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer || !viewer.contains(button)) return;
+
+    const action = button.dataset.fixAction;
+    const lesson = getCurrentLesson();
+    const lessons = getLessons();
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (action === "back") {
+      window.renderCourseLessonList(currentCourse);
+      return;
+    }
+
+    if (!lesson) return;
+
+    if (action === "bookmark") {
+      toggleBookmark(lesson.id);
+      updateLessonActions(lesson);
+      return;
+    }
+
+    const index = lessons.findIndex(item => item.id === lesson.id);
+
+    if (action === "previous" && index > 0) {
+      window.renderLesson(lessons[index - 1]);
+    }
+
+    if (action === "next" && index >= 0 && index < lessons.length - 1) {
+      window.renderLesson(lessons[index + 1]);
+    }
+  }, true);
+
+  // Refresh progress after the original completion handler runs.
+  document.addEventListener("click", function(event) {
+    if (!event.target.closest("#completeLessonButton")) return;
+
+    window.setTimeout(function() {
+      updateProgress();
+      refreshList();
+
+      const lesson = getCurrentLesson();
+      if (lesson) updateLessonActions(lesson);
+    }, 50);
+  });
+
+  console.info("CS MATE learning features fixed.");
+})();
+
 
     
  
