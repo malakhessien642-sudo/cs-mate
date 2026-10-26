@@ -1110,3 +1110,227 @@ HTML_LESSONS.push(
 );
 
 console.log("HTML lessons 13–16 added.");
+
+/* =========================================
+   CS MATE — HTML COURSE CONNECTION
+   Connect HTML lessons to the existing UI
+========================================= */
+
+(function connectHTMLCourse() {
+  "use strict";
+
+  // Make the HTML course show the correct lesson count.
+  const htmlCourse = COURSES.find(
+    course => course.id === "html"
+  );
+
+  if (htmlCourse) {
+    htmlCourse.lessons = HTML_LESSONS.length;
+  }
+
+  // Keep a reference to the original C# lesson list.
+  const originalLessonList = window.renderCourseLessonList;
+
+  // Display the lesson list for HTML only.
+  window.renderCourseLessonList = function(courseId) {
+    if (courseId !== "html") {
+      return originalLessonList.call(this, courseId);
+    }
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    const language = getCurrentLanguage();
+
+    viewer.innerHTML = `
+      <div class="lesson-header">
+        <h2>${language === "ar"
+          ? "كورس HTML — محتوى الدروس"
+          : "HTML Course — Lessons"}</h2>
+        <p>${language === "ar"
+          ? `عدد الدروس: ${HTML_LESSONS.length}`
+          : `Total lessons: ${HTML_LESSONS.length}`}</p>
+      </div>
+
+      <div class="lesson-list">
+        ${HTML_LESSONS.map((lesson, index) => `
+          <button
+            type="button"
+            class="lesson-list-item"
+            data-html-lesson="${index}">
+            <span>${index + 1}</span>
+            <span>${lesson.title[language] || lesson.title.en}</span>
+            <span>${lesson.duration}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <button type="button" id="htmlBackToCourses">
+        ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+      </button>
+    `;
+
+    viewer.hidden = false;
+    viewer.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    viewer.querySelectorAll("[data-html-lesson]").forEach(button => {
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.htmlLesson);
+        const lesson = HTML_LESSONS[index];
+
+        if (!lesson) return;
+
+        // Convert the explanation arrays into readable text.
+        const preparedLesson = {
+          ...lesson,
+          codeExplanation: {
+            ar: Array.isArray(lesson.codeExplanation?.ar)
+              ? lesson.codeExplanation.ar.join("\n")
+              : lesson.codeExplanation?.ar || "",
+            en: Array.isArray(lesson.codeExplanation?.en)
+              ? lesson.codeExplanation.en.join("\n")
+              : lesson.codeExplanation?.en || ""
+          }
+        };
+
+        window.renderLesson(preparedLesson);
+      });
+    });
+
+    document.querySelector("#htmlBackToCourses")
+      ?.addEventListener("click", () => {
+        viewer.hidden = true;
+        document.querySelector("#coursesGrid")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+  };
+
+  // Refresh the course cards so HTML displays 16 lessons.
+  if (typeof renderCourses === "function") {
+    renderCourses();
+  }
+
+  console.log("CS MATE: HTML course connection loaded.");
+})();
+
+/* =========================================
+   CS MATE — HTML COURSE INTEGRATION
+========================================= */
+
+(function connectHTMLLessons() {
+  "use strict";
+
+  // Register HTML lessons for the existing learning interface.
+  window.HTML_LESSONS = HTML_LESSONS;
+
+  // Update the HTML course lesson count.
+  const htmlCourse = COURSES.find(
+    course => course.id === "html"
+  );
+
+  if (htmlCourse) {
+    htmlCourse.lessons = HTML_LESSONS.length;
+  }
+
+  // Return the correct lessons for each course.
+  const originalRenderList = window.renderCourseLessonList;
+
+  if (typeof originalRenderList === "function") {
+    window.renderCourseLessonList = function(courseId) {
+      if (courseId !== "html") {
+        return originalRenderList.call(this, courseId);
+      }
+
+      const viewer = document.querySelector("#lessonViewer");
+      if (!viewer) return;
+
+      const language = getCurrentLanguage();
+
+      viewer.innerHTML = `
+        <div class="lesson-header">
+          <h2>
+            ${language === "ar" ? "كورس HTML" : "HTML Course"}
+          </h2>
+          <p>
+            ${language === "ar"
+              ? `عدد الدروس: ${HTML_LESSONS.length}`
+              : `Total lessons: ${HTML_LESSONS.length}`}
+          </p>
+        </div>
+
+        <div class="lesson-list">
+          ${HTML_LESSONS.map((lesson, index) => `
+            <button
+              type="button"
+              class="lesson-list-item"
+              data-html-index="${index}">
+              <span>${index + 1}</span>
+              <span>${lesson.title[language] || lesson.title.en}</span>
+              <span>${lesson.duration}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+
+      viewer.hidden = false;
+      viewer.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    };
+  }
+
+  console.info("CS MATE: HTML lessons registered.");
+})();
+
+/* =========================================
+   CS MATE — HTML LESSON CLICK HANDLER
+========================================= */
+
+(function connectHTMLLessonClicks() {
+  "use strict";
+
+  const previousRenderer = window.renderCourseLessonList;
+
+  if (typeof previousRenderer !== "function") {
+    console.error("CS MATE: Lesson renderer was not found.");
+    return;
+  }
+
+  window.renderCourseLessonList = function (courseId) {
+    previousRenderer.call(this, courseId);
+
+    if (courseId !== "html") return;
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    viewer.querySelectorAll("[data-html-index]").forEach(button => {
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.htmlIndex);
+        const lesson = HTML_LESSONS[index];
+
+        if (!lesson || typeof window.renderLesson !== "function") {
+          return;
+        }
+
+        const language = getCurrentLanguage();
+
+        const preparedLesson = {
+          ...lesson,
+          codeExplanation: {
+            ar: lesson.codeExplanation.ar.join("\n"),
+            en: lesson.codeExplanation.en.join("\n")
+          }
+        };
+
+        window.renderLesson(preparedLesson);
+      });
+    });
+  };
+
+  console.log("CS MATE: HTML lesson click handler ready.");
+})();
