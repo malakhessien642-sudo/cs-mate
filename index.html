@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <meta name="theme-color" content="#080914">
+  <meta name="description" content="CS MATE — منصة تعليم البرمجة من الصفر حتى الاحتراف.">  <title>CS MATE | تعلم البرمجة</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">  <link rel="stylesheet" href="style.css">
+</head><body>
+  <div class="site-wrapper" id="siteWrapper"><header class="site-header">
+  <div class="container header-content">
+
+    <a href="#home" class="brand" aria-label="CS MATE Home">
+      <span class="brand-icon">&lt;/&gt;</span>
+      <span class="brand-name">CS <strong>MATE</strong></span>
+    </a><nav class="main-nav" id="mainNav" aria-label="القائمة الرئيسية">
+          <a href="#home" data-i18n="navHome">الرئيسية</a>
+          <a href="#courses" data-i18n="navCourses">لغات البرمجة</a>
+          <a href="#roadmap" data-i18n="navRoadmap">خطة التعلم</a>
+          <a href="#about" data-i18n="navAbout">عن المنصة</a>
+        </nav>    <div class="header-actions">
+      <button class="icon-button" id="themeToggle" type="button"
+        aria-label="تغيير الوضع إلى الفاتح" title="تغيير الوضع">
+        <span id="themeIcon" aria-hidden="true">☀️</span>
+      </button>
+
+      <button class="language-button" id="languageToggle" type="button"
+        aria-label="Switch language to English">
+        EN
+      </button>
+
+      <button class="menu-toggle" id="menuToggle" type="button"
+        aria-label="فتح القائمة" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<main>
+  <section class="hero-section" id="home">
+    <div class="container hero-grid">
+
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          <span data-i18n="heroBadge">رحلتك إلى عالم البرمجة تبدأ هنا</span>
+        </div>
+
+        <h1>
+          <span data-i18n="heroTitle1">فكّر بالكود.</span>
+          <span class="gradient-text" data-i18n="heroTitle2">وابنِ مستقبلك.</span>
+        </h1>
+
+        <p class="hero-description" data-i18n="heroDescription">
+          تعلّم البرمجة من الصفر من خلال دروس مفصلة،
+          وأمثلة عملية، وتدريبات تساعدك على بناء مهاراتك
+          خطوة بخطوة.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#courses" class="button button-primary" data-i18n="heroStart">
+            ابدأ رحلتك البرمجية
+            <span aria-hidden="true">←</span>
+          </a>
+
+          <a href="#roadmap" class="button button-secondary" data-i18n="heroExplore">
+            استكشف خطة التعلم
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section><section class="courses-section section-padding" id="courses">
+        <div class="container">      <div class="section-heading">
+        <div>
+          <span class="section-kicker" data-i18n="coursesKicker">
+            YOUR LEARNING LIBRARY
+          </span>
+
+          <h2 data-i18n="coursesTitle">استكشف لغات البرمجة</h2>
+
+          <p data-i18n="coursesDescription">
+            اختر مسارك، وتعلّم من الأساسيات إلى الموضوعات المتقدمة.
+          </p>
+        </div>
+
+        <span class="course-count" id="courseCount">8 مسارات</span>
+      </div>
+
+      <div class="course-tools">
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            id="courseSearch"
+            placeholder="ابحث عن لغة برمجة..."
+            data-i18n-placeholder="searchPlaceholder"
+            aria-label="البحث عن لغة برمجة"
+          >
+        </label>
+
+        <label class="filter-box">
+          <span class="visually-hidden">تصفية حسب المجال</span>
+          <select id="courseFilter">
+            <option value="all" data-i18n="filterAll">كل المسارات</option>
+            <option value="programming" data-i18n="filterProgramming">برمجة</option>
+            <option value="web" data-i18n="filterWeb">تطوير الويب</option>
+            <option value="database" data-i18n="filterDatabase">قواعد البيانات</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid" aria-live="polite">
+        <!-- JavaScript will render the course cards here. -->
+      </div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <span aria-hidden="true">⌕</span>
+        <h3 data-i18n="emptyTitle">لم نعثر على نتائج</h3>
+        <p data-i18n="emptyDescription">جرّب البحث بكلمات أخرى.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="roadmap-section section-padding" id="roadmap">
+    <div class="container">
+
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker" data-i18n="roadmapKicker">
+            YOUR NEXT STEP
+          </span>
+
+          <h2 data-i18n="roadmapTitle">ابدأ رحلتك بشكل صحيح</h2>
+
+          <p data-i18n="roadmapDescription">
+            تعلّم الأساسيات، وطبّق ما تتعلمه، ثم ابنِ مشروعاتك الخاصة.
+          </p>
+        </div>
+      </div>
+
+      <div class="roadmap-grid">
+
+        <article class="roadmap-card">
+          <span class="step-number">01</span>
+          <h3 data-i18n="stepOneTitle">تعلّم الأساسيات</h3>
+          <p data-i18n="stepOneDescription">
+            افهم المتغيرات والشروط والحلقات والدوال قبل الانتقال
+            إلى الموضوعات المتقدمة.
+          </p>
+        </article>
+
+        <article class="roadmap-card">
+          <span class="step-number">02</span>
+          <h3 data-i18n="stepTwoTitle">اكتب الكود بنفسك</h3>
+          <p data-i18n="stepTwoDescription">
+            جرّب الأمثلة، وحلّ التمارين، وافهم الأخطاء لتثبيت المفاهيم.
+          </p>
+        </article>
+
+        <article class="roadmap-card">
+          <span class="step-number">03</span>
+          <h3 data-i18n="stepThreeTitle">ابنِ مشروعات حقيقية</h3>
+          <p data-i18n="stepThreeDescription">
+            طبّق ما تعلمته في مشروعات صغيرة ثم انتقل تدريجيًا
+            إلى مشروعات أكبر.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section><section class="about-section section-padding" id="about">
+        <div class="container about-content">      <span class="section-kicker" data-i18n="aboutKicker">
+        LEARN WITH PURPOSE
+      </span>
+
+      <h2 data-i18n="aboutTitle">
+        المعرفة الحقيقية تبدأ بالفهم والتطبيق.
+      </h2>
+
+      <p data-i18n="aboutDescription">
+        CS MATE منصة تعليمية تهدف إلى تنظيم رحلة تعلم البرمجة،
+        من المفاهيم الأساسية إلى التطبيقات العملية، من خلال
+        شروحات مفصلة وأمثلة وتدريبات تساعدك على التقدم بثقة.
+      </p>
+
+      <a href="#courses" class="button button-primary" data-i18n="aboutButton">
+        اكتشف المسارات
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-content">
+
+    <a href="#home" class="brand footer-brand">
+      <span class="brand-icon">&lt;/&gt;</span>
+      <span class="brand-name">CS <strong>MATE</strong></span>
+    </a>
+
+    <p data-i18n="footerText">
+      تعلّم اليوم، واصنع حلول الغد.
+    </p>
+
+    <span class="footer-copy">
+      © <span id="currentYear"></span> CS MATE
+    </span>
+
+  </div>
+</footer>
+
+  </div>  <script src="script.js"></script></body>
+</html>
