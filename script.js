@@ -1513,6 +1513,54 @@ function renderCourseLessonList(courseId) {
 }
 
 console.info("CS MATE lesson list is ready.");
+/* =========================================
+   CS MATE — PART 17
+   Restore lesson navigation safely
+========================================= */
+
+(function connectCSMateLessonNavigation() {
+  "use strict";
+
+  function connectLessonButtons() {
+    const grid = document.querySelector("#coursesGrid");
+
+    if (!grid || grid.dataset.lessonNavigationFixed === "true") {
+      return;
+    }
+
+    // Replace the grid to remove old click listeners.
+    const cleanGrid = grid.cloneNode(true);
+    grid.replaceWith(cleanGrid);
+
+    cleanGrid.dataset.lessonNavigationFixed = "true";
+
+    cleanGrid.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-open-course]");
+
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (typeof CourseNavigation !== "undefined") {
+        CourseNavigation.currentCourseId = button.dataset.openCourse;
+      }
+
+      renderCourseLessonList(button.dataset.openCourse);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      connectLessonButtons,
+      { once: true }
+    );
+  } else {
+    connectLessonButtons();
+  }
+})();
+
 
     
  
