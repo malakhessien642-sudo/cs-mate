@@ -1439,3 +1439,124 @@ console.log("HTML lessons 13–16 added.");
 
   console.log("CS MATE: HTML course integration initialized.");
 })();
+/* =========================================
+   CS MATE — WORKING HTML COURSE FIX
+========================================= */
+
+(function () {
+  "use strict";
+
+  // Update the HTML course card.
+  const htmlCourse = COURSES.find(
+    course => course.id === "html"
+  );
+
+  if (htmlCourse) {
+    htmlCourse.lessons = HTML_LESSONS.length;
+    renderCourses();
+  }
+
+  // Use the existing lesson viewer for HTML.
+  openCourseLessons = function (courseId) {
+    if (courseId === "html") {
+      renderCourseLessonList("html");
+      return;
+    }
+
+    if (courseId === "csharp") {
+      renderCourseLessonList("csharp");
+      return;
+    }
+
+    const language = getCurrentLanguage();
+
+    alert(
+      language === "ar"
+        ? "محتوى هذا الكورس قيد الإعداد."
+        : "This course content is being prepared."
+    );
+  };
+
+  // Display the right lessons for each course.
+  renderCourseLessonList = function (courseId) {
+    const course = COURSES.find(
+      item => item.id === courseId
+    );
+
+    if (!course) return;
+
+    const language = getCurrentLanguage();
+    const lessons = courseId === "html"
+      ? HTML_LESSONS
+      : courseId === "csharp"
+        ? CSHARP_LESSONS
+        : [];
+
+    const viewer = createLessonViewer();
+
+    if (!lessons.length) {
+      viewer.innerHTML = `
+        <h2>${language === "ar"
+          ? "الدروس قيد الإعداد"
+          : "Lessons coming soon"}</h2>
+        <button id="closeLessonList" type="button">
+          ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+        </button>
+      `;
+      viewer.hidden = false;
+      document.querySelector("#closeLessonList")
+        ?.addEventListener("click", () => {
+          viewer.hidden = true;
+        });
+      return;
+    }
+
+    viewer.innerHTML = `
+      <div class="lesson-header">
+        <h2>${language === "ar"
+          ? `كورس ${course.name.ar} — محتوى الدروس`
+          : `${course.name.en} Course — Lessons`}</h2>
+        <p>${language === "ar"
+          ? `عدد الدروس: ${lessons.length}`
+          : `Total lessons: ${lessons.length}`}</p>
+      </div>
+
+      <div class="lesson-list">
+        ${lessons.map((lesson, index) => `
+          <button type="button"
+            class="lesson-list-item"
+            data-course-lesson-index="${index}">
+            <span>${index + 1}</span>
+            <span>${lesson.title[language] || lesson.title.en}</span>
+            <span>${lesson.duration}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <button id="closeLessonList" type="button">
+        ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+      </button>
+    `;
+
+    viewer.hidden = false;
+    viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    viewer.querySelectorAll("[data-course-lesson-index]")
+      .forEach(button => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.courseLessonIndex);
+          const lesson = lessons[index];
+
+          if (lesson) renderLesson(lesson);
+        });
+      });
+
+    viewer.querySelector("#closeLessonList")
+      ?.addEventListener("click", () => {
+        viewer.hidden = true;
+      });
+  };
+
+  console.log("CS MATE: HTML course is now connected.");
+})();
+
