@@ -2386,6 +2386,219 @@ console.info("CS MATE lesson list is ready.");
   console.info("CS MATE: feature repair loaded.");
 })();
 
+/* =========================================
+   CS MATE — PART 20
+   Final learning features repair
+========================================= */
+
+(function repairCSMateLearning() {
+  "use strict";
+
+  // Use the original course data and original storage functions.
+  function lessons() {
+    return typeof CSHARP_LESSONS !== "undefined"
+      ? CSHARP_LESSONS
+      : [];
+  }
+
+  function language() {
+    return getCurrentLanguage();
+  }
+
+  function activeLesson() {
+    const button = document.querySelector(
+      "#lessonViewer #completeLessonButton"
+    );
+
+    if (!button) return null;
+
+    return lessons().find(
+      item => String(item.id) === button.dataset.lessonId
+    ) || null;
+  }
+
+  function updateProgress() {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    const all = lessons();
+    const done = all.filter(
+      item => isLessonCompleted(item.id)
+    ).length;
+
+    const percent = all.length
+      ? Math.round(done / all.length * 100)
+      : 0;
+
+    let bar = viewer.querySelector(".lesson-progress");
+
+    if (!bar) {
+      bar = document.createElement("section");
+      bar.className = "lesson-progress";
+
+      const header = viewer.querySelector(".lesson-header");
+      if (header) header.after(bar);
+      else viewer.prepend(bar);
+    }
+
+    bar.innerHTML = `
+      <div class="lesson-progress-info">
+        <strong>${language() === "ar" ? "تقدمك في التعلم" : "Learning Progress"}</strong>
+        <span>${done} / ${all.length} — ${percent}%</span>
+      </div>
+      <div class="lesson-progress-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="${percent}">
+        <div class="lesson-progress-fill"
+             style="width:${percent}%"></div>
+      </div>
+    `;
+
+    viewer.querySelectorAll(".lesson-list-item").forEach(button => {
+      const item = all[Number(button.dataset.lessonIndex)];
+      if (!item) return;
+
+      const spans = button.querySelectorAll("span");
+      const complete = isLessonCompleted(item.id);
+
+      if (spans[0]) {
+        spans[0].textContent = complete
+          ? "✓"
+          : Number(button.dataset.lessonIndex) + 1;
+      }
+
+      if (spans[2]) {
+        spans[2].textContent = complete
+          ? (language() === "ar" ? "مكتمل" : "Completed")
+          : item.duration;
+      }
+    });
+  }
+
+  function updateActions(item) {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer || !item) return;
+
+    viewer.querySelector(".lesson-actions")?.remove();
+
+    const all = lessons();
+    const index = all.findIndex(entry => entry.id === item.id);
+    const ar = language() === "ar";
+
+    const actions = document.createElement("div");
+    actions.className = "lesson-actions";
+
+    actions.innerHTML = `
+      <button type="button" data-csmate-action="back">
+        ${ar ? "← قائمة الدروس" : "← Lesson List"}
+      </button>
+
+      <button type="button" data-csmate-action="previous"
+        ${index <= 0 ? "disabled" : ""}>
+        ${ar ? "الدرس السابق" : "Previous Lesson"}
+      </button>
+
+      <button type="button" data-csmate-action="bookmark"
+        class="lesson-bookmark-button ${isBookmarked(item.id) ? "is-bookmarked" : ""}">
+        ${isBookmarked(item.id)
+          ? (ar ? "★ في المفضلة" : "★ Bookmarked")
+          : (ar ? "☆ أضف للمفضلة" : "☆ Bookmark")}
+      </button>
+
+      <button type="button" data-csmate-action="next"
+        ${index < 0 || index >= all.length - 1 ? "disabled" : ""}>
+        ${ar ? "الدرس التالي →" : "Next Lesson →"}
+      </button>
+    `;
+
+    const progress = viewer.querySelector(".lesson-progress");
+    if (progress) progress.after(actions);
+    else viewer.prepend(actions);
+  }
+
+  // Keep the existing full-screen behavior and enhance the content.
+  const previousList = window.renderCourseLessonList;
+
+  if (typeof previousList === "function") {
+    window.renderCourseLessonList = function(courseId) {
+      const result = previousList.apply(this, arguments);
+      updateProgress();
+      return result;
+    };
+  }
+
+  const previousRender = window.renderLesson;
+
+  if (typeof previousRender === "function") {
+    window.renderLesson = function(item) {
+      const result = previousRender.apply(this, arguments);
+
+      if (item) {
+        updateProgress();
+        updateActions(item);
+      }
+
+      return result;
+    };
+  }
+
+  // These buttons use their own attribute so older handlers
+  // cannot accidentally intercept the same action.
+  document.addEventListener("click", function(event) {
+    const button = event.target.closest("[data-csmate-action]");
+    if (!button) return;
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer || !viewer.contains(button)) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const action = button.dataset.csmateAction;
+    const item = activeLesson();
+    const all = lessons();
+
+    if (action === "back") {
+      window.renderCourseLessonList("csharp");
+      return;
+    }
+
+    if (!item) return;
+
+    const index = all.findIndex(entry => entry.id === item.id);
+
+    if (action === "bookmark") {
+      toggleBookmark(item.id);
+      updateActions(item);
+      return;
+    }
+
+    if (action === "previous" && index > 0) {
+      window.renderLesson(all[index - 1]);
+      return;
+    }
+
+    if (action === "next" && index >= 0 && index < all.length - 1) {
+      window.renderLesson(all[index + 1]);
+    }
+  }, true);
+
+  // Refresh the progress after the original completion handler
+  // updates LearningData.progress.
+  document.addEventListener("click", function(event) {
+    if (!event.target.closest("#completeLessonButton")) return;
+
+    setTimeout(function() {
+      updateProgress();
+      updateActions(activeLesson());
+    }, 150);
+  });
+
+  console.info("CS MATE: final learning repair loaded.");
+})();
+
 
     
  
