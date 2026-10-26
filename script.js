@@ -1561,6 +1561,85 @@ console.info("CS MATE lesson list is ready.");
   }
 })();
 
+/* =========================================
+   CS MATE — PART 18
+   Full-screen learning interface
+========================================= */
+
+(function setupCSMateLearningScreen() {
+  "use strict";
+
+  function openLearningScreen() {
+    const viewer = document.querySelector("#lessonViewer");
+
+    if (!viewer) return;
+
+    // Move the learning interface above the page.
+    if (viewer.parentElement !== document.body) {
+      document.body.appendChild(viewer);
+    }
+
+    viewer.classList.add("lesson-viewer");
+    viewer.hidden = false;
+
+    document.body.classList.add("cs-mate-learning-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLearningScreen() {
+    const viewer = document.querySelector("#lessonViewer");
+
+    if (viewer) {
+      viewer.hidden = true;
+    }
+
+    document.body.classList.remove("cs-mate-learning-open");
+    document.body.style.overflow = "";
+  }
+
+  // Keep the original lesson functions and enhance them.
+  if (typeof window.renderCourseLessonList === "function") {
+    const originalRenderCourseLessonList =
+      window.renderCourseLessonList;
+
+    window.renderCourseLessonList = function (courseId) {
+      originalRenderCourseLessonList.call(this, courseId);
+      openLearningScreen();
+    };
+  }
+
+  if (typeof window.renderLesson === "function") {
+    const originalRenderLesson = window.renderLesson;
+
+    window.renderLesson = function (lesson) {
+      originalRenderLesson.call(this, lesson);
+      openLearningScreen();
+    };
+  }
+
+  // Handle closing the learning screen.
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest(
+      "#closeLessonList, #closeLessonButton"
+    );
+
+    if (button) {
+      closeLearningScreen();
+    }
+  });
+
+  // Escape closes the learning screen.
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      const viewer = document.querySelector("#lessonViewer");
+
+      if (viewer && !viewer.hidden) {
+        closeLearningScreen();
+      }
+    }
+  });
+})();
+
 
     
  
