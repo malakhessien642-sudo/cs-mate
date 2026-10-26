@@ -1301,3 +1301,453 @@ print(student["grade"])`,
     }
   }
 ];
+
+/* =========================================
+   CS MATE — PYTHON COURSE CONTROLS
+   Navigation, progress and saved results
+========================================= */
+
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "csmate_python_progress";
+
+  function getLessons() {
+    if (typeof PYTHON_LESSONS !== "undefined") {
+      return PYTHON_LESSONS;
+    }
+
+    if (Array.isArray(window.PYTHON_LESSONS)) {
+      return window.PYTHON_LESSONS;
+    }
+
+    return [];
+  }
+
+  function getProgress() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : {
+        completed: [],
+        currentLesson: 0,
+        quizScores: {}
+      };
+    } catch (error) {
+      return {
+        completed: [],
+        currentLesson: 0,
+        quizScores: {}
+      };
+    }
+  }
+
+  function saveProgress(progress) {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(progress)
+      );
+    } catch (error) {
+      console.warn("Could not save Python progress.", error);
+    }
+  }
+
+  function markLessonComplete(lessonId) {
+    const progress = getProgress();
+
+    if (!progress.completed.includes(lessonId)) {
+      progress.completed.push(lessonId);
+    }
+
+    saveProgress(progress);
+    updateProgressDisplay();
+  }
+
+  function saveQuizScore(lessonId, score, total) {
+    const progress = getProgress();
+
+    progress.quizScores[lessonId] = {
+      score: Number(score),
+      total: Number(total),
+      date: new Date().toISOString()
+    };
+
+    saveProgress(progress);
+  }
+
+  function updateProgressDisplay() {
+    const lessons = getLessons();
+    const progress = getProgress();
+
+    const percentage = lessons.length
+      ? Math.round(
+          progress.completed.length / lessons.length * 100
+        )
+      : 0;
+
+    document.querySelectorAll(
+      "[data-python-progress]"
+    ).forEach(function (element) {
+      element.textContent = percentage + "%";
+    });
+
+    document.querySelectorAll(
+      "[data-python-progress-bar]"
+    ).forEach(function (element) {
+      element.style.width = percentage + "%";
+      element.setAttribute("aria-valuenow", percentage);
+    });
+
+    document.querySelectorAll(
+      "[data-python-completed]"
+    ).forEach(function (element) {
+      element.textContent = progress.completed.length;
+    });
+  }
+
+  window.CSMatePython = {
+    getLessons: getLessons,
+    getProgress: getProgress,
+    saveProgress: saveProgress,
+    markLessonComplete: markLessonComplete,
+    saveQuizScore: saveQuizScore,
+    updateProgressDisplay: updateProgressDisplay
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      updateProgressDisplay
+    );
+  } else {
+    updateProgressDisplay();
+  }
+})();
+
+/* =========================================
+   CS MATE — PYTHON LESSON NAVIGATION
+========================================= */
+
+(function () {
+  "use strict";
+
+  const api = window.CSMatePython;
+
+  if (!api) {
+    console.warn("Load the Python controls code first.");
+    return;
+  }
+
+  const lessons = api.getLessons();
+
+  if (!Array.isArray(lessons) || lessons.length === 0) {
+    console.warn("Python lessons are not available.");
+    return;
+  }
+
+  let progress = api.getProgress();
+
+  function getLessonId(index) {
+    const lesson = lessons[index];
+    return lesson ? (lesson.id ?? index + 1) : null;
+  }
+
+  function saveCurrentLesson(index) {
+    progress = api.getProgress();
+    progress.currentLesson = index;
+    api.saveProgress(progress);
+  }
+
+  function getText(value) {
+    if (typeof value === "string") return value;
+
+    if (value && typeof value === "object") {
+      return value.ar || value.en || "";
+    }
+
+    return "";
+  }
+
+  function renderPythonLesson(index) {
+    if (index < 0 || index >= lessons.length) return;
+
+    const lesson = lessons[index];
+
+    const title = getText(lesson.title);
+    const explanation = getText(lesson.explanation);
+    const code = getText(lesson.code);
+    const exercise = getText(lesson.exercise);
+    const summary = getText(lesson.summary);
+
+    const selectors = {
+      title: "[data-python-title]",
+      explanation: "[data-python-explanation]",
+      code: "[data-python-code]",
+      exercise: "[data-python-exercise]",
+      summary: "[data-python-summary]",
+      counter: "[data-python-lesson-counter]"
+    };
+
+    function setText(selector, value) {
+      document.querySelectorAll(selector).forEach(function (el) {
+        el.textContent = value;
+      });
+    }
+
+    setText(selectors.title, title);
+    setText(selectors.explanation, explanation);
+    setText(selectors.code, code);
+    setText(selectors.exercise, exercise);
+    setText(selectors.summary, summary);
+
+    setText(
+      selectors.counter,
+      "Lesson " + (index + 1) + " / " + lessons.length
+    );
+
+    document.querySelectorAll("[data-python-previous]")
+      .forEach(function (button) {
+        button.disabled = index === 0;
+      });
+
+    document.querySelectorAll("[data-python-next]")
+      .forEach(function (button) {
+        button.disabled = index === lessons.length - 1;
+      });
+
+    saveCurrentLesson(index);
+  }
+
+  document.addEventListener("click", function (event) {
+    const previous = event.target.closest(
+      "[data-python-previous]"
+    );
+
+    const next = event.target.closest(
+      "[data-python-next]"
+    );
+
+    const complete = event.target.closest(
+      "[data-python-complete]"
+    );
+
+    progress = api.getProgress();
+
+    let index = Number(progress.currentLesson) || 0;
+
+    if (previous) {
+      renderPythonLesson(index - 1);
+    }
+
+    if (next) {
+      renderPythonLesson(index + 1);
+    }
+
+    if (complete) {
+      const lessonId = getLessonId(index);
+      api.markLessonComplete(lessonId);
+
+      complete.textContent = "Completed ✓";
+      complete.disabled = true;
+    }
+  });
+
+  window.CSMatePython.renderLesson = renderPythonLesson;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    progress = api.getProgress();
+
+    const index = Math.min(
+      Math.max(Number(progress.currentLesson) || 0, 0),
+      lessons.length - 1
+    );
+
+    renderPythonLesson(index);
+  });
+
+  if (document.readyState !== "loading") {
+    const index = Math.min(
+      Math.max(Number(progress.currentLesson) || 0, 0),
+      lessons.length - 1
+    );
+
+    renderPythonLesson(index);
+  }
+})();
+
+/* =========================================
+   CS MATE — PYTHON QUIZ SYSTEM
+   Scoring, answers and saved results
+========================================= */
+
+(function () {
+  "use strict";
+
+  const api = window.CSMatePython;
+
+  if (!api) {
+    console.warn("Python controls are not loaded.");
+    return;
+  }
+
+  function saveScore(lessonId, score, total) {
+    api.saveQuizScore(lessonId, score, total);
+
+    document.querySelectorAll("[data-python-quiz-score]")
+      .forEach(function (element) {
+        element.textContent = score + " / " + total;
+      });
+
+    document.querySelectorAll("[data-python-quiz-percent]")
+      .forEach(function (element) {
+        element.textContent = total > 0
+          ? Math.round(score / total * 100) + "%"
+          : "0%";
+      });
+  }
+
+  function gradeQuiz(form) {
+    const questions = Array.from(
+      form.querySelectorAll("[data-correct-answer]")
+    );
+
+    if (!questions.length) {
+      const result = form.querySelector("[data-quiz-result]");
+      if (result) {
+        result.textContent =
+          "No quiz questions were found.";
+      }
+      return;
+    }
+
+    let score = 0;
+
+    questions.forEach(function (question) {
+      const correctAnswer =
+        question.dataset.correctAnswer;
+
+      const selected = question.querySelector(
+        'input[type="radio"]:checked, ' +
+        'input[type="checkbox"]:checked'
+      );
+
+      const textInput = question.querySelector(
+        'input[type="text"], input:not([type])'
+      );
+
+      const answer = selected
+        ? selected.value
+        : textInput
+          ? textInput.value.trim()
+          : "";
+
+      const isCorrect =
+        String(answer).trim().toLowerCase() ===
+        String(correctAnswer).trim().toLowerCase();
+
+      question.dataset.answeredCorrectly =
+        String(isCorrect);
+
+      question.querySelectorAll("[data-answer-feedback]")
+        .forEach(function (feedback) {
+          feedback.textContent = isCorrect
+            ? "Correct!"
+            : "Try again.";
+
+          feedback.dataset.correct = String(isCorrect);
+        });
+
+      if (isCorrect) score++;
+    });
+
+    const progress = api.getProgress();
+    const index = Number(progress.currentLesson) || 0;
+    const lessons = api.getLessons();
+    const lesson = lessons[index];
+
+    if (lesson) {
+      saveScore(lesson.id ?? index + 1, score, questions.length);
+    }
+
+    const result = form.querySelector("[data-quiz-result]");
+
+    if (result) {
+      const percentage = Math.round(
+        score / questions.length * 100
+      );
+
+      result.textContent =
+        "Your score: " + score + " / " +
+        questions.length + " (" + percentage + "%)";
+    }
+  }
+
+  document.addEventListener("submit", function (event) {
+    const form = event.target.closest(
+      "[data-python-quiz]"
+    );
+
+    if (!form) return;
+
+    event.preventDefault();
+    gradeQuiz(form);
+  });
+
+  window.CSMatePython.gradeQuiz = gradeQuiz;
+})();
+
+/* =========================================
+   CS MATE — PYTHON RESULTS SUMMARY
+========================================= */
+
+(function () {
+  "use strict";
+
+  const api = window.CSMatePython;
+  if (!api) return;
+
+  function updateQuizSummary() {
+    const progress = api.getProgress();
+    const scores = Object.values(progress.quizScores || {});
+
+    const totalCorrect = scores.reduce(function (sum, item) {
+      return sum + (Number(item.score) || 0);
+    }, 0);
+
+    const totalQuestions = scores.reduce(function (sum, item) {
+      return sum + (Number(item.total) || 0);
+    }, 0);
+
+    const percentage = totalQuestions
+      ? Math.round(totalCorrect / totalQuestions * 100)
+      : 0;
+
+    document.querySelectorAll("[data-python-total-score]")
+      .forEach(function (element) {
+        element.textContent =
+          totalCorrect + " / " + totalQuestions;
+      });
+
+    document.querySelectorAll("[data-python-average-score]")
+      .forEach(function (element) {
+        element.textContent = percentage + "%";
+      });
+
+    document.querySelectorAll("[data-python-quiz-count]")
+      .forEach(function (element) {
+        element.textContent = scores.length;
+      });
+  }
+
+  window.CSMatePython.updateQuizSummary =
+    updateQuizSummary;
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      updateQuizSummary
+    );
+  } else {
+    updateQuizSummary();
+  }
+})();
