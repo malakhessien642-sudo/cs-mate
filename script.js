@@ -2938,6 +2938,546 @@ Type conversion matters because arithmetic operations require suitable data type
 
 console.info("CS MATE: Lesson 4 added.");
 
+/* =========================================
+   CS MATE — PART 23
+   Lesson 5: Conditions and Decision Making
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-05",
+
+  title: {
+    ar: "5. الشروط واتخاذ القرار",
+    en: "5. Conditions and Decision Making"
+  },
+
+  duration: "25 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `تُستخدم الشروط لاتخاذ قرار بناءً على قيمة أو تعبير منطقي.
+
+1. if: تنفذ الكود إذا كان الشرط صحيحًا.
+2. else: تنفذ كودًا بديلًا إذا كان الشرط غير صحيح.
+3. else if: تختبر شرطًا إضافيًا.
+4. يمكن استخدام معاملات المقارنة مثل > و < و == و !=.
+
+يجب أن يكون الشرط داخل الأقواس ()، ويُكتب الكود داخل الأقواس المعقوفة {}.`,
+
+    en: `Conditions allow a program to make decisions based on values or Boolean expressions.
+
+1. if: Executes code when a condition is true.
+2. else: Executes alternative code when the condition is false.
+3. else if: Tests an additional condition.
+4. Comparison operators include >, <, == and !=.
+
+Conditions go inside parentheses (), and code blocks use curly braces {}.`
+  },
+
+  code: `int grade = 85;
+
+if (grade >= 90)
+{
+    Console.WriteLine("Excellent");
+}
+else if (grade >= 75)
+{
+    Console.WriteLine("Very Good");
+}
+else if (grade >= 50)
+{
+    Console.WriteLine("Pass");
+}
+else
+{
+    Console.WriteLine("Try Again");
+}`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا متغيرًا باسم grade لتخزين الدرجة.",
+      "إذا كانت الدرجة 90 أو أكثر، تظهر Excellent.",
+      "إذا لم يتحقق الشرط الأول وكانت الدرجة 75 أو أكثر، تظهر Very Good.",
+      "إذا كانت الدرجة 50 أو أكثر، تظهر Pass.",
+      "إذا لم يتحقق أي شرط سابق، تظهر Try Again.",
+      "يتم تنفيذ أول فرع يتحقق شرطه فقط."
+    ],
+
+    en: [
+      "We created a variable named grade to store the mark.",
+      "If the mark is 90 or higher, Excellent is displayed.",
+      "If the first condition fails and the mark is at least 75, Very Good is displayed.",
+      "If the mark is at least 50, Pass is displayed.",
+      "If no previous condition matches, Try Again is displayed.",
+      "Only the first matching branch is executed."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "استخدام = بدلًا من == عند المقارنة.",
+      "نسيان الأقواس المعقوفة أو إغلاقها بشكل غير صحيح.",
+      "ترتيب الشروط بطريقة تجعل شرطًا عامًا يسبق شرطًا أكثر تحديدًا.",
+      "نسيان أن if تنفذ أول شرط صحيح فقط."
+    ],
+
+    en: [
+      "Using = instead of == for comparison.",
+      "Forgetting or incorrectly closing curly braces.",
+      "Placing a general condition before a more specific condition.",
+      "Forgetting that an if/else-if chain executes only the first matching branch."
+    ]
+  },
+
+  exercise: {
+    ar: "اكتبي برنامجًا يستقبل درجة الطالب، ثم يحدد هل هو ناجح أم راسب. اعتبري أن درجة النجاح 50. بعد ذلك أضيفي تصنيفًا للدرجات باستخدام if و else if.",
+    en: "Write a program that reads a student's mark and determines whether the student passes or fails. A passing mark is 50. Then add grade classifications using if and else if."
+  },
+
+  summary: {
+    ar: "تسمح if و else if و else للبرنامج باتخاذ قرارات مختلفة حسب الشروط. ترتيب الشروط مهم، وتُستخدم معاملات المقارنة لمقارنة القيم.",
+    en: "if, else if and else let a program make decisions based on conditions. Condition order matters, and comparison operators compare values."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 24
+   Lesson 6: Loops
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-06",
+
+  title: {
+    ar: "6. الحلقات التكرارية",
+    en: "6. Loops"
+  },
+
+  duration: "30 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `تُستخدم الحلقات التكرارية لتنفيذ مجموعة من التعليمات أكثر من مرة.
+
+1. for: مناسبة عندما نعرف عدد مرات التكرار غالبًا.
+2. while: تستمر ما دام الشرط صحيحًا.
+3. do-while: تنفذ الكود مرة واحدة على الأقل، ثم تختبر الشرط.
+
+يجب تحديث المتغير أو تغيير الشرط عند الحاجة حتى لا تحدث حلقة لا نهائية.`,
+
+    en: `Loops repeat a block of instructions multiple times.
+
+1. for: Often used when the number of repetitions is known.
+2. while: Continues while its condition is true.
+3. do-while: Executes the block at least once, then checks the condition.
+
+Update the counter or condition when necessary to avoid an infinite loop.`
+  },
+
+  code: `// for loop
+for (int i = 1; i <= 5; i++)
+{
+    Console.WriteLine(i);
+}
+
+// while loop
+int number = 1;
+
+while (number <= 3)
+{
+    Console.WriteLine("Number: " + number);
+    number++;
+}
+
+// do-while loop
+int count = 1;
+
+do
+{
+    Console.WriteLine("Count: " + count);
+    count++;
+}
+while (count <= 2);`,
+
+  codeExplanation: {
+    ar: [
+      "حلقة for تطبع الأرقام من 1 إلى 5.",
+      "int i = 1 يحدد قيمة البداية.",
+      "i <= 5 هو شرط استمرار الحلقة.",
+      "i++ يزيد قيمة i بمقدار واحد بعد كل تكرار.",
+      "حلقة while تستمر ما دام number أصغر من أو يساوي 3.",
+      "number++ يمنع بقاء الشرط صحيحًا إلى الأبد.",
+      "حلقة do-while تنفذ التعليمات مرة واحدة على الأقل قبل اختبار الشرط."
+    ],
+
+    en: [
+      "The for loop prints numbers from 1 to 5.",
+      "int i = 1 sets the starting value.",
+      "i <= 5 is the loop continuation condition.",
+      "i++ increases i by one after each iteration.",
+      "The while loop continues while number is less than or equal to 3.",
+      "number++ prevents the condition from remaining true forever.",
+      "The do-while loop executes its instructions at least once before checking the condition."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "نسيان زيادة العداد، مما قد يؤدي إلى حلقة لا نهائية.",
+      "استخدام < بدلًا من <= أو العكس، فيتغير عدد مرات التكرار.",
+      "وضع فاصلة منقوطة بعد شرط الحلقة بطريقة غير مقصودة.",
+      "نسيان أن do-while تنتهي بفاصلة منقوطة بعد while (condition)."
+    ],
+
+    en: [
+      "Forgetting to update the counter, which may cause an infinite loop.",
+      "Using < instead of <=, or vice versa, changing the number of iterations.",
+      "Accidentally placing a semicolon after the loop condition.",
+      "Forgetting the semicolon after the do-while condition."
+    ]
+  },
+
+  exercise: {
+    ar: "اكتبي برنامجًا يطبع الأرقام من 1 إلى 10 باستخدام for، ثم يطبع الأرقام الزوجية من 2 إلى 20. جرّبي تنفيذ مهمة مشابهة باستخدام while.",
+    en: "Write a program that prints numbers from 1 to 10 using for, then prints even numbers from 2 to 20. Try implementing a similar task using while."
+  },
+
+  summary: {
+    ar: "تكرر الحلقات التكرارية التعليمات. استخدمي for عند معرفة عدد التكرارات غالبًا، وwhile عندما يعتمد التكرار على شرط، وdo-while عندما يجب تنفيذ الكود مرة واحدة على الأقل.",
+    en: "Loops repeat instructions. Use for when the repetition count is usually known, while when repetition depends on a condition, and do-while when the code must execute at least once."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 25
+   Lesson 7: Arrays
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-07",
+  title: {
+    ar: "7. المصفوفات Arrays",
+    en: "7. Arrays"
+  },
+  duration: "30 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `المصفوفة Array تسمح بتخزين عدة قيم من النوع نفسه داخل متغير واحد. يبدأ فهرس العناصر Index من صفر، ويمكن الوصول إلى كل عنصر باستخدام الفهرس. الخاصية Length تعطي عدد العناصر في المصفوفة.`,
+    en: `An array stores multiple values of the same type in one variable. Element indexes start at zero, and each element can be accessed using its index. The Length property returns the number of elements.`
+  },
+
+  code: `int[] numbers = { 10, 20, 30, 40 };
+
+Console.WriteLine(numbers[0]);
+Console.WriteLine(numbers[2]);
+
+numbers[1] = 25;
+
+Console.WriteLine(numbers[1]);
+Console.WriteLine("Length: " + numbers.Length);
+
+for (int i = 0; i < numbers.Length; i++)
+{
+    Console.WriteLine(numbers[i]);
+}`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا مصفوفة أعداد صحيحة تحتوي على أربعة عناصر.",
+      "numbers[0] يصل إلى أول عنصر وقيمته 10.",
+      "numbers[2] يصل إلى العنصر الثالث وقيمته 30.",
+      "غيّرنا قيمة العنصر الثاني إلى 25.",
+      "Length تعيد عدد العناصر، وهو 4.",
+      "تطبع حلقة for جميع عناصر المصفوفة."
+    ],
+    en: [
+      "We created an integer array containing four elements.",
+      "numbers[0] accesses the first element, which is 10.",
+      "numbers[2] accesses the third element, which is 30.",
+      "We changed the second element to 25.",
+      "Length returns the number of elements, which is 4.",
+      "The for loop prints every array element."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "نسيان أن الفهرسة تبدأ من صفر.",
+      "محاولة الوصول إلى فهرس خارج حدود المصفوفة.",
+      "استخدام نوع بيانات غير مناسب للقيم.",
+      "الخلط بين الفهرس وعدد العناصر."
+    ],
+    en: [
+      "Forgetting that indexing starts at zero.",
+      "Accessing an index outside the array bounds.",
+      "Using an unsuitable data type.",
+      "Confusing an index with the number of elements."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي مصفوفة تحتوي على خمس درجات، ثم اطبعي جميع الدرجات واحسبي مجموعها باستخدام حلقة تكرارية.",
+    en: "Create an array containing five grades, print all grades, and calculate their sum using a loop."
+  },
+
+  summary: {
+    ar: "المصفوفة تخزن عدة قيم من النوع نفسه. نستخدم الفهرس للوصول إلى العناصر وLength لمعرفة عددها.",
+    en: "An array stores multiple values of the same type. Use indexes to access elements and Length to get the number of elements."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 26
+   Lesson 8: Methods
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-08",
+  title: {
+    ar: "8. الدوال Methods",
+    en: "8. Methods"
+  },
+  duration: "35 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `الدالة Method هي مجموعة تعليمات لها اسم، ويمكن استدعاؤها عند الحاجة لتقليل تكرار الكود وتنظيمه.
+
+قد تستقبل الدالة Parameters، وقد تعيد قيمة باستخدام return. إذا كان نوع الإرجاع void، فهذا يعني أنها لا تعيد قيمة.`,
+    en: `A method is a named block of instructions that can be called when needed. Methods help organize code and reduce repetition.
+
+A method may accept parameters and return a value using return. A void method does not return a value.`
+  },
+
+  code: `static void SayHello()
+{
+    Console.WriteLine("Hello!");
+}
+
+static int Add(int a, int b)
+{
+    return a + b;
+}
+
+SayHello();
+
+int result = Add(5, 3);
+Console.WriteLine(result);`,
+
+  codeExplanation: {
+    ar: [
+      "SayHello دالة من النوع void لا تعيد قيمة.",
+      "الأقواس () تحدد مكان المعاملات عند تعريف الدالة أو استدعائها.",
+      "الدالة Add تستقبل عددين صحيحين a وb.",
+      "return تعيد ناتج جمع العددين.",
+      "استدعينا Add بالقيمتين 5 و3.",
+      "خزّنا الناتج 8 في المتغير result ثم طبعناه.",
+      "في تطبيق Console عادي، توضع هذه الدوال داخل Program وخارج Main عند استخدام هذا الشكل من التعريف."
+    ],
+    en: [
+      "SayHello is a void method that returns no value.",
+      "Parentheses () contain parameters in a declaration and arguments in a call.",
+      "Add receives two integer parameters, a and b.",
+      "return sends back their sum.",
+      "We called Add with the values 5 and 3.",
+      "We stored the result, 8, in result and printed it.",
+      "In a regular Console application, place these methods inside Program but outside Main when using this declaration style."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "نسيان استدعاء الدالة بعد تعريفها.",
+      "إرجاع قيمة لا تتوافق مع نوع الدالة.",
+      "نسيان return في دالة يجب أن تعيد قيمة.",
+      "الخلط بين تعريف الدالة واستدعائها."
+    ],
+    en: [
+      "Defining a method but never calling it.",
+      "Returning a value of the wrong type.",
+      "Forgetting return in a method that must return a value.",
+      "Confusing a method declaration with a method call."
+    ]
+  },
+
+  exercise: {
+    ar: "اكتبي دالة باسم Multiply تستقبل عددين صحيحين وتعيد حاصل ضربهما، ثم استدعيها واطبعي الناتج.",
+    en: "Write a method named Multiply that accepts two integers and returns their product. Call it and print the result."
+  },
+
+  summary: {
+    ar: "تساعد الدوال على تقسيم البرنامج إلى أجزاء واضحة قابلة لإعادة الاستخدام. يمكنها استقبال Parameters وإرجاع قيمة باستخدام return.",
+    en: "Methods divide a program into clear, reusable parts. They can accept parameters and return a value using return."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 27
+   Lesson 9: Strings
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-09",
+  title: {
+    ar: "9. النصوص Strings",
+    en: "9. Strings"
+  },
+  duration: "30 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `النوع string يُستخدم لتخزين النصوص. يمكن معرفة طول النص باستخدام Length، والوصول إلى حرف باستخدام الفهرس، والبحث عن نص باستخدام Contains.
+
+السلاسل النصية في C# غير قابلة للتعديل مباشرة؛ العمليات مثل ToUpper وReplace تُرجع نصًا جديدًا.`,
+    en: `The string type stores text. Use Length to get its length, an index to access a character, and Contains to search for text.
+
+Strings in C# are immutable. Operations such as ToUpper and Replace return a new string.`
+  },
+
+  code: `string name = "Malak";
+
+Console.WriteLine(name);
+Console.WriteLine(name.Length);
+Console.WriteLine(name[0]);
+Console.WriteLine(name.ToUpper());
+Console.WriteLine(name.Contains("la"));
+
+string message = "Hello World";
+string updated = message.Replace("World", "CSharp");
+
+Console.WriteLine(updated);`,
+
+  codeExplanation: {
+    ar: [
+      "خزّنا النص Malak داخل متغير name.",
+      "Length تعيد عدد الأحرف.",
+      "name[0] تعيد أول حرف، وهو M.",
+      "ToUpper تُرجع نسخة من النص بأحرف كبيرة.",
+      "Contains تتحقق من وجود جزء معين داخل النص.",
+      "Replace تستبدل World بكلمة CSharp في نص جديد."
+    ],
+    en: [
+      "We stored the text Malak in the name variable.",
+      "Length returns the number of characters.",
+      "name[0] returns the first character, M.",
+      "ToUpper returns an uppercase version of the string.",
+      "Contains checks whether a substring exists.",
+      "Replace substitutes World with CSharp in a new string."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "استخدام الفهرس خارج حدود النص.",
+      "الاعتقاد أن ToUpper تغيّر المتغير الأصلي تلقائيًا.",
+      "الخلط بين string و char؛ الأول للنص والثاني لحرف واحد.",
+      "تجاهل اختلاف الأحرف الكبيرة والصغيرة عند المقارنة."
+    ],
+    en: [
+      "Using an index outside the string bounds.",
+      "Assuming ToUpper automatically changes the original variable.",
+      "Confusing string, which stores text, with char, which stores one character.",
+      "Ignoring case sensitivity when comparing text."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي متغيرًا يحتوي على اسمك، واطبعي طوله وأول حرف منه، ثم اطبعي الاسم بأحرف كبيرة.",
+    en: "Create a variable containing your name, print its length and first character, then print the name in uppercase."
+  },
+
+  summary: {
+    ar: "يُستخدم string للتعامل مع النصوص، وتوفر خصائصه ودواله أدوات لمعرفة الطول والبحث والاستبدال وتغيير حالة الأحرف.",
+    en: "The string type handles text and provides properties and methods for length, searching, replacement, and changing letter case."
+  }
+});
+
+/* =========================================
+   CS MATE — PART 28
+   Lesson 10: Lists
+========================================= */
+
+CSHARP_LESSONS.push({
+  id: "csharp-10",
+  title: {
+    ar: "10. القوائم Lists",
+    en: "10. Lists"
+  },
+  duration: "35 min",
+  level: "Beginner",
+
+  explanation: {
+    ar: `List<T> مجموعة يمكن أن يتغير عدد عناصرها أثناء تشغيل البرنامج. يحدد T نوع العناصر، مثل List<int> للأعداد الصحيحة.
+
+من أهم العمليات Add لإضافة عنصر، وRemove لإزالة عنصر، وCount لمعرفة عدد العناصر. تحتاج القوائم إلى using System.Collections.Generic في الملفات التي لا تستورده تلقائيًا.`,
+    en: `List<T> is a collection whose number of elements can change while the program runs. T specifies the element type, such as List<int> for integers.
+
+Common operations include Add to insert an item, Remove to remove an item, and Count to get the number of items. Files that do not import it automatically need using System.Collections.Generic.`
+  },
+
+  code: `using System.Collections.Generic;
+
+List<string> courses = new List<string>();
+
+courses.Add("C#");
+courses.Add("HTML");
+courses.Add("SQL");
+
+Console.WriteLine("Count: " + courses.Count);
+
+courses.Remove("HTML");
+
+for (int i = 0; i < courses.Count; i++)
+{
+    Console.WriteLine(courses[i]);
+}`,
+
+  codeExplanation: {
+    ar: [
+      "أنشأنا قائمة لتخزين أسماء الكورسات كنصوص.",
+      "Add تضيف عناصر جديدة إلى القائمة.",
+      "Count تعيد عدد العناصر الحالي.",
+      "Remove تحذف العنصر المطابق إذا وُجد.",
+      "حلقة for تطبع العناصر المتبقية.",
+      "عدد عناصر List قابل للتغيير، بخلاف حجم المصفوفة الذي يُحدد عند إنشائها."
+    ],
+    en: [
+      "We created a list to store course names as strings.",
+      "Add inserts new items into the list.",
+      "Count returns the current number of items.",
+      "Remove deletes the matching item if found.",
+      "The for loop prints the remaining items.",
+      "A List can grow or shrink, unlike an array whose size is fixed when created."
+    ]
+  },
+
+  commonMistakes: {
+    ar: [
+      "نسيان تحديد نوع العناصر داخل <>.",
+      "استخدام Length بدلًا من Count مع List.",
+      "محاولة استخدام عنصر غير موجود دون التحقق.",
+      "نسيان استيراد مساحة الأسماء المطلوبة في بعض المشاريع."
+    ],
+    en: [
+      "Forgetting to specify the element type inside <>.",
+      "Using Length instead of Count with a List.",
+      "Trying to access an item that does not exist without checking.",
+      "Forgetting the required namespace import in some projects."
+    ]
+  },
+
+  exercise: {
+    ar: "أنشئي قائمة بأسماء ثلاثة مواد، ثم أضيفي مادة رابعة واحذفي مادة واحدة، واطبعي العناصر المتبقية وعددها.",
+    en: "Create a list containing three subject names, add a fourth subject, remove one subject, and print the remaining items and their count."
+  },
+
+  summary: {
+    ar: "تُستخدم List<T> لتخزين مجموعة من العناصر التي يمكن أن يتغير عددها. من العمليات المهمة Add وRemove وCount.",
+    en: "List<T> stores a collection whose size can change. Important operations include Add, Remove, and Count."
+  }
+});
+
 
     
  
