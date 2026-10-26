@@ -1593,4 +1593,851 @@ console.info("CS MATE lesson list is ready.");
     startRepair();
   }
 })();
+/* =========================================
+   CS MATE — PART 18
+   Learning interface and course overlay
+========================================= */
+
+(function () {
+  "use strict";
+
+  const overlayId = "csMateLearningOverlay";
+
+  function getLearningLessons(courseId) {
+    if (
+      courseId === "csharp" &&
+      typeof CSHARP_LESSONS !== "undefined"
+    ) {
+      return CSHARP_LESSONS;
+    }
+
+    return [];
+  }
+
+  function getCompletedLessons() {
+    try {
+      return JSON.parse(
+        localStorage.getItem("csmate_completed_lessons") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCompletedLessons(items) {
+    localStorage.setItem(
+      "csmate_completed_lessons",
+      JSON.stringify(items)
+    );
+  }
+
+  function getBookmarkedLessons() {
+    try {
+      return JSON.parse(
+        localStorage.getItem("csmate_bookmarked_lessons") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  function saveBookmarkedLessons(items) {
+    localStorage.setItem(
+      "csmate_bookmarked_lessons",
+      JSON.stringify(items)
+    );
+  }
+
+  function currentLanguage() {
+    return typeof getCurrentLanguage === "function"
+      ? getCurrentLanguage()
+      : "ar";
+  }
+
+  function isArabic() {
+    return currentLanguage() === "ar";
+  }
+
+  function makeButton(text, action, className = "") {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = text;
+    button.dataset.learningAction = action;
+
+    if (className) {
+      button.className = className;
+    }
+
+    return button;
+  }
+
+  function ensureLearningOverlay() {
+    let overlay = document.getElementById(overlayId);
+
+    if (overlay) return overlay;
+
+    overlay = document.createElement("section");
+    overlay.id = overlayId;
+    overlay.className = "csmate-learning-overlay";
+    overlay.hidden = true;
+
+    overlay.innerHTML = `
+      <div class="csmate-learning-shell" dir="auto">
+        <header class="csmate-learning-topbar">
+          <button
+            type="button"
+            data-learning-action="close"
+            class="csmate-learning-back"
+          >
+            ← <span data-learning-label="back"></span>
+          </button>
+
+          <div class="csmate-learning-brand">
+            <span class="csmate-learning-brand-icon">✦</span>
+            <span>CS MATE</span>
+          </div>
+
+          <button
+            type="button"
+            data-learning-action="close"
+            class="csmate-learning-close"
+            aria-label="Close course"
+          >✕</button>
+        </header>
+
+        <main class="csmate-learning-main">
+          <div id="csmateLearningContent"></div>
+        </main>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", handleLearningClick);
+
+    return overlay;
+  }
+
+  function openLearningSpace(courseId) {
+    const course =
+      typeof COURSES !== "undefined"
+        ? COURSES.find((item) => item.id === courseId)
+        : null;
+
+    if (!course) return;
+
+    const lessons = getLearningLessons(courseId);
+
+    if (!lessons.length) {
+      alert(
+        isArabic()
+          ? "دروس هذا الكورس ستُضاف قريبًا."
+          : "Lessons for this course are coming soon."
+      );
+      return;
+    }
+
+    const overlay = ensureLearningOverlay();
+
+    overlay.dataset.courseId = courseId;
+    overlay.hidden = false;
+
+    document.body.dataset.csMatePreviousOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    renderLearningHome(courseId);
+    overlay.scrollTop = 0;
+  }
+
+  function closeLearningSpace() {
+    const overlay = document.getElementById(overlayId);
+
+    if (!overlay) return;
+
+    overlay.hidden = true;
+
+    document.body.style.overflow =
+      document.body.dataset.csMatePreviousOverflow || "";
+
+    delete document.body.dataset.csMatePreviousOverflow;
+  }
+
+  function renderLearningHome(courseId) {
+    const overlay = ensureLearningOverlay();
+    const content = overlay.querySelector("#csmateLearningContent");
+    const lessons = getLearningLessons(courseId);
+    const completed = getCompletedLessons();
+    const completedCount = lessons.filter(
+      (lesson) => completed.includes(lesson.id)
+    ).length;
+
+    const arabic = isArabic();
+
+    content.replaceChildren();
+
+    const intro = document.createElement("section");
+    intro.className = "csmate-learning-intro";
+
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "csmate-learning-eyebrow";
+    eyebrow.textContent = arabic
+      ? "مسار التعلم"
+      : "LEARNING PATH";
+
+    const title = document.createElement("h1");
+    title.textContent = arabic
+      ? "تعلم C# خطوة بخطوة"
+      : "Learn C# Step by Step";
+
+    const description = document.createElement("p");
+    description.textContent = arabic
+      ? "اختاري الدرس وابدئي التعلم. تقدمك هيتحفظ على جهازك."
+      : "Choose a lesson and start learning. Your progress is saved on this device.";
+
+    intro.append(eyebrow, title, description);
+
+    const progress = document.createElement("section");
+    progress.className = "csmate-learning-progress";
+
+    const progressInfo = document.createElement("div");
+    progressInfo.className = "csmate-learning-progress-info";
+
+    const progressLabel = document.createElement("span");
+    progressLabel.textContent = arabic
+      ? "تقدمك في الكورس"
+      : "Your course progress";
+
+    const progressCount = document.createElement("strong");
+    progressCount.textContent =
+      `${completedCount} / ${lessons.length}`;
+
+    const track = document.createElement("div");
+    track.className = "csmate-learning-progress-track";
+    track.setAttribute("role", "progressbar");
+    track.setAttribute("aria-valuemin", "0");
+    track.setAttribute("aria-valuemax", String(lessons.length));
+    track.setAttribute("aria-valuenow", String(completedCount));
+
+    const fill = document.createElement("div");
+    fill.className = "csmate-learning-progress-fill";
+    fill.style.width =
+      `${(completedCount / lessons.length) * 100}%`;
+
+    track.appendChild(fill);
+    progressInfo.append(progressLabel, progressCount);
+    progress.append(progressInfo, track);
+
+    const listTitle = document.createElement("h2");
+    listTitle.className = "csmate-learning-section-title";
+    listTitle.textContent = arabic
+      ? "دروس الكورس"
+      : "Course lessons";
+
+    const list = document.createElement("div");
+    list.className = "csmate-learning-list";
+
+    lessons.forEach((lesson, index) => {
+      const isDone = completed.includes(lesson.id);
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "csmate-learning-lesson-card";
+      card.dataset.learningAction = "open-lesson";
+      card.dataset.lessonIndex = String(index);
+
+      const number = document.createElement("span");
+      number.className = "csmate-learning-lesson-number";
+      number.textContent = isDone ? "✓" : String(index + 1);
+
+      const info = document.createElement("span");
+      info.className = "csmate-learning-lesson-info";
+
+      const lessonTitle = document.createElement("strong");
+      lessonTitle.textContent =
+        arabic ? lesson.titleAr : lesson.titleEn;
+
+      const lessonDescription = document.createElement("span");
+      lessonDescription.textContent = isDone
+        ? (arabic ? "تم إكمال الدرس" : "Lesson completed")
+        : (arabic ? "اضغطي لفتح الدرس" : "Tap to open lesson");
+
+      info.append(lessonTitle, lessonDescription);
+
+      const arrow = document.createElement("span");
+      arrow.className = "csmate-learning-lesson-arrow";
+      arrow.textContent = "←";
+
+      card.append(number, info, arrow);
+      list.appendChild(card);
+    });
+
+    content.append(intro, progress, listTitle, list);
+  }
+
+  function handleLearningClick(event) {
+    const overlay = document.getElementById(overlayId);
+    const button = event.target.closest("[data-learning-action]");
+
+    if (!overlay || !button || !overlay.contains(button)) return;
+
+    const action = button.dataset.learningAction;
+    const courseId = overlay.dataset.courseId;
+
+    if (action === "close") {
+      closeLearningSpace();
+      return;
+    }
+
+    if (action === "open-lesson") {
+      const index = Number(button.dataset.lessonIndex);
+      renderLearningLesson(courseId, index);
+    }
+  }
+
+  // The remaining lesson-detail functions are added in Part 19.
+  window.CSMateLearning = {
+    open: openLearningSpace,
+    close: closeLearningSpace,
+    renderHome: renderLearningHome
+  };
+
+  function connectCourseCards() {
+    const oldGrid = document.querySelector("#coursesGrid");
+
+    if (!oldGrid || oldGrid.dataset.learningConnected === "true") {
+      return;
+    }
+
+    const grid = oldGrid.cloneNode(true);
+    oldGrid.replaceWith(grid);
+
+    grid.dataset.learningConnected = "true";
+
+    grid.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-open-course]");
+
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      openLearningSpace(button.dataset.openCourse);
+    });
+  }
+
+  function startLearningIntegration() {
+    connectCourseCards();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      startLearningIntegration,
+      { once: true }
+    );
+  } else {
+    startLearningIntegration();
+  }
+})();
+
+/* =========================================
+   CS MATE — PART 19
+   Lesson details and progress controls
+========================================= */
+
+(function () {
+  "use strict";
+
+  const overlayId = "csMateLearningOverlay";
+
+  function getOverlay() {
+    return document.getElementById(overlayId);
+  }
+
+  function getLessons(courseId) {
+    if (
+      courseId === "csharp" &&
+      typeof CSHARP_LESSONS !== "undefined"
+    ) {
+      return CSHARP_LESSONS;
+    }
+
+    return [];
+  }
+
+  function getCompleted() {
+    try {
+      return JSON.parse(
+        localStorage.getItem("csmate_completed_lessons") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCompleted(items) {
+    localStorage.setItem(
+      "csmate_completed_lessons",
+      JSON.stringify(items)
+    );
+  }
+
+  function getBookmarks() {
+    try {
+      return JSON.parse(
+        localStorage.getItem("csmate_bookmarked_lessons") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  function saveBookmarks(items) {
+    localStorage.setItem(
+      "csmate_bookmarked_lessons",
+      JSON.stringify(items)
+    );
+  }
+
+  function arabic() {
+    return typeof getCurrentLanguage === "function"
+      ? getCurrentLanguage() === "ar"
+      : true;
+  }
+
+  function addText(tag, className, text) {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = text || "";
+    return element;
+  }
+
+  function makeButton(text, action, className = "") {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = className;
+    button.textContent = text;
+    button.dataset.lessonDetailAction = action;
+
+    return button;
+  }
+
+  function renderLearningLesson(courseId, index) {
+    const overlay = getOverlay();
+    if (!overlay) return;
+
+    const lessons = getLessons(courseId);
+    const lesson = lessons[index];
+
+    if (!lesson) return;
+
+    const content = overlay.querySelector("#csmateLearningContent");
+    if (!content) return;
+
+    const ar = arabic();
+    const completed = getCompleted();
+    const bookmarks = getBookmarks();
+    const isDone = completed.includes(lesson.id);
+    const isSaved = bookmarks.includes(lesson.id);
+
+    overlay.dataset.lessonIndex = String(index);
+    content.replaceChildren();
+
+    const back = makeButton(
+      ar ? "← العودة لقائمة الدروس" : "← Back to lessons",
+      "back-to-list",
+      "csmate-detail-back"
+    );
+
+    const heading = addText(
+      "p",
+      "csmate-learning-eyebrow",
+      ar ? `الدرس ${index + 1} من ${lessons.length}` :
+        `LESSON ${index + 1} OF ${lessons.length}`
+    );
+
+    const title = addText(
+      "h1",
+      "csmate-detail-title",
+      ar ? lesson.titleAr : lesson.titleEn
+    );
+
+    const intro = addText(
+      "p",
+      "csmate-detail-intro",
+      ar ? lesson.explanationAr : lesson.explanationEn
+    );
+
+    const explanation = document.createElement("section");
+    explanation.className = "csmate-detail-section";
+
+    explanation.append(
+      addText("h2", "", ar ? "شرح الدرس" : "Lesson explanation"),
+      addText(
+        "p",
+        "csmate-detail-paragraph",
+        ar ? lesson.explanationAr : lesson.explanationEn
+      )
+    );
+
+    const codeSection = document.createElement("section");
+    codeSection.className = "csmate-detail-section";
+
+    const codeHeading = addText(
+      "h2",
+      "",
+      ar ? "مثال عملي" : "Code example"
+    );
+
+    const code = document.createElement("pre");
+    const codeElement = document.createElement("code");
+
+    codeElement.textContent = lesson.code || "";
+    code.appendChild(codeElement);
+
+    const copyButton = makeButton(
+      ar ? "نسخ الكود" : "Copy code",
+      "copy-code",
+      "csmate-detail-button"
+    );
+
+    codeSection.append(codeHeading, code, copyButton);
+
+    const codeExplanation = document.createElement("section");
+    codeExplanation.className = "csmate-detail-section";
+
+    codeExplanation.append(
+      addText("h2", "", ar ? "شرح الكود" : "Code walkthrough"),
+      addText(
+        "p",
+        "csmate-detail-paragraph",
+        ar
+          ? (lesson.codeExplanationAr || "راجعي المثال السابق.")
+          : (lesson.codeExplanationEn || "Review the example above.")
+      )
+    );
+
+    const mistakes = document.createElement("section");
+    mistakes.className = "csmate-detail-section";
+
+    mistakes.appendChild(
+      addText("h2", "", ar ? "أخطاء شائعة" : "Common mistakes")
+    );
+
+    const mistakeList = document.createElement("ul");
+    mistakeList.className = "csmate-detail-list";
+
+    const mistakeItems = ar
+      ? (lesson.commonMistakesAr || [])
+      : (lesson.commonMistakesEn || []);
+
+    mistakeItems.forEach((item) => {
+      mistakeList.appendChild(addText("li", "", item));
+    });
+
+    if (!mistakeItems.length) {
+      mistakeList.appendChild(
+        addText(
+          "li",
+          "",
+          ar ? "راجعي كتابة الكود بعناية." : "Check your code carefully."
+        )
+      );
+    }
+
+    mistakes.appendChild(mistakeList);
+
+    const exercise = document.createElement("section");
+    exercise.className = "csmate-detail-section csmate-detail-exercise";
+
+    exercise.append(
+      addText("h2", "", ar ? "تمرين الدرس" : "Lesson exercise"),
+      addText(
+        "p",
+        "csmate-detail-paragraph",
+        ar ? lesson.exerciseAr : lesson.exerciseEn
+      )
+    );
+
+    const summary = document.createElement("section");
+    summary.className = "csmate-detail-section";
+
+    summary.append(
+      addText("h2", "", ar ? "ملخص الدرس" : "Lesson summary"),
+      addText(
+        "p",
+        "csmate-detail-paragraph",
+        ar ? lesson.summaryAr : lesson.summaryEn
+      )
+    );
+
+    const progress = document.createElement("section");
+    progress.className = "csmate-learning-progress";
+
+    const progressInfo = document.createElement("div");
+    progressInfo.className = "csmate-learning-progress-info";
+
+    const progressLabel = addText(
+      "span",
+      "",
+      ar ? "تقدمك في الكورس" : "Course progress"
+    );
+
+    const completedCount = lessons.filter((item) =>
+      completed.includes(item.id)
+    ).length;
+
+    const progressCount = addText(
+      "strong",
+      "",
+      `${completedCount} / ${lessons.length}`
+    );
+
+    const track = document.createElement("div");
+    track.className = "csmate-learning-progress-track";
+    track.setAttribute("role", "progressbar");
+    track.setAttribute("aria-valuemin", "0");
+    track.setAttribute("aria-valuemax", String(lessons.length));
+    track.setAttribute("aria-valuenow", String(completedCount));
+
+    const fill = document.createElement("div");
+    fill.className = "csmate-learning-progress-fill";
+    fill.style.width = `${completedCount / lessons.length * 100}%`;
+
+    track.appendChild(fill);
+    progressInfo.append(progressLabel, progressCount);
+    progress.append(progressInfo, track);
+
+    const actions = document.createElement("div");
+    actions.className = "csmate-detail-actions";
+
+    const bookmarkButton = makeButton(
+      isSaved
+        ? (ar ? "★ محفوظ في المفضلة" : "★ Bookmarked")
+        : (ar ? "☆ أضف للمفضلة" : "☆ Bookmark"),
+      "toggle-bookmark",
+      "csmate-detail-button"
+    );
+
+    if (isSaved) {
+      bookmarkButton.classList.add("is-bookmarked");
+    }
+
+    const completeButton = makeButton(
+      isDone
+        ? (ar ? "✓ تم إكمال الدرس" : "✓ Lesson completed")
+        : (ar ? "✓ علّم الدرس كمكتمل" : "✓ Mark as complete"),
+      "toggle-complete",
+      "csmate-detail-button csmate-detail-complete"
+    );
+
+    const previousButton = makeButton(
+      ar ? "الدرس السابق" : "Previous lesson",
+      "previous-lesson",
+      "csmate-detail-button"
+    );
+
+    const nextButton = makeButton(
+      ar ? "الدرس التالي →" : "Next lesson →",
+      "next-lesson",
+      "csmate-detail-button"
+    );
+
+    previousButton.disabled = index === 0;
+    nextButton.disabled = index === lessons.length - 1;
+
+    actions.append(
+      bookmarkButton,
+      completeButton,
+      previousButton,
+      nextButton
+    );
+
+    content.append(
+      back,
+      heading,
+      title,
+      intro,
+      explanation,
+      codeSection,
+      codeExplanation,
+      mistakes,
+      exercise,
+      summary,
+      progress,
+      actions
+    );
+
+    content.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
+  async function copyLessonCode() {
+    const overlay = getOverlay();
+    const code = overlay?.querySelector(".csmate-detail-section pre code");
+
+    if (!code) return;
+
+    const text = code.textContent || "";
+
+    try {
+      await navigator.clipboard.writeText(text);
+
+      alert(
+        arabic()
+          ? "تم نسخ الكود!"
+          : "Code copied!"
+      );
+    } catch {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+
+      document.body.appendChild(area);
+      area.select();
+
+      const copied = document.execCommand("copy");
+      area.remove();
+
+      alert(
+        copied
+          ? (arabic() ? "تم نسخ الكود!" : "Code copied!")
+          : (arabic() ? "تعذر النسخ تلقائيًا." : "Could not copy automatically.")
+      );
+    }
+  }
+
+  function handleDetailClick(event) {
+    const button = event.target.closest("[data-lesson-detail-action]");
+    if (!button) return;
+
+    const overlay = getOverlay();
+    if (!overlay || overlay.hidden) return;
+
+    const action = button.dataset.lessonDetailAction;
+    const courseId = overlay.dataset.courseId;
+    const index = Number(overlay.dataset.lessonIndex || 0);
+    const lessons = getLessons(courseId);
+    const lesson = lessons[index];
+
+    if (!lesson) return;
+
+    if (action === "back-to-list") {
+      if (window.CSMateLearning) {
+        window.CSMateLearning.renderHome(courseId);
+      }
+      return;
+    }
+
+    if (action === "copy-code") {
+      copyLessonCode();
+      return;
+    }
+
+    if (action === "toggle-complete") {
+      const completed = getCompleted();
+      const position = completed.indexOf(lesson.id);
+
+      if (position >= 0) {
+        completed.splice(position, 1);
+      } else {
+        completed.push(lesson.id);
+      }
+
+      saveCompleted(completed);
+      renderLearningLesson(courseId, index);
+      return;
+    }
+
+    if (action === "toggle-bookmark") {
+      const bookmarks = getBookmarks();
+      const position = bookmarks.indexOf(lesson.id);
+
+      if (position >= 0) {
+        bookmarks.splice(position, 1);
+      } else {
+        bookmarks.push(lesson.id);
+      }
+
+      saveBookmarks(bookmarks);
+      renderLearningLesson(courseId, index);
+      return;
+    }
+
+    if (action === "previous-lesson" && index > 0) {
+      renderLearningLesson(courseId, index - 1);
+      return;
+    }
+
+    if (
+      action === "next-lesson" &&
+      index < lessons.length - 1
+    ) {
+      renderLearningLesson(courseId, index + 1);
+    }
+  }
+
+  document.addEventListener("click", handleDetailClick);
+
+  if (window.CSMateLearning) {
+    window.CSMateLearning.openLesson = renderLearningLesson;
+  }
+})();
+
+/* =========================================
+   CS MATE — PART 20
+   Connect lesson list to lesson details
+========================================= */
+
+(function connectLearningLessonDetails() {
+  "use strict";
+
+  function connect() {
+    const overlay = document.getElementById(
+      "csMateLearningOverlay"
+    );
+
+    if (!overlay || overlay.dataset.detailsConnected === "true") {
+      return;
+    }
+
+    overlay.dataset.detailsConnected = "true";
+
+    overlay.addEventListener("click", function (event) {
+      const button = event.target.closest(
+        '[data-learning-action="open-lesson"]'
+      );
+
+      if (!button || !overlay.contains(button)) {
+        return;
+      }
+
+      const courseId = overlay.dataset.courseId;
+      const index = Number(button.dataset.lessonIndex);
+
+      if (
+        window.CSMateLearning &&
+        typeof window.CSMateLearning.openLesson === "function"
+      ) {
+        window.CSMateLearning.openLesson(courseId, index);
+      }
+    });
+  }
+
+  // The overlay is created when the first course is opened.
+  // Watch for its creation, then connect the lesson list.
+  const observer = new MutationObserver(connect);
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  connect();
+})();
+
 
