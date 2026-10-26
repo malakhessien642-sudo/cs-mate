@@ -1855,4 +1855,236 @@ console.log("HTML lessons 13–16 added.");
   console.info("CS MATE: HTML navigation and progress initialized.");
 })();
 
+/* =========================================
+   CS MATE — FINAL HTML LESSON FIX
+   Navigation + Completion + Progress
+========================================= */
+
+(function fixHTMLCourse() {
+  "use strict";
+
+  const lessons = HTML_LESSONS;
+  const $viewer = () => document.querySelector("#lessonViewer");
+  const language = () =>
+    typeof getCurrentLanguage === "function"
+      ? getCurrentLanguage()
+      : "ar";
+
+  let currentIndex = 0;
+
+  window.HTML_LESSONS = lessons;
+
+  function isDone(id) {
+    return typeof isLessonCompleted === "function"
+      ? isLessonCompleted(id)
+      : false;
+  }
+
+  function progressHTML() {
+    const done = lessons.filter(lesson => isDone(lesson.id)).length;
+    const percent = Math.round(done / lessons.length * 100);
+
+    return `
+      <section class="lesson-progress html-only-progress">
+        <div class="lesson-progress-info">
+          <strong>${language() === "ar" ? "تقدمك في HTML" : "HTML Progress"}</strong>
+          <span>${done} / ${lessons.length} — ${percent}%</span>
+        </div>
+        <div class="lesson-progress-track"
+             role="progressbar"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             aria-valuenow="${percent}">
+          <div class="lesson-progress-fill" style="width:${percent}%"></div>
+        </div>
+      </section>
+    `;
+  }
+
+  function addProgress() {
+    const viewer = $viewer();
+    if (!viewer) return;
+
+    viewer.querySelectorAll(".lesson-progress").forEach(el => el.remove());
+
+    const header = viewer.querySelector(".lesson-header");
+    if (header) {
+      header.insertAdjacentHTML("afterend", progressHTML());
+    } else {
+      viewer.insertAdjacentHTML("afterbegin", progressHTML());
+    }
+  }
+
+  function addNavigation() {
+    const viewer = $viewer();
+    if (!viewer) return;
+
+    viewer.querySelectorAll(".lesson-actions, .html-only-navigation")
+      .forEach(el => el.remove());
+
+    const nav = document.createElement("div");
+    nav.className = "lesson-actions html-only-navigation";
+
+    nav.innerHTML = `
+      <button type="button" data-html-action="list">
+        ${language() === "ar" ? "قائمة الدروس" : "Lesson List"}
+      </button>
+      <button type="button" data-html-action="previous"
+        ${currentIndex === 0 ? "disabled" : ""}>
+        ${language() === "ar" ? "الدرس السابق" : "Previous Lesson"}
+      </button>
+      <span>${currentIndex + 1} / ${lessons.length}</span>
+      <button type="button" data-html-action="next"
+        ${currentIndex === lessons.length - 1 ? "disabled" : ""}>
+        ${language() === "ar" ? "الدرس التالي" : "Next Lesson"}
+      </button>
+    `;
+
+    const complete = viewer.querySelector("#completeLessonButton");
+    if (complete) complete.insertAdjacentElement("afterend", nav);
+    else viewer.appendChild(nav);
+
+    addProgress();
+  }
+
+  function showLesson(index) {
+    if (index < 0 || index >= lessons.length) return;
+
+    currentIndex = index;
+    window.renderLesson(lessons[index]);
+  }
+
+  function showList() {
+    const viewer = $viewer();
+    if (!viewer) return;
+
+    viewer.innerHTML = `
+      <div class="lesson-header">
+        <h2>${language() === "ar" ? "كورس HTML" : "HTML Course"}</h2>
+        <p>${language() === "ar"
+          ? `عدد الدروس: ${lessons.length}`
+          : `Total lessons: ${lessons.length}`}</p>
+      </div>
+
+      ${progressHTML()}
+
+      <div class="lesson-list">
+        ${lessons.map((lesson, index) => `
+          <button type="button" class="lesson-list-item"
+            data-html-index="${index}">
+            <span>${isDone(lesson.id) ? "✓" : index + 1}</span>
+            <span>${lesson.title[language()] || lesson.title.en}</span>
+            <span>${isDone(lesson.id)
+              ? (language() === "ar" ? "مكتمل" : "Completed")
+              : lesson.duration}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <button type="button" id="html-return-courses">
+        ${language() === "ar" ? "العودة للكورسات" : "Back to courses"}
+      </button>
+    `;
+
+    viewer.hidden = false;
+    document.body.classList.add("cs-mate-learning-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  // Keep the original lesson renderer, but correct HTML navigation.
+  const originalRenderLesson = window.renderLesson;
+
+  if (typeof originalRenderLesson === "function") {
+    window.renderLesson = function(lesson) {
+      originalRenderLesson.call(this, lesson);
+
+      if (!lesson || !String(lesson.id).startsWith("html-")) return;
+
+      const index = lessons.findIndex(item => item.id === lesson.id);
+      if (index < 0) return;
+
+      currentIndex = index;
+
+      const viewer = $viewer();
+      if (!viewer) return;
+
+      // Remove navigation/progress created by the C#-only handlers.
+      viewer.querySelectorAll(".lesson-actions, .lesson-progress")
+        .forEach(el => el.remove());
+
+      addNavigation();
+    };
+  }
+
+  // Make the course card open the HTML lesson list.
+  const originalRenderList = window.renderCourseLessonList;
+
+  window.renderCourseLessonList = function(courseId) {
+    if (courseId !== "html") {
+      if (typeof originalRenderList === "function") {
+        return originalRenderList.call(this, courseId);
+      }
+      return;
+    }
+
+    showList();
+  };
+
+  // Route clicks to the correct HTML lesson.
+  document.addEventListener("click", function(event) {
+    const viewer = $viewer();
+    if (!viewer || !viewer.contains(event.target)) return;
+
+    const lessonButton = event.target.closest("[data-html-index]");
+    if (lessonButton) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showLesson(Number(lessonButton.dataset.htmlIndex));
+      return;
+    }
+
+    const actionButton = event.target.closest("[data-html-action]");
+    if (actionButton) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const action = actionButton.dataset.htmlAction;
+
+      if (action === "previous") showLesson(currentIndex - 1);
+      if (action === "next") showLesson(currentIndex + 1);
+      if (action === "list") showList();
+
+      return;
+    }
+
+    if (event.target.closest("#html-return-courses")) {
+      viewer.hidden = true;
+      document.body.classList.remove("cs-mate-learning-open");
+      document.body.style.overflow = "";
+    }
+  }, true);
+
+  // Refresh HTML progress after the original completion handler runs.
+  document.addEventListener("click", function(event) {
+    const button = event.target.closest("#completeLessonButton");
+    if (!button || !String(button.dataset.lessonId).startsWith("html-")) {
+      return;
+    }
+
+    setTimeout(() => {
+      const viewer = $viewer();
+      if (!viewer) return;
+
+      addProgress();
+
+      const completed = isDone(button.dataset.lessonId);
+      button.textContent = completed
+        ? (language() === "ar" ? "✓ تم إكمال الدرس" : "✓ Lesson Completed")
+        : (language() === "ar" ? "✓ إكمال الدرس" : "✓ Mark as Completed");
+    }, 100);
+  });
+
+  console.log("CS MATE: HTML course navigation fix loaded.");
+})();
+
 
