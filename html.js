@@ -1559,4 +1559,300 @@ console.log("HTML lessons 13–16 added.");
 
   console.log("CS MATE: HTML course is now connected.");
 })();
+/* =========================================
+   CS MATE — HTML COURSE NAVIGATION FIX
+   Previous / Next / Completion / Progress
+========================================= */
+
+(function setupHTMLCourseNavigation() {
+  "use strict";
+
+  let currentHTMLIndex = 0;
+
+  const getLanguage = () =>
+    typeof getCurrentLanguage === "function"
+      ? getCurrentLanguage()
+      : "en";
+
+  const getCompleted = (id) =>
+    typeof isLessonCompleted === "function"
+      ? isLessonCompleted(id)
+      : false;
+
+  function prepareHTMLLesson(lesson) {
+    return {
+      ...lesson,
+      codeExplanation: {
+        ar: Array.isArray(lesson.codeExplanation?.ar)
+          ? lesson.codeExplanation.ar.join("\n")
+          : lesson.codeExplanation?.ar || "",
+        en: Array.isArray(lesson.codeExplanation?.en)
+          ? lesson.codeExplanation.en.join("\n")
+          : lesson.codeExplanation?.en || ""
+      }
+    };
+  }
+
+  function updateHTMLProgress() {
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer) return;
+
+    const language = getLanguage();
+    const completedCount = HTML_LESSONS.filter(
+      lesson => getCompleted(lesson.id)
+    ).length;
+
+    const percent = Math.round(
+      completedCount / HTML_LESSONS.length * 100
+    );
+
+    let progress = viewer.querySelector(".html-course-progress");
+
+    if (!progress) {
+      progress = document.createElement("section");
+      progress.className = "lesson-progress html-course-progress";
+
+      const header = viewer.querySelector(".lesson-header");
+      if (header) {
+        header.after(progress);
+      } else {
+        viewer.prepend(progress);
+      }
+    }
+
+    progress.innerHTML = `
+      <div class="lesson-progress-info">
+        <strong>
+          ${language === "ar" ? "تقدمك في HTML" : "HTML Progress"}
+        </strong>
+        <span>
+          ${completedCount} / ${HTML_LESSONS.length}
+          — ${percent}%
+        </span>
+      </div>
+
+      <div class="lesson-progress-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="${percent}">
+        <div class="lesson-progress-fill"
+             style="width:${percent}%"></div>
+      </div>
+    `;
+  }
+
+  function addHTMLNavigation() {
+    const viewer = document.querySelector("#lessonViewer");
+    const lesson = HTML_LESSONS[currentHTMLIndex];
+
+    if (!viewer || !lesson) return;
+
+    viewer.querySelectorAll(
+      ".lesson-actions, .html-lesson-navigation"
+    ).forEach(element => element.remove());
+
+    const language = getLanguage();
+    const navigation = document.createElement("div");
+
+    navigation.className = "lesson-actions html-lesson-navigation";
+
+    navigation.innerHTML = `
+      <button type="button" data-html-nav="list">
+        ${language === "ar" ? "قائمة الدروس" : "Lesson List"}
+      </button>
+
+      <button type="button" data-html-nav="previous"
+        ${currentHTMLIndex === 0 ? "disabled" : ""}>
+        ${language === "ar" ? "← السابق" : "← Previous"}
+      </button>
+
+      <span>
+        ${currentHTMLIndex + 1} / ${HTML_LESSONS.length}
+      </span>
+
+      <button type="button" data-html-nav="next"
+        ${currentHTMLIndex === HTML_LESSONS.length - 1
+          ? "disabled"
+          : ""}>
+        ${language === "ar" ? "التالي →" : "Next →"}
+      </button>
+    `;
+
+    const completeButton = viewer.querySelector(
+      "#completeLessonButton"
+    );
+
+    if (completeButton) {
+      completeButton.after(navigation);
+    } else {
+      viewer.appendChild(navigation);
+    }
+
+    updateHTMLProgress();
+  }
+
+  function showHTMLLesson(index) {
+    if (index < 0 || index >= HTML_LESSONS.length) return;
+
+    currentHTMLIndex = index;
+
+    if (typeof window.renderLesson === "function") {
+      window.renderLesson(
+        prepareHTMLLesson(HTML_LESSONS[index])
+      );
+    }
+  }
+
+  // Save the existing renderers before adding HTML-specific behavior.
+  const originalRenderLesson = window.renderLesson;
+  const originalRenderList = window.renderCourseLessonList;
+
+  if (typeof originalRenderLesson === "function") {
+    window.renderLesson = function(lesson) {
+      originalRenderLesson.call(this, lesson);
+
+      if (!lesson || !String(lesson.id).startsWith("html-")) {
+        return;
+      }
+
+      const index = HTML_LESSONS.findIndex(
+        item => item.id === lesson.id
+      );
+
+      if (index !== -1) {
+        currentHTMLIndex = index;
+        addHTMLNavigation();
+      }
+    };
+  }
+
+  if (typeof originalRenderList === "function") {
+    window.renderCourseLessonList = function(courseId) {
+      if (courseId !== "html") {
+        return originalRenderList.call(this, courseId);
+      }
+
+      const viewer = typeof createLessonViewer === "function"
+        ? createLessonViewer()
+        : document.querySelector("#lessonViewer");
+
+      if (!viewer) return;
+
+      const language = getLanguage();
+
+      viewer.innerHTML = `
+        <div class="lesson-header">
+          <h2>${language === "ar" ? "كورس HTML" : "HTML Course"}</h2>
+          <p>${language === "ar"
+            ? `عدد الدروس: ${HTML_LESSONS.length}`
+            : `Total lessons: ${HTML_LESSONS.length}`}</p>
+        </div>
+
+        <div class="lesson-list">
+          ${HTML_LESSONS.map((lesson, index) => `
+            <button type="button"
+              class="lesson-list-item"
+              data-html-index="${index}">
+              <span>${getCompleted(lesson.id) ? "✓" : index + 1}</span>
+              <span>${lesson.title[language] || lesson.title.en}</span>
+              <span>${getCompleted(lesson.id)
+                ? (language === "ar" ? "مكتمل" : "Completed")
+                : lesson.duration}</span>
+            </button>
+          `).join("")}
+        </div>
+
+        <button type="button" id="htmlCloseList">
+          ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+        </button>
+      `;
+
+      viewer.hidden = false;
+
+      viewer.querySelectorAll("[data-html-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          showHTMLLesson(Number(button.dataset.htmlIndex));
+        });
+      });
+
+      viewer.querySelector("#htmlCloseList")
+        ?.addEventListener("click", () => {
+          viewer.hidden = true;
+          document.body.classList.remove("cs-mate-learning-open");
+          document.body.style.overflow = "";
+        });
+
+      updateHTMLProgress();
+    };
+  }
+
+  // Handle HTML navigation without interfering with C# buttons.
+  document.addEventListener("click", function(event) {
+    const button = event.target.closest("[data-html-nav]");
+    if (!button) return;
+
+    const viewer = document.querySelector("#lessonViewer");
+    if (!viewer || !viewer.contains(button)) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const action = button.dataset.htmlNav;
+
+    if (action === "previous") {
+      showHTMLLesson(currentHTMLIndex - 1);
+    } else if (action === "next") {
+      showHTMLLesson(currentHTMLIndex + 1);
+    } else if (action === "list") {
+      window.renderCourseLessonList("html");
+    }
+  }, true);
+
+  // Refresh HTML progress after the existing completion handler runs.
+  document.addEventListener("click", function(event) {
+    if (!event.target.closest("#completeLessonButton")) return;
+
+    const viewer = document.querySelector("#lessonViewer");
+    const lessonId = viewer
+      ?.querySelector("#completeLessonButton")
+      ?.dataset.lessonId;
+
+    if (!String(lessonId || "").startsWith("html-")) return;
+
+    window.setTimeout(() => {
+      updateHTMLProgress();
+
+      const button = viewer.querySelector("#completeLessonButton");
+      if (button) {
+        const language = getLanguage();
+        button.textContent = getCompleted(lessonId)
+          ? (language === "ar" ? "✓ تم إكمال الدرس" : "✓ Lesson Completed")
+          : (language === "ar" ? "✓ إكمال الدرس" : "✓ Mark as Completed");
+      }
+
+      viewer.querySelectorAll("[data-html-index]").forEach(item => {
+        const index = Number(item.dataset.htmlIndex);
+        const lesson = HTML_LESSONS[index];
+        if (!lesson) return;
+
+        const number = item.querySelector("span:first-child");
+        const status = item.querySelector("span:last-child");
+
+        if (number) {
+          number.textContent = getCompleted(lesson.id) ? "✓" : index + 1;
+        }
+
+        if (status) {
+          status.textContent = getCompleted(lesson.id)
+            ? (getLanguage() === "ar" ? "مكتمل" : "Completed")
+            : lesson.duration;
+        }
+      });
+    }, 100);
+  });
+
+  console.info("CS MATE: HTML navigation and progress initialized.");
+})();
+
 
