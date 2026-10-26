@@ -1514,3 +1514,83 @@ function renderCourseLessonList(courseId) {
 
 console.info("CS MATE lesson list is ready.");
 
+/* =========================================
+   CS MATE — PART 17
+   Lesson system repair and integration
+========================================= */
+
+(function repairCSMateLessons() {
+  function startRepair() {
+    if (typeof COURSES === "undefined") {
+      console.error("CS MATE: COURSES is missing.");
+      return;
+    }
+
+    if (typeof CSHARP_LESSONS === "undefined") {
+      console.error("CS MATE: CSHARP_LESSONS is missing.");
+      return;
+    }
+
+    if (typeof renderCourseLessonList !== "function") {
+      console.error("CS MATE: Lesson list function is missing.");
+      return;
+    }
+
+    const grid = document.querySelector("#coursesGrid");
+
+    if (!grid) {
+      console.error("CS MATE: Courses grid was not found.");
+      return;
+    }
+
+    // Remove previous course-navigation listeners
+    // by replacing the grid with a clean copy.
+    const cleanGrid = grid.cloneNode(true);
+    grid.replaceWith(cleanGrid);
+
+    cleanGrid.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-open-course]");
+
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const courseId = button.dataset.openCourse;
+
+      const course = COURSES.find(
+        (item) => item.id === courseId
+      );
+
+      if (!course) return;
+
+      if (courseId === "csharp") {
+        renderCourseLessonList(courseId);
+      } else {
+        const language =
+          typeof getCurrentLanguage === "function"
+            ? getCurrentLanguage()
+            : "ar";
+
+        alert(
+          language === "ar"
+            ? "دروس هذا الكورس ستُضاف قريبًا."
+            : "Lessons for this course will be added soon."
+        );
+      }
+    });
+
+    console.info("CS MATE lesson repair completed.");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      startRepair,
+      { once: true }
+    );
+  } else {
+    startRepair();
+  }
+})();
+
