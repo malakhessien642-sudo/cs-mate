@@ -1801,4 +1801,121 @@ print(student["grade"])`,
   } else {
     startPythonCheck();
   }
+})();/* =========================================
+   CS MATE — CONNECT PYTHON TO COURSE SYSTEM
+========================================= */
+
+(function () {
+  "use strict";
+
+  function connectPythonCourse() {
+    if (!Array.isArray(window.PYTHON_LESSONS)) {
+      console.error("CS MATE: Python lessons are unavailable.");
+      return;
+    }
+
+    const lessons = window.PYTHON_LESSONS;
+
+    if (typeof window.renderCourseLessonList !== "function") {
+      console.error("CS MATE: Course lesson renderer not found.");
+      return;
+    }
+
+    const originalRenderList = window.renderCourseLessonList;
+
+    window.renderCourseLessonList = function (courseId) {
+      if (courseId !== "python") {
+        return originalRenderList.apply(this, arguments);
+      }
+
+      const viewer = document.querySelector("#lessonViewer");
+      if (!viewer) {
+        console.error("CS MATE: Lesson viewer not found.");
+        return;
+      }
+
+      const language =
+        typeof getCurrentLanguage === "function"
+          ? getCurrentLanguage()
+          : "ar";
+
+      const getText = function (value) {
+        if (typeof value === "string") return value;
+        return value?.[language] || value?.en || "";
+      };
+
+      viewer.hidden = false;
+
+      viewer.innerHTML = `
+        <div class="lesson-header">
+          <h2>${language === "ar" ? "كورس Python" : "Python Course"}</h2>
+          <p>
+            ${language === "ar"
+              ? `عدد الدروس: ${lessons.length}`
+              : `Total lessons: ${lessons.length}`}
+          </p>
+          <button type="button" id="pythonBackToCourses">
+            ${language === "ar" ? "العودة للكورسات" : "Back to courses"}
+          </button>
+        </div>
+
+        <div class="lesson-list">
+          ${lessons.map((lesson, index) => `
+            <button
+              type="button"
+              class="lesson-list-item"
+              data-python-lesson-index="${index}"
+            >
+              <span>${index + 1}</span>
+              <span>${getText(lesson.title)}</span>
+              <span>${lesson.duration || ""}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+
+      viewer.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      viewer.querySelector("#pythonBackToCourses")
+        .addEventListener("click", function () {
+          viewer.hidden = true;
+          document.querySelector("#coursesGrid")
+            ?.scrollIntoView({ behavior: "smooth" });
+        });
+    };
+
+    document.addEventListener("click", function (event) {
+      const button = event.target.closest(
+        "[data-python-lesson-index]"
+      );
+
+      if (!button) return;
+
+      const index = Number(button.dataset.pythonLessonIndex);
+      const lesson = lessons[index];
+
+      if (!lesson || typeof window.renderLesson !== "function") {
+        return;
+      }
+
+      window.renderLesson(lesson);
+    });
+
+    console.info(
+      `CS MATE: Connected ${lessons.length} Python lessons.`
+    );
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      connectPythonCourse,
+      { once: true }
+    );
+  } else {
+    connectPythonCourse();
+  }
 })();
