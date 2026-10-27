@@ -1918,4 +1918,8 @@ print(student["grade"])`,
   } else {
     connectPythonCourse();
   }
-})();
+})();/* =========================================
+   CS MATE — PYTHON LESSON DATA FIX
+========================================= */
+
+window.PYTHON_LESSONS = PYTHON_LESSONS;
