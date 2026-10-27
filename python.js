@@ -1922,4 +1922,447 @@ print(student["grade"])`,
    CS MATE — PYTHON LESSON DATA FIX
 ========================================= */
 
-window.PYTHON_LESSONS = PYTHON_LESSONS;
+window.PYTHON_LESSONS = PYTHON_LESSONS;/* ==========================================
+   CS MATE — PYTHON COURSE VIEWER
+   Independent lesson viewer and progress
+========================================== */
+
+(function () {
+  "use strict";
+
+  function startPythonViewer() {
+    const lessons = window.PYTHON_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      console.error("CS MATE: Python lessons were not found.");
+      return;
+    }
+
+    if (document.getElementById("csmate-python-launcher")) {
+      return;
+    }
+
+    const STORAGE_KEY = "csmate_python_viewer_v1";
+
+    let saved = {};
+
+    try {
+      saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch (error) {
+      saved = {};
+    }
+
+    if (!Array.isArray(saved.completed)) saved.completed = [];
+
+    let currentIndex = Math.min(
+      Math.max(Number(saved.currentIndex) || 0, 0),
+      lessons.length - 1
+    );
+
+    function getText(value) {
+      if (typeof value === "string") return value;
+
+      if (value && typeof value === "object") {
+        return value.ar || value.en || "";
+      }
+
+      return "";
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(saved)
+        );
+      } catch (error) {
+        console.warn("Python progress could not be saved.", error);
+      }
+    }
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+      #csmate-python-launcher {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        z-index: 99990;
+        padding: 13px 18px;
+        border: 0;
+        border-radius: 12px;
+        background: #1677ff;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 5px 20px #0004;
+      }
+
+      #csmate-python-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99991;
+        display: none;
+        background: #080b12;
+        color: #f3f6ff;
+        overflow-y: auto;
+        font-family: Arial, sans-serif;
+      }
+
+      #csmate-python-overlay * {
+        box-sizing: border-box;
+      }
+
+      #csmate-python-overlay .py-shell {
+        max-width: 950px;
+        margin: auto;
+        padding: 22px;
+      }
+
+      #csmate-python-overlay .py-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      #csmate-python-overlay .py-btn {
+        border: 0;
+        border-radius: 9px;
+        padding: 11px 16px;
+        color: white;
+        background: #1769e0;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #csmate-python-overlay .py-btn:disabled {
+        opacity: .4;
+        cursor: not-allowed;
+      }
+
+      #csmate-python-overlay .py-card {
+        background: #111827;
+        border: 1px solid #26344a;
+        border-radius: 15px;
+        padding: 22px;
+        margin: 18px 0;
+      }
+
+      #csmate-python-overlay .py-muted {
+        color: #aebbd0;
+        line-height: 1.8;
+        white-space: pre-wrap;
+      }
+
+      #csmate-python-overlay .py-code {
+        background: #030712;
+        color: #7dd3fc;
+        border-radius: 10px;
+        padding: 18px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        direction: ltr;
+        text-align: left;
+        line-height: 1.7;
+      }
+
+      #csmate-python-overlay .py-progress {
+        height: 9px;
+        background: #26344a;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 12px 0;
+      }
+
+      #csmate-python-overlay .py-progress span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: #22c55e;
+        transition: width .2s;
+      }
+
+      #csmate-python-overlay .py-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      #csmate-python-overlay .py-lesson-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      #csmate-python-overlay .py-lesson-item {
+        width: 100%;
+        text-align: start;
+        padding: 14px;
+        border: 1px solid #26344a;
+        border-radius: 10px;
+        background: #111827;
+        color: #f3f6ff;
+        cursor: pointer;
+      }
+
+      #csmate-python-overlay .py-lesson-item.active {
+        border-color: #3987ff;
+        background: #142745;
+      }
+
+      @media (max-width: 600px) {
+        #csmate-python-overlay .py-shell {
+          padding: 14px;
+        }
+
+        #csmate-python-overlay .py-card {
+          padding: 16px;
+        }
+
+        #csmate-python-launcher {
+          bottom: 12px;
+          right: 12px;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+
+    const launcher = document.createElement("button");
+    launcher.id = "csmate-python-launcher";
+    launcher.textContent = "🐍 افتحي كورس Python";
+    launcher.type = "button";
+
+    const overlay = document.createElement("div");
+    overlay.id = "csmate-python-overlay";
+
+    overlay.innerHTML = `
+      <div class="py-shell" dir="rtl">
+        <div class="py-top">
+          <div>
+            <h1>🐍 Python Course</h1>
+            <div class="py-muted" id="py-counter"></div>
+          </div>
+          <button type="button" class="py-btn" id="py-close">
+            إغلاق الكورس ✕
+          </button>
+        </div>
+
+        <div class="py-card">
+          <strong>تقدمك في الكورس</strong>
+          <div class="py-progress">
+            <span id="py-progress-bar"></span>
+          </div>
+          <div class="py-muted" id="py-progress-text"></div>
+        </div>
+
+        <div class="py-card">
+          <h2>قائمة الدروس</h2>
+          <div class="py-lesson-list" id="py-lesson-list"></div>
+        </div>
+
+        <article class="py-card">
+          <h2 id="py-title"></h2>
+          <div class="py-muted" id="py-duration"></div>
+          <div class="py-muted" id="py-explanation"></div>
+
+          <h3>مثال عملي</h3>
+          <pre class="py-code"><code id="py-code"></code></pre>
+
+          <h3>شرح المثال</h3>
+          <div class="py-muted" id="py-code-explanation"></div>
+
+          <h3>أخطاء شائعة</h3>
+          <div class="py-muted" id="py-mistakes"></div>
+
+          <h3>تدريب الدرس</h3>
+          <div class="py-muted" id="py-exercise"></div>
+
+          <h3>ملخص الدرس</h3>
+          <div class="py-muted" id="py-summary"></div>
+
+          <div class="py-nav">
+            <button type="button" class="py-btn" id="py-prev">
+              ← الدرس السابق
+            </button>
+
+            <button type="button" class="py-btn" id="py-complete">
+              إكمال الدرس ✓
+            </button>
+
+            <button type="button" class="py-btn" id="py-next">
+              الدرس التالي →
+            </button>
+          </div>
+        </article>
+      </div>
+    `;
+
+    document.body.appendChild(launcher);
+    document.body.appendChild(overlay);
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value || "";
+    }
+
+    function updateProgress() {
+      const count = saved.completed.length;
+      const percentage = Math.round(count / lessons.length * 100);
+
+      document.getElementById("py-progress-bar").style.width =
+        percentage + "%";
+
+      setText(
+        "py-progress-text",
+        `أكملتِ ${count} من ${lessons.length} درسًا — ${percentage}%`
+      );
+    }
+
+    function renderLesson() {
+      const lesson = lessons[currentIndex];
+
+      if (!lesson) return;
+
+      setText("py-counter", `الدرس ${currentIndex + 1} من ${lessons.length}`);
+      setText("py-title", getText(lesson.title));
+      setText("py-duration", lesson.duration || "");
+      setText("py-explanation", getText(lesson.explanation));
+      setText("py-code", getText(lesson.code));
+
+      const codeExplanation = lesson.codeExplanation;
+
+      setText(
+        "py-code-explanation",
+        Array.isArray(codeExplanation)
+          ? codeExplanation.map(getText).join("\n")
+          : getText(codeExplanation)
+      );
+
+      const mistakes = lesson.commonMistakes;
+
+      setText(
+        "py-mistakes",
+        Array.isArray(mistakes)
+          ? mistakes.map(getText).join("\n")
+          : getText(mistakes)
+      );
+
+      setText("py-exercise", getText(lesson.exercise));
+      setText("py-summary", getText(lesson.summary));
+
+      const id = lesson.id ?? currentIndex + 1;
+
+      const completeButton = document.getElementById("py-complete");
+
+      completeButton.textContent = saved.completed.includes(id)
+        ? "تم إكمال الدرس ✓"
+        : "إكمال الدرس ✓";
+
+      document.getElementById("py-prev").disabled =
+        currentIndex === 0;
+
+      document.getElementById("py-next").disabled =
+        currentIndex === lessons.length - 1;
+
+      const list = document.getElementById("py-lesson-list");
+      list.replaceChildren();
+
+      lessons.forEach(function (item, index) {
+        const itemId = item.id ?? index + 1;
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "py-lesson-item";
+
+        if (index === currentIndex) {
+          button.classList.add("active");
+        }
+
+        button.textContent =
+          `${saved.completed.includes(itemId) ? "✓ " : ""}` +
+          `${index + 1}. ${getText(item.title)}`;
+
+        button.addEventListener("click", function () {
+          currentIndex = index;
+          saved.currentIndex = currentIndex;
+          save();
+          renderLesson();
+        });
+
+        list.appendChild(button);
+      });
+
+      updateProgress();
+
+      saved.currentIndex = currentIndex;
+      save();
+    }
+
+    launcher.addEventListener("click", function () {
+      overlay.style.display = "block";
+      document.body.style.overflow = "hidden";
+      renderLesson();
+    });
+
+    document.getElementById("py-close").addEventListener("click", function () {
+      overlay.style.display = "none";
+      document.body.style.overflow = "";
+    });
+
+    document.getElementById("py-prev").addEventListener("click", function () {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderLesson();
+      }
+    });
+
+    document.getElementById("py-next").addEventListener("click", function () {
+      if (currentIndex < lessons.length - 1) {
+        currentIndex++;
+        renderLesson();
+      }
+    });
+
+    document.getElementById("py-complete").addEventListener("click", function () {
+      const id = lessons[currentIndex].id ?? currentIndex + 1;
+
+      if (!saved.completed.includes(id)) {
+        saved.completed.push(id);
+      }
+
+      save();
+      renderLesson();
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && overlay.style.display === "block") {
+        overlay.style.display = "none";
+        document.body.style.overflow = "";
+      }
+    });
+
+    console.info(
+      "CS MATE Python viewer ready:",
+      lessons.length,
+      "lessons"
+    );
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      startPythonViewer,
+      { once: true }
+    );
+  } else {
+    startPythonViewer();
+  }
+})();
