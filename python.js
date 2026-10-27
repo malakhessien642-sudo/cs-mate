@@ -3224,3 +3224,216 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
     button.style.setProperty("display", "none", "important");
   }
 })();
+/* =========================================
+   CS MATE - FINAL PYTHON PATCH
+   Hide extra launcher and repair navigation
+========================================= */
+(function () {
+  "use strict";
+
+  function repair() {
+    const overlay = document.getElementById("csmate-python-overlay");
+    const lessons = window.PYTHON_LESSONS;
+
+    const launcher = document.getElementById("csmate-python-launcher");
+    if (launcher) launcher.style.display = "none";
+
+    if (!overlay || !Array.isArray(lessons) || !lessons.length) return;
+    if (overlay.dataset.finalPatch === "yes") return;
+    overlay.dataset.finalPatch = "yes";
+
+    const $ = id => document.getElementById(id);
+    const list = $("py-lesson-list");
+    const listCard = list && list.closest(".py-card");
+    const lessonCard = overlay.querySelector("article.py-card");
+
+    if (!list || !listCard || !lessonCard) return;
+
+    let current = 0;
+    let completed = [];
+
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem("csmate_python_viewer_v1") || "{}"
+      );
+      if (Number.isInteger(saved.currentIndex)) {
+        current = Math.max(0, Math.min(saved.currentIndex, lessons.length - 1));
+      }
+      if (Array.isArray(saved.completed)) completed = saved.completed;
+    } catch (_) {}
+
+    function text(value) {
+      if (typeof value === "string") return value;
+      if (value && typeof value === "object") {
+        return value.ar || value.en || "";
+      }
+      return "";
+    }
+
+    function set(id, value) {
+      const el = $(id);
+      if (el) el.textContent = value || "";
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(
+          "csmate_python_viewer_v1",
+          JSON.stringify({ currentIndex: current, completed })
+        );
+      } catch (_) {}
+    }
+
+    function showList() {
+      listCard.style.display = "";
+      lessonCard.style.display = "none";
+    }
+
+    function showLesson(index) {
+      if (index < 0 || index >= lessons.length) return;
+      current = index;
+      const lesson = lessons[current];
+      const id = lesson.id ?? current + 1;
+
+      set("py-counter", `الدرس ${current + 1} من ${lessons.length}`);
+      set("py-title", text(lesson.title));
+      set("py-duration", lesson.duration);
+      set("py-explanation", text(lesson.explanation));
+      set("py-code", text(lesson.code));
+      set("py-exercise", text(lesson.exercise));
+      set("py-summary", text(lesson.summary));
+
+      function fillLines(elementId, values) {
+        const el = $(elementId);
+        if (!el) return;
+        el.replaceChildren();
+        const items = Array.isArray(values) ? values : [values];
+        items.forEach(value => {
+          const p = document.createElement("p");
+          p.textContent = text(value);
+          el.appendChild(p);
+        });
+      }
+
+      fillLines("py-code-explanation", lesson.codeExplanation);
+      fillLines("py-mistakes", lesson.commonMistakes);
+
+      const prev = $("py-prev");
+      const next = $("py-next");
+      const complete = $("py-complete");
+
+      if (prev) prev.disabled = current === 0;
+      if (next) next.disabled = current === lessons.length - 1;
+      if (complete) {
+        complete.textContent = completed.includes(id)
+          ? "تم إكمال الدرس ✓"
+          : "إكمال الدرس ✓";
+      }
+
+      list.querySelectorAll("button").forEach((button, i) => {
+        button.classList.toggle("active", i === current);
+      });
+
+      const percent = Math.round(completed.length / lessons.length * 100);
+      const bar = $("py-progress-bar");
+      if (bar) bar.style.width = percent + "%";
+      set(
+        "py-progress-text",
+        `أكملت ${completed.length} من ${lessons.length} درسًا — ${percent}%`
+      );
+
+      save();
+      listCard.style.display = "none";
+      lessonCard.style.display = "";
+
+      if (!$("py-back-to-list")) {
+        const back = document.createElement("button");
+        back.id = "py-back-to-list";
+        back.type = "button";
+        back.className = "py-btn";
+        back.textContent = "← العودة لقائمة الدروس";
+        back.style.marginBottom = "12px";
+        lessonCard.prepend(back);
+      }
+    }
+
+    list.replaceChildren();
+    lessons.forEach((lesson, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "py-lesson-item";
+      button.textContent = `${index + 1}. ${text(lesson.title)}`;
+      button.addEventListener("click", () => showLesson(index));
+      list.appendChild(button);
+    });
+
+    overlay.addEventListener("click", function (event) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      if (target.closest("#py-back-to-list")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        showList();
+        return;
+      }
+
+      if (target.closest("#py-prev")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        showLesson(current - 1);
+        return;
+      }
+
+      if (target.closest("#py-next")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        showLesson(current + 1);
+        return;
+      }
+
+      if (target.closest("#py-complete")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const id = lessons[current].id ?? current + 1;
+        completed = completed.includes(id)
+          ? completed.filter(item => item !== id)
+          : [...completed, id];
+        showLesson(current);
+      }
+    }, true);
+
+    document.addEventListener("click", function (event) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const button = target.closest("button, a");
+      if (!button || overlay.contains(button)) return;
+
+      const label = (button.innerText || button.textContent || "").trim();
+      if (!/ابدأ التعلم|ابدأ الكورس|start learning|learn now/i.test(label)) return;
+
+      const card = button.closest(".course-card, .course-card-content, article");
+      if (card && !/python/i.test(card.innerText || "")) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      overlay.style.display = "block";
+      document.body.style.overflow = "hidden";
+      showList();
+    }, true);
+
+    const style = document.createElement("style");
+    style.textContent = "#csmate-python-launcher{display:none!important}";
+    document.head.appendChild(style);
+
+    showList();
+    save();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", repair, { once: true });
+  } else {
+    repair();
+  }
+})();
