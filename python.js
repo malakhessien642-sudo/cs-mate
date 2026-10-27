@@ -3004,4 +3004,204 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
   } else {
     startFix();
   }
+})();/* CS MATE - Python Course Layout */
+(function () {
+  "use strict";
+
+  function setupPythonCourseLayout() {
+    const style = document.createElement("style");
+
+    style.textContent = `
+      #csmate-python-launcher {
+        display: none !important;
+      }
+
+      #csmate-python-overlay {
+        position: relative;
+      }
+
+      #csmate-python-overlay .py-list-hidden {
+        display: none !important;
+      }
+
+      #csmate-python-overlay .py-content-hidden {
+        display: none !important;
+      }
+    `;
+
+    document.head.appendChild(style);
+
+    const launcher = document.getElementById(
+      "csmate-python-launcher"
+    );
+
+    if (launcher) {
+      launcher.remove();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      setupPythonCourseLayout
+    );
+  } else {
+    setupPythonCourseLayout();
+  }
+})();/* Python lesson list/content switching */
+(function () {
+  "use strict";
+
+  function setupLessonSwitching() {
+    const overlay = document.getElementById(
+      "csmate-python-overlay"
+    );
+
+    if (!overlay) return;
+
+    const lessonList = document.getElementById(
+      "py-lesson-list"
+    );
+
+    if (!lessonList) return;
+
+    const possibleContentIds = [
+      "py-title",
+      "py-code",
+      "py-explanation",
+      "py-lesson-explanation",
+      "py-exercise",
+      "py-summary",
+      "py-code-explanation",
+      "py-mistakes"
+    ];
+
+    const contentElements = possibleContentIds
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    function showList() {
+      lessonList.classList.remove("py-list-hidden");
+
+      contentElements.forEach(element => {
+        element.classList.add("py-content-hidden");
+      });
+    }
+
+    function showContent() {
+      lessonList.classList.add("py-list-hidden");
+
+      contentElements.forEach(element => {
+        element.classList.remove("py-content-hidden");
+      });
+    }
+
+    overlay.addEventListener("click", function (event) {
+      const target = event.target;
+
+      if (!(target instanceof Element)) return;
+
+      const lessonButton = target.closest(
+        "#py-lesson-list button"
+      );
+
+      if (lessonButton) {
+        showContent();
+      }
+
+      const backButton = target.closest(
+        "#py-back-to-list"
+      );
+
+      if (backButton) {
+        event.preventDefault();
+        showList();
+      }
+    });
+
+    showList();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      setupLessonSwitching
+    );
+  } else {
+    setupLessonSwitching();
+  }
+})();/* Python back-to-lessons button */
+(function () {
+  "use strict";
+
+  function addPythonBackButton() {
+    const overlay = document.getElementById(
+      "csmate-python-overlay"
+    );
+
+    if (!overlay) return;
+
+    if (document.getElementById("py-back-to-list")) {
+      return;
+    }
+
+    const button = document.createElement("button");
+
+    button.id = "py-back-to-list";
+    button.type = "button";
+    button.textContent = "← الرجوع لقائمة الدروس";
+
+    button.style.cssText = `
+      display: block;
+      margin: 12px 0;
+      padding: 10px 16px;
+      border: 1px solid #3b82f6;
+      border-radius: 10px;
+      background: #111827;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    `;
+
+    const lessonList = document.getElementById(
+      "py-lesson-list"
+    );
+
+    if (lessonList) {
+      lessonList.parentNode.insertBefore(
+        button,
+        lessonList
+      );
+    }
+
+    button.addEventListener("click", function () {
+      lessonList.classList.remove("py-list-hidden");
+
+      [
+        "py-title",
+        "py-code",
+        "py-explanation",
+        "py-lesson-explanation",
+        "py-exercise",
+        "py-summary",
+        "py-code-explanation",
+        "py-mistakes"
+      ].forEach(id => {
+        const element = document.getElementById(id);
+
+        if (element) {
+          element.classList.add("py-content-hidden");
+        }
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      addPythonBackButton
+    );
+  } else {
+    addPythonBackButton();
+  }
 })();
