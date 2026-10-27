@@ -2558,4 +2558,292 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
   } else {
     repairPythonButtons();
   }
+})();/* =========================================
+   CS MATE — PYTHON BUTTONS FIX
+========================================= */
+
+(function () {
+  "use strict";
+
+  function initializePythonFix() {
+    const lessons = window.PYTHON_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      console.error("Python lessons were not found.");
+      return;
+    }
+
+    const overlay = document.getElementById(
+      "csmate-python-overlay"
+    );
+
+    if (!overlay) {
+      console.error("Python viewer was not found.");
+      return;
+    }
+
+    const previousButton = document.getElementById("py-prev");
+    const nextButton = document.getElementById("py-next");
+    const completeButton = document.getElementById("py-complete");
+    const lessonList = document.getElementById("py-lesson-list");
+
+    const STORAGE_KEY = "csmate_python_viewer_v1";
+
+    let currentIndex = 0;
+    let completedLessons = [];
+
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "{}"
+      );
+
+      if (
+        Number.isInteger(saved.currentIndex) &&
+        saved.currentIndex >= 0 &&
+        saved.currentIndex < lessons.length
+      ) {
+        currentIndex = saved.currentIndex;
+      }
+
+      if (Array.isArray(saved.completed)) {
+        completedLessons = saved.completed;
+      }
+    } catch (error) {
+      console.warn("Could not restore Python progress.", error);
+    }
+
+    function getText(value) {
+      if (value == null) return "";
+
+      if (typeof value === "string") {
+        return value;
+      }
+
+      return value.ar || value.en || "";
+    }    function setText(ids, value) {
+      for (const id of ids) {
+        const element = document.getElementById(id);
+
+        if (element) {
+          element.textContent = getText(value);
+          return;
+        }
+      }
+    }
+
+    function renderLesson(index) {
+      if (index < 0 || index >= lessons.length) {
+        return;
+      }
+
+      currentIndex = index;
+
+      const lesson = lessons[currentIndex];
+
+      setText(["py-title"], lesson.title);
+      setText(["py-code"], lesson.code);
+
+      setText(
+        ["py-explanation", "py-lesson-explanation"],
+        lesson.explanation
+      );
+
+      setText(
+        ["py-exercise", "py-lesson-exercise"],
+        lesson.exercise
+      );
+
+      setText(
+        ["py-summary", "py-lesson-summary"],
+        lesson.summary
+      );
+
+      const codeExplanation = document.getElementById(
+        "py-code-explanation"
+      );
+
+      if (codeExplanation) {
+        codeExplanation.replaceChildren();
+
+        const items = Array.isArray(lesson.codeExplanation)
+          ? lesson.codeExplanation
+          : [];
+
+        items.forEach(item => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = getText(item);
+          codeExplanation.appendChild(paragraph);
+        });
+      }
+
+      const mistakes = document.getElementById("py-mistakes");
+
+      if (mistakes) {
+        mistakes.replaceChildren();
+
+        const items = Array.isArray(lesson.commonMistakes)
+          ? lesson.commonMistakes
+          : [];
+
+        items.forEach(item => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = getText(item);
+          mistakes.appendChild(paragraph);
+        });
+      }      if (previousButton) {
+        previousButton.disabled = currentIndex === 0;
+      }
+
+      if (nextButton) {
+        nextButton.disabled =
+          currentIndex === lessons.length - 1;
+      }
+
+      if (completeButton) {
+        completeButton.textContent =
+          completedLessons.includes(lesson.id)
+            ? "✓ مكتمل"
+            : "تحديد كمكتمل";
+      }
+
+      const percentage =
+        ((currentIndex + 1) / lessons.length) * 100;
+
+      const progressBar = document.querySelector(
+        "#csmate-python-overlay #py-progress-bar"
+      );
+
+      if (progressBar) {
+        progressBar.style.width = percentage + "%";
+      }
+
+      const progressText = document.getElementById(
+        "py-progress-text"
+      );
+
+      if (progressText) {
+        progressText.textContent =
+          `${currentIndex + 1} / ${lessons.length}`;
+      }
+
+      if (lessonList) {
+        const buttons = lessonList.querySelectorAll("button");
+
+        buttons.forEach((button, i) => {
+          button.classList.toggle("active", i === currentIndex);
+        });
+      }
+
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            currentIndex: currentIndex,
+            completed: completedLessons
+          })
+        );
+      } catch (error) {
+        console.warn("Could not save Python progress.", error);
+      }
+    }    [
+      previousButton,
+      nextButton,
+      completeButton
+    ].forEach(button => {
+      if (button) {
+        button.type = "button";
+        button.style.pointerEvents = "auto";
+        button.style.cursor = "pointer";
+      }
+    });
+
+    if (overlay._pythonFixHandler) {
+      overlay.removeEventListener(
+        "click",
+        overlay._pythonFixHandler,
+        true
+      );
+    }
+
+    overlay._pythonFixHandler = function (event) {
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const previous = target.closest("#py-prev");
+      const next = target.closest("#py-next");
+      const complete = target.closest("#py-complete");
+
+      if (previous) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        renderLesson(currentIndex - 1);
+        return;
+      }
+
+      if (next) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        renderLesson(currentIndex + 1);
+        return;
+      }
+
+      if (complete) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const lesson = lessons[currentIndex];
+
+        if (!lesson) return;
+
+        if (completedLessons.includes(lesson.id)) {
+          completedLessons = completedLessons.filter(
+            id => id !== lesson.id
+          );
+        } else {
+          completedLessons.push(lesson.id);
+        }
+
+        renderLesson(currentIndex);
+        return;
+      }      const lessonButton = target.closest(
+        "#py-lesson-list button"
+      );
+
+      if (lessonButton && lessonList) {
+        const buttons = Array.from(
+          lessonList.querySelectorAll("button")
+        );
+
+        const index = buttons.indexOf(lessonButton);
+
+        if (index !== -1 && index < lessons.length) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          renderLesson(index);
+        }
+      }
+    };
+
+    overlay.addEventListener(
+      "click",
+      overlay._pythonFixHandler,
+      true
+    );
+
+    renderLesson(currentIndex);
+
+    console.log("CS MATE Python button fix loaded.");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      initializePythonFix
+    );
+  } else {
+    initializePythonFix();
+  }
 })();
