@@ -1442,3 +1442,274 @@ console.log(
     }
   }, true);
 })();
+/* ==========================================
+   CS MATE — FINAL JAVASCRIPT COURSE FIX
+========================================== */
+
+(function () {
+  "use strict";
+
+  function textValue(value) {
+    if (typeof value === "string") return value;
+
+    if (value && typeof value === "object") {
+      return value[document.documentElement.lang] ||
+             value.ar ||
+             value.en ||
+             "";
+    }
+
+    return "";
+  }
+
+  function safeText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function showJavaScriptCourse() {
+    const lessons = window.JAVASCRIPT_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length !== 20) {
+      alert("تعذر تحميل الدروس العشرين. راجعي ملف javascript.js.");
+      return;
+    }
+
+    let viewer = document.getElementById("js-final-viewer");
+
+    if (viewer) viewer.remove();
+
+    viewer = document.createElement("div");
+    viewer.id = "js-final-viewer";
+
+    viewer.innerHTML = `
+      <div class="js-final-container">
+        <button id="js-final-back" type="button">← الرجوع للموقع</button>
+
+        <h1>JavaScript</h1>
+        <p>كورس JavaScript — ${lessons.length} درس</p>
+
+        <div class="js-final-layout">
+          <nav id="js-final-list"></nav>
+          <main id="js-final-content">
+            <h2>اختاري درسًا للبدء</h2>
+          </main>
+        </div>
+      </div>
+    `;
+
+    const style = document.createElement("style");
+    style.id = "js-final-style";
+    style.textContent = `
+      #js-final-viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        overflow: auto;
+        background: #080914;
+        color: #f4f7ff;
+        font-family: Arial, sans-serif;
+        direction: rtl;
+        padding: 18px;
+        box-sizing: border-box;
+      }
+
+      #js-final-viewer * { box-sizing: border-box; }
+
+      .js-final-container {
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      #js-final-back, .js-final-lesson {
+        border: 1px solid #315078;
+        background: #111d33;
+        color: white;
+        border-radius: 10px;
+        padding: 12px;
+        cursor: pointer;
+      }
+
+      #js-final-viewer h1,
+      #js-final-viewer h2 {
+        color: #60c5ff;
+      }
+
+      .js-final-layout {
+        display: grid;
+        grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+        gap: 18px;
+        margin-top: 22px;
+      }
+
+      #js-final-list {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+      }
+
+      .js-final-lesson { text-align: right; }
+
+      .js-final-lesson.active {
+        background: #164e78;
+        border-color: #60c5ff;
+      }
+
+      #js-final-content {
+        min-width: 0;
+        line-height: 1.9;
+        overflow-wrap: anywhere;
+      }
+
+      #js-final-content pre {
+        direction: ltr;
+        text-align: left;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: #020617;
+        color: #a5e5ff;
+        padding: 16px;
+        border-radius: 10px;
+        overflow-x: auto;
+      }
+
+      .js-final-nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .js-final-nav button {
+        padding: 12px 18px;
+        border: 0;
+        border-radius: 9px;
+        cursor: pointer;
+        background: #1686c9;
+        color: white;
+      }
+
+      @media (max-width: 650px) {
+        .js-final-layout { grid-template-columns: 1fr; }
+        #js-final-list { grid-template-columns: 1fr 1fr; }
+      }
+    `;
+
+    document.head.appendChild(style);
+    document.body.appendChild(viewer);
+
+    const list = viewer.querySelector("#js-final-list");
+    const content = viewer.querySelector("#js-final-content");
+
+    let currentIndex = 0;
+
+    function renderLesson(index) {
+      currentIndex = index;
+
+      const lesson = lessons[index];
+
+      list.querySelectorAll("button").forEach((button, i) => {
+        button.classList.toggle("active", i === index);
+      });
+
+      const explanation = textValue(lesson.explanation);
+      const codeExplanation = textValue(
+        lesson.codeExplanation
+      );
+      const mistakes = textValue(lesson.commonMistakes);
+
+      content.innerHTML = `
+        <h2>${safeText(textValue(lesson.title))}</h2>
+
+        <p>
+          <strong>المستوى:</strong>
+          ${safeText(textValue(lesson.level) || "مبتدئ")}
+        </p>
+
+        <p>
+          <strong>المدة:</strong>
+          ${safeText(lesson.duration || "")}
+        </p>
+
+        <h3>📘 شرح الدرس</h3>
+        <p>${safeText(explanation).replace(/\n/g, "<br>")}</p>
+
+        <h3>💻 مثال الكود</h3>
+        <pre><code>${safeText(lesson.code)}</code></pre>
+
+        <h3>🧠 شرح الكود</h3>
+        <p>${safeText(codeExplanation).replace(/\n/g, "<br>")}</p>
+
+        <h3>⚠️ أخطاء شائعة</h3>
+        <p>${safeText(mistakes).replace(/\n/g, "<br>")}</p>
+
+        <h3>✍️ التدريب</h3>
+        <p>${safeText(textValue(lesson.exercise))}</p>
+
+        <h3>✅ ملخص الدرس</h3>
+        <p>${safeText(textValue(lesson.summary))}</p>
+
+        <div class="js-final-nav">
+          <button id="js-final-prev" ${index === 0 ? "disabled" : ""}>
+                        الدرس السابق
+          </button>
+
+          <button id="js-final-next" ${index === lessons.length - 1 ? "disabled" : ""}>
+            الدرس التالي
+          </button>
+        </div>
+      `;
+
+      content.querySelector("#js-final-prev").onclick = () => {
+        if (currentIndex > 0) renderLesson(currentIndex - 1);
+      };
+
+      content.querySelector("#js-final-next").onclick = () => {
+        if (currentIndex < lessons.length - 1) {
+          renderLesson(currentIndex + 1);
+        }
+      };
+
+      content.scrollIntoView({ block: "start" });
+    }
+
+    lessons.forEach((lesson, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "js-final-lesson";
+      button.textContent = `${index + 1}. ${textValue(lesson.title)}`;
+      button.onclick = () => renderLesson(index);
+      list.appendChild(button);
+    });
+
+    viewer.querySelector("#js-final-back").onclick = () => {
+      viewer.remove();
+      document.getElementById("js-final-style")?.remove();
+    };
+
+    renderLesson(0);
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-open-course]");
+
+    if (!button || button.dataset.openCourse !== "javascript") {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    showJavaScriptCourse();
+  }, true);
+
+})();
+         
+
+  
