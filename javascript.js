@@ -1269,4 +1269,176 @@ console.log(
       " درس. الخطوة التالية هي عرض الدروس داخل واجهة الموقع."
     );
   });
+})();/* ==========================================
+   CS MATE — JavaScript Lessons Viewer
+   Displays all 20 lessons in a standalone panel
+========================================== */
+
+(function () {
+  "use strict";
+
+  function openJavaScriptLessons() {
+    const lessons = window.JAVASCRIPT_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      alert("مش لاقيين الدروس. اتأكدي إن محتوى JavaScript اتحفظ صح.");
+      return;
+    }
+
+    let panel = document.getElementById("js-course-viewer");
+
+    if (!panel) {
+      panel = document.createElement("section");
+      panel.id = "js-course-viewer";
+
+      Object.assign(panel.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "99999",
+        background: "#080d1a",
+        color: "#ffffff",
+        overflowY: "auto",
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+        direction: "rtl"
+      });
+
+      document.body.appendChild(panel);
+    }
+
+    panel.innerHTML = `
+      <div style="max-width:900px;margin:auto">
+        <button id="js-close-viewer"
+          style="padding:10px 18px;cursor:pointer">
+          رجوع للموقع ✕
+        </button>
+
+        <h1 style="color:#55b8ff;margin-top:25px">
+          كورس JavaScript
+        </h1>
+
+        <p>عدد الدروس: ${lessons.length}</p>
+
+        <div id="js-lesson-list"
+          style="display:grid;gap:12px;margin:25px 0"></div>
+
+        <article id="js-lesson-content"
+          style="line-height:1.9"></article>
+      </div>
+    `;
+
+    panel.querySelector("#js-close-viewer").onclick = () => {
+      panel.remove();
+    };
+
+    const list = panel.querySelector("#js-lesson-list");
+    const content = panel.querySelector("#js-lesson-content");
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    lessons.forEach((lesson, index) => {
+      const button = document.createElement("button");
+
+      button.textContent =
+        `${index + 1}. ${lesson.title || "الدرس " + (index + 1)}`;
+
+      Object.assign(button.style, {
+        padding: "15px",
+        textAlign: "right",
+        background: "#111d33",
+        color: "#ffffff",
+        border: "1px solid #294c75",
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontSize: "16px"
+      });
+
+      button.onclick = () => {
+        const explanation = Array.isArray(lesson.explanation)
+          ? lesson.explanation.join("\n")
+          : lesson.explanation;
+
+        const codeExplanation = Array.isArray(lesson.codeExplanation)
+          ? lesson.codeExplanation
+          : [];
+
+        const mistakes = Array.isArray(lesson.commonMistakes)
+          ? lesson.commonMistakes
+          : [];
+
+        content.innerHTML = `
+          <h2>${escapeHTML(lesson.title)}</h2>
+
+          <p><strong>المستوى:</strong>
+            ${escapeHTML(lesson.level || "مبتدئ")}
+          </p>
+
+          <p><strong>المدة:</strong>
+            ${escapeHTML(lesson.duration || "غير محددة")}
+          </p>
+
+          <h3>شرح الدرس</h3>
+          <p style="white-space:pre-wrap">
+            ${escapeHTML(explanation || "لا يوجد شرح مسجل")}
+          </p>
+
+          <h3>الكود</h3>
+          <pre style="direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#020617;padding:15px;border-radius:10px;color:#8ce7ff"><code>${escapeHTML(lesson.code || "")}</code></pre>
+
+          <h3>شرح الكود</h3>
+          <ul>
+            ${codeExplanation.map(item =>
+              `<li>${escapeHTML(item)}</li>`
+            ).join("")}
+          </ul>
+
+          <h3>أخطاء شائعة</h3>
+          <ul>
+            ${mistakes.map(item =>
+              `<li>${escapeHTML(item)}</li>`
+            ).join("")}
+          </ul>
+
+          <h3>التدريب</h3>
+          <p>${escapeHTML(lesson.exercise || "لا يوجد تدريب مسجل")}</p>
+
+          <h3>ملخص الدرس</h3>
+          <p>${escapeHTML(lesson.summary || "")}</p>
+        `;
+
+        content.scrollIntoView({ behavior: "smooth" });
+      };
+
+      list.appendChild(button);
+    });
+
+    if (lessons.length > 0) {
+      list.querySelector("button").click();
+    }
+
+    panel.scrollTop = 0;
+  }
+
+  window.openJavaScriptLessons = openJavaScriptLessons;
+
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-open-course]");
+
+    if (
+      button &&
+      button.dataset.openCourse.toLowerCase() === "javascript"
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openJavaScriptLessons();
+    }
+  }, true);
 })();
