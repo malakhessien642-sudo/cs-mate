@@ -3437,3 +3437,163 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
     repair();
   }
 })();
+
+/* CS MATE - PYTHON BUTTONS EMERGENCY FIX */
+(function () {
+  "use strict";
+
+  const lessons = window.PYTHON_LESSONS;
+  const overlay = document.getElementById("csmate-python-overlay");
+
+  if (!overlay || !Array.isArray(lessons) || !lessons.length) return;
+
+  const KEY = "csmate_python_viewer_v1";
+  let index = 0;
+  let completed = [];
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    if (Number.isInteger(saved.currentIndex)) {
+      index = Math.max(0, Math.min(saved.currentIndex, lessons.length - 1));
+    }
+    if (Array.isArray(saved.completed)) completed = saved.completed;
+  } catch (_) {}
+
+  function getText(value) {
+    if (typeof value === "string") return value;
+    if (value && typeof value === "object") {
+      return value.ar || value.en || "";
+    }
+    return "";
+  }
+
+  function put(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = getText(value);
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        currentIndex: index,
+        completed: completed
+      }));
+    } catch (_) {}
+  }
+
+  function render() {
+    const lesson = lessons[index];
+    if (!lesson) return;
+
+    put("py-counter", `الدرس ${index + 1} من ${lessons.length}`);
+    put("py-title", lesson.title);
+    put("py-duration", lesson.duration);
+    put("py-explanation", lesson.explanation);
+    put("py-code", lesson.code);
+    put("py-exercise", lesson.exercise);
+    put("py-summary", lesson.summary);
+
+    function fill(id, values) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.replaceChildren();
+
+      const list = Array.isArray(values) ? values : [values];
+      const value = values && !Array.isArray(values)
+        ? values.ar || values.en || []
+        : list;
+
+      (Array.isArray(value) ? value : [value]).forEach(item => {
+        const p = document.createElement("p");
+        p.textContent = getText(item);
+        el.appendChild(p);
+      });
+    }
+
+    fill("py-code-explanation", lesson.codeExplanation);
+    fill("py-mistakes", lesson.commonMistakes);
+
+    const prev = document.getElementById("py-prev");
+    const next = document.getElementById("py-next");
+    const done = document.getElementById("py-complete");
+
+    if (prev) prev.disabled = index === 0;
+    if (next) next.disabled = index === lessons.length - 1;
+
+    const id = lesson.id ?? index + 1;
+    if (done) {
+      done.textContent = completed.includes(id)
+        ? "تم إكمال الدرس ✓"
+        : "إكمال الدرس ✓";
+    }
+
+    const bar = document.getElementById("py-progress-bar");
+    const percent = Math.round(completed.length / lessons.length * 100);
+    if (bar) bar.style.width = percent + "%";
+
+    put("py-progress-text",
+      `أكملت ${completed.length} من ${lessons.length} درسًا — ${percent}%`
+    );
+
+    save();
+  }
+
+  document.addEventListener("click", function (event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest(
+      "#csmate-python-overlay #py-prev, " +
+      "#csmate-python-overlay #py-next, " +
+      "#csmate-python-overlay #py-complete, " +
+      "#csmate-python-overlay #py-lesson-list button"
+    );
+
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (button.id === "py-prev") {
+      if (index > 0) index--;
+      render();
+      return;
+    }
+
+    if (button.id === "py-next") {
+      if (index < lessons.length - 1) index++;
+      render();
+      return;
+    }
+
+    if (button.id === "py-complete") {
+      const id = lessons[index].id ?? index + 1;
+
+      completed = completed.includes(id)
+        ? completed.filter(item => item !== id)
+        : [...completed, id];
+
+      render();
+      return;
+    }
+
+    const list = Array.from(
+      overlay.querySelectorAll("#py-lesson-list button")
+    );
+
+    const selected = list.indexOf(button);
+    if (selected !== -1 && selected < lessons.length) {
+      index = selected;
+      render();
+
+      const lessonList = document.getElementById("py-lesson-list");
+      const listCard = lessonList && lessonList.closest(".py-card");
+      const contentCard = overlay.querySelector("article.py-card");
+
+      if (listCard) listCard.style.display = "none";
+      if (contentCard) contentCard.style.display = "";
+    }
+  }, true);
+
+  render();
+})();
