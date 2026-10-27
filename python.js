@@ -1751,3 +1751,54 @@ print(student["grade"])`,
     updateQuizSummary();
   }
 })();
+/* =========================================
+   CS MATE — PYTHON COURSE DIAGNOSTICS
+========================================= */
+
+(function () {
+  "use strict";
+
+  function startPythonCheck() {
+    console.log("CS MATE: Checking Python course...");
+
+    const lessons = window.PYTHON_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      console.error(
+        "Python lessons are missing or not globally accessible."
+      );
+      return;
+    }
+
+    console.log(
+      "Python lessons found:",
+      lessons.length
+    );
+
+    console.log(
+      "First lesson:",
+      lessons[0]
+    );
+
+    const courseElements = document.querySelectorAll(
+      '[data-course="python"], ' +
+      '[data-course-id="python"], ' +
+      '#python-course, ' +
+      '.python-course'
+    );
+
+    console.log(
+      "Possible Python course containers:",
+      courseElements.length
+    );
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      startPythonCheck
+    );
+  } else {
+    startPythonCheck();
+  }
+})();
