@@ -2365,4 +2365,197 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
   } else {
     startPythonViewer();
   }
+})();/* =========================================
+   CS MATE — PYTHON BUTTON REPAIR
+========================================= */
+
+(function () {
+  "use strict";
+
+  function repairPythonButtons() {
+    const overlay = document.getElementById("csmate-python-overlay");
+
+    if (!overlay || overlay.dataset.buttonsRepaired === "true") {
+      return;
+    }
+
+    const lessons = window.PYTHON_LESSONS;
+
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      console.error("Python lessons not found.");
+      return;
+    }
+
+    overlay.dataset.buttonsRepaired = "true";
+
+    const storageKey = "csmate_python_viewer_v1";
+
+    function readProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {
+          currentIndex: 0,
+          completed: []
+        };
+      } catch (error) {
+        return { currentIndex: 0, completed: [] };
+      }
+    }
+
+    function saveProgress(data) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      } catch (error) {
+        console.error("Could not save Python progress.", error);
+      }
+    }
+
+    function textOf(value) {
+      if (typeof value === "string") return value;
+      if (value && typeof value === "object") {
+        return value.ar || value.en || "";
+      }
+      return "";
+    }
+
+    function showLesson(index) {
+      if (index < 0 || index >= lessons.length) return;
+
+      const lesson = lessons[index];
+      const progress = readProgress();
+
+      progress.currentIndex = index;
+      saveProgress(progress);
+
+      const fields = {
+        "py-counter": `الدرس ${index + 1} من ${lessons.length}`,
+        "py-title": textOf(lesson.title),
+        "py-duration": lesson.duration || "",
+        "py-explanation": textOf(lesson.explanation),
+        "py-code": textOf(lesson.code),
+        "py-exercise": textOf(lesson.exercise),
+        "py-summary": textOf(lesson.summary)
+      };
+
+      Object.entries(fields).forEach(function ([id, value]) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      });
+
+      const previous = document.getElementById("py-prev");
+      const next = document.getElementById("py-next");
+
+      if (previous) previous.disabled = index === 0;
+      if (next) next.disabled = index === lessons.length - 1;
+
+      const complete = document.getElementById("py-complete");
+      const lessonId = lesson.id ?? index + 1;
+
+      if (complete) {
+        complete.textContent = progress.completed.includes(lessonId)
+          ? "تم إكمال الدرس ✓"
+          : "إكمال الدرس ✓";
+      }
+
+      const bar = document.getElementById("py-progress-bar");
+      const progressText = document.getElementById("py-progress-text");
+      const percentage = Math.round(
+        progress.completed.length / lessons.length * 100
+      );
+
+      if (bar) bar.style.width = percentage + "%";
+
+      if (progressText) {
+        progressText.textContent = Math.round(percentage) + "%";
+      }
+
+      if (prevButton) {
+        prevButton.disabled = index === 0;
+      }
+
+      if (nextButton) {
+        nextButton.disabled = index === PYTHON_LESSONS.length - 1;
+      }
+
+      if (completeButton) {
+        completeButton.textContent = completed.includes(lesson.id)
+          ? "✓ مكتمل"
+          : "تحديد كمكتمل";
+      }
+
+      if (lessonList) {
+        lessonList.querySelectorAll("button").forEach((button, i) => {
+          button.classList.toggle("active", i === index);
+        });
+      }
+
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            currentIndex: index,
+            completed: completed
+          })
+        );
+      } catch (error) {
+        console.warn("تعذر حفظ تقدم دروس Python:", error);
+      }
+    }
+
+    overlay.addEventListener("click", function (event) {
+      const target = event.target;
+
+      if (target.closest("#py-prev")) {
+        event.preventDefault();
+        showLesson(currentIndex - 1);
+        return;
+      }
+
+      if (target.closest("#py-next")) {
+        event.preventDefault();
+        showLesson(currentIndex + 1);
+        return;
+      }
+
+      if (target.closest("#py-complete")) {
+        event.preventDefault();
+
+        const lesson = PYTHON_LESSONS[currentIndex];
+
+        if (!lesson) return;
+
+        if (completed.includes(lesson.id)) {
+          completed = completed.filter(id => id !== lesson.id);
+        } else {
+          completed.push(lesson.id);
+        }
+
+        showLesson(currentIndex);
+        return;
+      }
+
+      const lessonButton = target.closest("#py-lesson-list button");
+
+      if (lessonButton) {
+        const buttons = Array.from(
+          lessonList.querySelectorAll("button")
+        );
+
+        const clickedIndex = buttons.indexOf(lessonButton);
+
+        if (clickedIndex !== -1) {
+          showLesson(clickedIndex);
+        }
+      }
+    });
+
+    showLesson(currentIndex);
+
+    console.log("Python buttons initialized successfully.");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", repairPythonButtons);
+  } else {
+    repairPythonButtons();
+  }
 })();
