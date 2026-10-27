@@ -3204,4 +3204,23 @@ window.PYTHON_LESSONS = PYTHON_LESSONS;/* ======================================
   } else {
     addPythonBackButton();
   }
+})();/* Hide the extra Python launcher button */
+(function () {
+  const style = document.createElement("style");
+
+  style.textContent = `
+    #csmate-python-launcher {
+      display: none !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  const button = document.getElementById(
+    "csmate-python-launcher"
+  );
+
+  if (button) {
+    button.style.setProperty("display", "none", "important");
+  }
 })();
